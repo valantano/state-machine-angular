@@ -1,0 +1,98 @@
+.header {
+    flex: auto;
+    background-color: #f2f2f2;
+    padding: 0px;
+    text-align: center;
+    height: 20;
+  }
+  
+  .lamp {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .lamp.connected {
+    background: radial-gradient(circle at center, #00ff00, #008000);
+  }
+  
+  .lamp.disconnected {
+    background: radial-gradient(circle at center, #ff0000, #800000);
+  }
+  
+  .lamp.ongoing-actions {
+    background: radial-gradient(circle at center, #ffff00, #808000);
+  }
+  
+  .button-container {
+    margin-top: 20px;
+  }
+  
+  button {
+    background-color: #6dbb63; /* Light green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 1s;
+    cursor: pointer;
+  }
+  
+  
+  button:hover {
+    background-color: #8cd19d; /* Lighter green on hover */
+  }
+  
+  button.connection-interrupted {
+    background-color: #e74c3c; /* Light red */
+  }
+  
+  button.ongoing-actions {
+    background-color: #f7dc6f; /* Light yellow */
+  }
+  
+  
+  .console-log {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    height: 500px;
+    overflow: auto;
+  }
+  
+  .container {
+    display: flex;
+  }
+  
+  .left-side {
+    flex: 1;
+    width: 50%;
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333; /* Adjust text color as needed */
+  }
+  
+  .right-side {
+    flex: 1;
+    width: 50%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333; /* Adjust text color as needed */
+  }
+  
+  #cy {
+    width: 99%;
+    height: 90%;
+    border: 1px solid #ddd;
+  }
+  

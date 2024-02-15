@@ -1,0 +1,90 @@
+<div class="header">
+    <h1>State Machine</h1>
+    <div class="lamp" [class.connected]="connectionStatus" [class.disconnected]="!connectionStatus"
+            [class.ongoing-actions]="ongoingActionStatus" [title]="getLampTitle()">
+    </div>
+</div>
+
+<div class="container">
+    <div class="left-side">
+        <div>
+            Clicking on the buttons below will start the statemachine with the selected state as the only state that
+            will be executed (except for IDLE which will always be executed).
+            Clicking on START will start the statemachine with the activation configuration from the graph above.
+        </div>
+        <div class = "button-container">
+            <button (click)="openControlArmDialog()">Control Arm</button>
+            <button (click)="openGripper()">Open Gripper</button>
+            <button (click)="closeGripper()">Close Gripper</button>
+        </div>
+        
+        <div class="button-container">
+            <button *ngFor="let stateKey of states" (click)="simulateSolelyState(stateKey)"
+                [class.connection-interrupted]="!connectionStatus" [class.ongoing-actions]="ongoingActionStatus"
+                [disabled]="!connectionStatus || ongoingActionStatus">
+                {{ stateKey }}
+            </button>
+        </div>
+
+        <div class="console-log">
+            <div *ngFor="let log of logs">{{ log }}</div>
+        </div>
+    </div>
+
+    <div class="right-side">
+        <div id="cy"></div>
+        <p>Click on the Graph to activate and deactivate states of the statemachine. Deactivated states will be skipped
+            when the statemachine is started</p>
+    </div>
+    
+</div>
+
+
+
+
+    <!-- Button to call  getFSM()-->
+    <!-- <button (click)="startStateMachine()" [class.connection-interrupted]="!connectionStatus"
+    [class.ongoing-actions]="ongoingActionStatus" [disabled]="!connectionStatus || ongoingActionStatus">Send Start
+    Signal</button> -->
+
+
+    <!-- <button (click)="simulateSolelyState('OPENGRIPPER')" [class.connection-interrupted]="!connectionStatus"
+    [class.ongoing-actions]="ongoingActionStatus"
+    [disabled]="!connectionStatus || ongoingActionStatus">OpenGripper</button>
+<button (click)="simulateSolelyState('CLOSEGRIPPER')" [class.connection-interrupted]="!connectionStatus"
+    [class.ongoing-actions]="ongoingActionStatus"
+    [disabled]="!connectionStatus || ongoingActionStatus">CloseGripper</button>
+<button (click)="simulateSolelyState('SPIN')" [class.connection-interrupted]="!connectionStatus"
+    [class.ongoing-actions]="ongoingActionStatus"
+    [disabled]="!connectionStatus || ongoingActionStatus">SpingRobot</button>
+<button (click)="simulateSolelyState('CHECKLOCALIZATION')" [class.connection-interrupted]="!connectionStatus"
+    [class.ongoing-actions]="ongoingActionStatus" [disabled]="!connectionStatus || ongoingActionStatus">Check
+    Localization</button>
+<button (click)="simulateSolelyState('MO')" [class.connection-interrupted]="!connectionStatus"
+    [class.ongoing-actions]="ongoingActionStatus" [disabled]="!connectionStatus || ongoingActionStatus">Move Base to
+    Position</button>
+<button (click)="moveArmToScanPoses()" [class.connection-interrupted]="!connectionStatus"
+    [class.ongoing-actions]="ongoingActionStatus" [disabled]="!connectionStatus || ongoingActionStatus">Move Arm to Scan
+    Poses</button>
+<button (click)="checkStableDetect()" [class.connection-interrupted]="!connectionStatus"
+    [class.ongoing-actions]="ongoingActionStatus" [disabled]="!connectionStatus || ongoingActionStatus">Check Stable
+    Object Detection</button>
+<button (click)="controlArm()" [class.connection-interrupted]="!connectionStatus"
+    [class.ongoing-actions]="ongoingActionStatus" [disabled]="!connectionStatus || ongoingActionStatus">Control
+    Arm</button> -->
+
+
+
+
+    <!-- "START": { "state": "START", "transitions": {"start": "IDLE" } },
+"CHECKLOCALIZATION": { "state": "CHECKLOCALIZATION", "transitions": { "move_base_to_goal": "MOVEBASETOGOAL", "spin": "SPIN" } },
+"CHECKSTABLEOBJECTPOSEDETECTED": { "state": "CHECKSTABLEOBJECTPOSEDETECTED", "transitions": { "move_arm_to_grasp_pose": "MOVEARMTOGRIPPINGPOSE", "move_arm_to_scan_pose": "MOVEARMTOSCANPOSE" } },
+"CLOSEGRIPPER": { "state": "CLOSEGRIPPER", "transitions": { "move_arm_to_transport_pose": "MOVEARMTOTRANSPORTPOSE" } },
+"IDLE": { "state": "IDLE", "transitions": { "move_base_to_goal": "MOVEBASETOGOAL", "spin": "SPIN" } },
+"MOVEARMTOGRIPPINGPOSE": { "state": "MOVEARMTOGRIPPINGPOSE", "transitions": { "close_gripper": "CLOSEGRIPPER" } },
+"MOVEARMTORELEASEPOSE": { "state": "MOVEARMTORELEASEPOSE", "transitions": { "open_gripper": "OPENGRIPPER" } },
+"MOVEARMTOSCANPOSE": { "state": "MOVEARMTOSCANPOSE", "transitions": { "check_stable_object_pose_detected": "CHECKSTABLEOBJECTPOSEDETECTED", "idle": "IDLE" } },
+"MOVEARMTOTRANSPORTPOSE": { "state": "MOVEARMTOTRANSPORTPOSE", "transitions": { "move_base_to_goal": "MOVEBASETOGOAL" } },
+"MOVEBASETOGOAL": { "state": "MOVEBASETOGOAL", "transitions": { "move_arm_to_release_pose": "MOVEARMTORELEASEPOSE", "move_arm_to_scan_pose": "MOVEARMTOSCANPOSE" } },
+"OPENGRIPPER": { "state": "OPENGRIPPER", "transitions": { "idle": "IDLE" } },
+"SPIN": { "state": "SPIN", "transitions": { "check_localization": "CHECKLOCALIZATION" } } -->

@@ -1,0 +1,34 @@
+<h1 mat-dialog-title>Control the Arm</h1>
+<div mat-dialog-content>
+    <div>
+        <mat-checkbox [(ngModel)]="section1Active">Section 1</mat-checkbox>
+        <mat-form-field>
+            <mat-label>Select an option</mat-label>
+            <mat-select [(ngModel)]="selectedOption1" [disabled]="!section1Active">
+                <mat-option *ngFor="let option of options" [value]="option">{{ option }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div>
+        <mat-checkbox [(ngModel)]="section2Active">Section 2</mat-checkbox>
+        <mat-form-field>
+            <mat-label>Select an option</mat-label>
+            <mat-select [(ngModel)]="selectedOption2" [disabled]="!section2Active">
+                <mat-option *ngFor="let option of options" [value]="option">{{ option }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div>
+        <mat-checkbox [(ngModel)]="section3Active">Section 3</mat-checkbox>
+        <mat-form-field>
+            <mat-label>Select an option</mat-label>
+            <mat-select [(ngModel)]="selectedOption3" [disabled]="!section3Active">
+                <mat-option *ngFor="let option of options" [value]="option">{{ option }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()">Cancel</button>
+    <button mat-button (click)="onStartClick()" [disabled]="(!section1Active && !section2Active && !section3Active) || (section1Active && section2Active) || (section2Active && section3Active)">Start</button>
+</div>
