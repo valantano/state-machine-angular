@@ -1,0 +1,16 @@
+<!-- <div class="outer-container">
+  <div class="toolbox">
+    
+
+  </div> -->
+
+<div class="graph" (mouseup)="onMouseUp()">
+  <app-state-node *ngFor="let node of nodes | keyvalue" class="state-node" [style.left.px]="node.value.x"
+    [style.top.px]="node.value.y" [id]="node.value.id" [title]="node.value.title"
+    [informationText]="node.value.informationText" 
+    (circleDrag)="handleCircleDrag($event)" (nodeSelectedForDrag)="onNodeSelectedForDrag()">
+  </app-state-node>
+  <app-transition-edge *ngIf="isDrawing" [startX]="startX" [startY]="startY" [endX]="currentX"
+    [endY]="currentY"></app-transition-edge>
+</div>
+

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterOutlet, provideRouter } from '@angular/router';
 import { routes } from './app-routing.module';
@@ -16,6 +16,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
+import { StateNodeComponent } from './behavior-tree/state-node/state-node.component';
+import { TreeCanvasComponent } from './behavior-tree/tree-canvas/tree-canvas.component';
+import { BehaviorTreeModule } from './behavior-tree/behavior-tree.module';
+import { EmptyStateNodeComponent } from './empty-state-node/empty-state-node.component';
 
 
 
@@ -24,6 +28,9 @@ import { FormsModule } from '@angular/forms';
     AppComponent,
     WzlStateMachineComponent,
     ControlPopupComponent,
+    EmptyStateNodeComponent,
+    // StateNodeComponent,
+    // TreeCanvasComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +45,9 @@ import { FormsModule } from '@angular/forms';
     MatDialogModule,
     MatCheckboxModule,
     FormsModule,
+    BehaviorTreeModule,
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   providers: [
     provideAnimationsAsync(),
     provideRouter(routes),
