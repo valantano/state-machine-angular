@@ -1,4 +1,4 @@
-<div class="container">
+<!-- <div class="container"> -->
     <div class="rectangle" [style.left.px]="x" [style.top.px]="y" (mousedown)="onNodeDrag($event)">
         <div class="title">{{title}}</div>
         <hr> <!-- Horizontal Divider -->
@@ -7,9 +7,8 @@
         </div>
 
     </div>
-    <div class="circle-container">
-        <div #topCircle class="circle top-circle" (mousedown)="onCircleDrag($event, 'top')"></div>
-        <!-- Circle at the top -->
-        <div #bottomCircle class="circle bottom-circle" (mousedown)="onCircleDrag($event, 'bottom')"></div>
-    </div>
-</div>
+    <!-- <div class="circle-container"> -->
+        <div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)" (mouseleave)="onTopCircleLeave($event)"></div>
+        <div #bottomCircle class="circle bottom-circle" (mousedown)="onBotCircleDrag($event)"></div>
+    <!-- </div> -->
+<!-- </div> -->

@@ -1,12 +1,19 @@
 .graph {
     position: relative;
-    width: 1000px; // Adjust as needed
+    width: 100%; // Adjust as needed
     height: 800px; // Adjust as needed
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    // display: grid;
+    // grid-template-columns: repeat(5, 1fr);
+    // grid-template-rows: repeat(5, 1fr);
+    border-color: black;
+    
   }
   
   .state-node {
     position: absolute;
+    z-index: 1;
+  }
+
+  .drawing-edge {
+    z-index: 1;
   }

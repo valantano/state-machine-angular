@@ -1,4 +1,4 @@
-import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, EventEmitter, Output} from '@angular/core';
+import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, EventEmitter, Output, HostListener} from '@angular/core';
 
 @Component({
   selector: 'app-state-node',
@@ -29,23 +29,40 @@ export class StateNodeComponent {
   @Input() title: string = 'State Node';
   @Input() informationText: string = 'Information about the state node';
   @Input() id: number = -1;
-  @Output() circleDrag: EventEmitter<{event: MouseEvent, nodeId: number}> = new EventEmitter<{event: MouseEvent, nodeId: number}>();
+  @Output() circleDrag: EventEmitter<{nodeId: number}> = new EventEmitter<{nodeId: number}>();
+  @Output() nodeDrag: EventEmitter<void> = new EventEmitter<void>();
+  @Output() topCircleEnter: EventEmitter<{nodeId: number}> = new EventEmitter<{nodeId: number}>();
+  @Output() topCircleLeave: EventEmitter<{nodeId: number}> = new EventEmitter<{nodeId: number}>();
 
 
+  // @HostListener('mouseenter') onMouseEnter() {
+  //   console.log('Mouse entered');
+  // }
 
+  // @HostListener('mouseleave') onMouseLeave() {
+  //   console.log('Mouse left');
+  // }
 
-  @Output() nodeSelectedForDrag: EventEmitter<void> = new EventEmitter<void>();
-
-  onNodeDrag(event: MouseEvent) {
-    console.log('Node drag');
-    this.nodeSelectedForDrag.emit();
+  onTopCircleEnter(event: MouseEvent) {
+    console.log('Top circle entered', this.id);
+    this.topCircleEnter.emit({nodeId: this.id});
   }
 
-  onCircleDrag(event: MouseEvent, circlePosition: string): void {
-    console.log('Mouse down');
-    if (circlePosition === 'bottom') {
-      this.circleDrag.emit({event: event, nodeId: this.id});
-    }
+  onTopCircleLeave(event: MouseEvent) {
+    console.log('Top circle left', this.id);
+    this.topCircleLeave.emit({nodeId: this.id});
+  }
+
+  
+
+  onNodeDrag(event: MouseEvent) {
+    console.log('StateNode: Node drag');
+    this.nodeDrag.emit();
+  }
+
+  onBotCircleDrag(event: MouseEvent): void {
+    console.log('StateNode: Mouse down');
+    this.circleDrag.emit({nodeId: this.id});
   }
 
 

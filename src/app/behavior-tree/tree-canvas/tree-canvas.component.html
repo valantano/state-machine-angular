@@ -7,10 +7,19 @@
 <div class="graph" (mouseup)="onMouseUp()">
   <app-state-node *ngFor="let node of nodes | keyvalue" class="state-node" [style.left.px]="node.value.x"
     [style.top.px]="node.value.y" [id]="node.value.id" [title]="node.value.title"
-    [informationText]="node.value.informationText" 
-    (circleDrag)="handleCircleDrag($event)" (nodeSelectedForDrag)="onNodeSelectedForDrag()">
+    [informationText]="node.value.informationText" (circleDrag)="handleCircleDrag($event)" (nodeDrag)="handleNodeDrag()"
+    (topCircleEnter)="handleTopCircleEnter($event)" (topCircleLeave)="handleTopCircleLeave($event)"
+    (mousedown)="onNodeMouseDown($event, node.value)">
   </app-state-node>
-  <app-transition-edge *ngIf="isDrawing" [startX]="startX" [startY]="startY" [endX]="currentX"
-    [endY]="currentY"></app-transition-edge>
-</div>
+  <!-- <ng-container *ngIf="viewInitialized"> -->
+  <app-transition-edge *ngFor="let edge of edges | keyvalue"
+    [sourceId]="edge.value.sourceNodeId" [targetId]="edge.value.targetNodeId">
+  </app-transition-edge>
 
+ 
+  
+  <!-- circleDrag is output of app-state-node and not an event. Therefore, it needs to be forwarded to handleCircleDrag this way. -->
+  <app-transition-edge class="drawing-edge" *ngIf="isDrawing" [startX]="startXCircle" [startY]="startYCircle"
+    [endX]="currentX" [endY]="currentY"></app-transition-edge>
+
+</div>

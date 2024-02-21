@@ -13,5 +13,9 @@ export class TransitionEdgeComponent {
   @Input() endX: number = 0;
   @Input() endY: number = 0;
 
+  @Input() sourceId: number = -1;
+  @Input() targetId: number = -1;
+
+
 
 }
