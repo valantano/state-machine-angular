@@ -1,26 +1,37 @@
+// border-color: #B0BEC5;
+// rectangle-color: #607D8B;
+// not used: #455A64;
+// background-color: #37474F;
+
+
 .rectangle {
     width: 300px;
-    border: 2px solid black;
-    background-color: grey;
-    border-radius: 10px;
+    border: 4px solid #B0BEC5;
+    background-color: #607D8B;
+    border-radius: 20px;
     position: relative;
     overflow: visible;
     user-select: none;
+    font-family: 'Courier New', Courier, monospace;
+
   }
   
   .title {
     font-size: 20px;
     font-weight: bold;
     padding: 10px;
+    color: #c7e3e7;
   }
   
   hr {
     margin: 0;
+    border-color: #B0BEC5;
   }
   
   .information {
     padding: 10px;
     white-space: pre-wrap; /* Allow line breaks */
+    color: #c7e3e7;
   }
 
   
@@ -29,8 +40,8 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: white;
-    border: 1px solid black;
+    background-color: #607D8B;
+    border: 3px solid #B0BEC5;
     position: absolute;
     transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
   }
@@ -49,6 +60,6 @@
   .circle:hover {
     // background-color: grey;
     transform: scale(1.2); /* Scale up the circle on hover */
-    border: 2px solid grey;
+    border: 3px solid #455A64;
   }
   
