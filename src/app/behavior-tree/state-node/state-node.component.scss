@@ -21,17 +21,20 @@
     font-weight: bold;
     padding: 10px;
     color: #c7e3e7;
+    user-select: none;
   }
   
   hr {
     margin: 0;
     border-color: #B0BEC5;
+    user-select: none;
   }
   
   .information {
     padding: 10px;
     white-space: pre-wrap; /* Allow line breaks */
     color: #c7e3e7;
+    user-select: none;
   }
 
   
@@ -44,6 +47,7 @@
     border: 3px solid #B0BEC5;
     position: absolute;
     transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    user-select: none;
   }
   
   .top-circle {
@@ -61,5 +65,6 @@
     // background-color: grey;
     transform: scale(1.2); /* Scale up the circle on hover */
     border: 3px solid #455A64;
+    user-select: none;
   }
   

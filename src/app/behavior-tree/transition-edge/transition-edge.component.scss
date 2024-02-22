@@ -2,10 +2,29 @@ svg {
     position: absolute;
     width: 100%;
     height: 100%;
+    user-select: none;
   }
+
   
-  line {
+  // line {
+  //   stroke: #B0BEC5;
+  //   stroke-width: 3;
+
+  // }
+
+  path {
     stroke: #B0BEC5;
     stroke-width: 3;
+    border-radius: 10px;
+    pointer-events: stroke;
+    // user-select: none;
 
+  }
+
+  path:hover {
+    border-color: #B0BEC5;
+    stroke: #0280be;
+    // background-color: grey;
+    // border: 3px solid #455A64;
+    // user-select: none;
   }
