@@ -20,6 +20,7 @@ import { StateNodeComponent } from './behavior-tree/state-node/state-node.compon
 import { TreeCanvasComponent } from './behavior-tree/tree-canvas/tree-canvas.component';
 import { BehaviorTreeModule } from './behavior-tree/behavior-tree.module';
 import { EmptyStateNodeComponent } from './empty-state-node/empty-state-node.component';
+import { EditCanvasToolbarComponent } from './edit-canvas-toolbar/edit-canvas-toolbar.component';
 
 
 
@@ -29,6 +30,7 @@ import { EmptyStateNodeComponent } from './empty-state-node/empty-state-node.com
     WzlStateMachineComponent,
     ControlPopupComponent,
     EmptyStateNodeComponent,
+    EditCanvasToolbarComponent,
     // StateNodeComponent,
     // TreeCanvasComponent
   ],
