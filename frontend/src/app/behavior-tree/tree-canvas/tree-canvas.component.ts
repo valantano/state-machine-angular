@@ -4,6 +4,7 @@ import { TransitionEdgeComponent } from '../transition-edge/transition-edge.comp
 import { StateNode } from '../state-node/state-node';
 import { TransitionEdge } from '../transition-edge/transition-edge';
 import { BehaviorTreeService } from '../behavior-tree.service';
+import { state } from '@angular/animations';
 
 
 @Component({
@@ -89,17 +90,48 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
       const sourceNode = this.getStateNodeById(edge.sourceId);
       const targetNode = this.getStateNodeById(edge.targetId);
       if (sourceNode && targetNode) {
-        const sourceCircle = sourceNode.getBottomCircleMidpointPosition(edge.sourceNodeOutputGate);
+        const sourceCircle = sourceNode.getBottomCircleScreenPosition(edge.sourceNodeOutputGate);
         const targetCircle = targetNode.getTopCircleMidpointPosition();
-        edge.startX = sourceCircle.x;
-        edge.startY = sourceCircle.y;
-        edge.endX = targetCircle.x;
-        edge.endY = targetCircle.y;
+        const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
+        // const graphRect = (circle.nativeElement.parentNode as HTMLElement).getBoundingClientRect();
+        edge.startX = sourceCircle.x - graphRect.left;
+        edge.startY = sourceCircle.y - graphRect.top;
+        edge.endX = targetCircle.x - graphRect.left;
+        edge.endY = targetCircle.y - graphRect.top;
       }
     });
     if (!this.isDragging) {
       this.stopRedrawEdgesJob();  // Stop the job if the nodes are not being dragged
     }
+  }
+
+  private scale = 1;
+  // @HostListener('wheel', ['$event'])
+  onWheel(event: WheelEvent) {
+    console.log('TreeCanvas: Wheel');
+    // Zoom in or out
+    event.preventDefault();
+    if (event.deltaY < 0) {
+      this.scale *= 1.1;
+    } else {
+      this.scale *= 0.9;
+    }
+    const state_nodes = document.querySelectorAll('.state-node') as NodeListOf<HTMLElement>;
+    // const drawing_edge = document.querySelector('.drawing-edge') as HTMLElement;
+    // const drawn_edges = document.querySelectorAll('.drawn-edge') as NodeListOf<HTMLElement>;
+
+    if (state_nodes) {
+      state_nodes.forEach(node => { node.style.transform = `scale(${this.scale})` });
+    }
+    // if (drawing_edge) {
+    //   drawing_edge.style.transform = `scale(${this.scale})`;
+    // }
+    // if (drawn_edges) {
+    //   drawn_edges.forEach(edge => { 
+    //     const path = edge.querySelector('.pathclass') as HTMLElement;
+    //     path.style.setProperty('--stroke-width', `${1 / this.scale}px`) });
+    // }
+    this.redrawEdges();
   }
 
   // Either draws a line between the clicked bottom circle and the current mouse position
@@ -109,8 +141,9 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     // console.log('TreeCanvas: Mouse move');
     if (this.isDrawing) {
       // console.log(event.clientX, event.clientY);
-      this.currentX = event.clientX;
-      this.currentY = event.clientY;
+      const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
+      this.currentX = event.clientX - graphRect.left;
+      this.currentY = event.clientY - graphRect.top;
     }
     if (this.isDragging && this.draggedNode) {
       this.draggedNode.x = event.clientX - this.startXNode;
@@ -130,7 +163,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
       if (sourceId == -1 && targetId == -1) {
         console.error('TreeCanvas: Invalid source or target id');
       } else {
-        this.addEdge(sourceId, targetId, outputGate); // TODO: remove default
+        this.addEdge(sourceId, targetId, outputGate);
       }
   
       this.isDrawing = false;
@@ -159,10 +192,11 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     this.outputGate = outputGate
     this.isDrawing = true;
     this.botCircleNodeId = nodeId;
-    this.startXCircle = circlepos.x;
-    this.startYCircle = circlepos.y;
-    this.currentX = circlepos.x;
-    this.currentY = circlepos.y;
+    const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
+    this.startXCircle = circlepos.x - graphRect.left;
+    this.startYCircle = circlepos.y - graphRect.top;
+    this.currentX = circlepos.x - graphRect.left;
+    this.currentY = circlepos.y - graphRect.top;
   }
 
   handleTopCircleEnter(eventWithId: any) {

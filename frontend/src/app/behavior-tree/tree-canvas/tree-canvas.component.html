@@ -12,7 +12,7 @@
     (mousedown)="onNodeMouseDown($event, node.value)">
   </app-state-node>
   <!-- <ng-container *ngIf="viewInitialized"> -->
-  <app-transition-edge *ngFor="let edge of edges | keyvalue"
+  <app-transition-edge *ngFor="let edge of edges | keyvalue" class="drawn-edge"
     [sourceId]="edge.value.sourceNodeId" [targetId]="edge.value.targetNodeId" [sourceNodeOutputGate]="edge.value.sourceNodeOutputGate">
   </app-transition-edge>
 

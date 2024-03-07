@@ -4,7 +4,7 @@ import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, HostListener} from '@angular/
   selector: 'app-transition-edge',
   template: `<svg>
   <!-- <line [attr.x1]="startX" [attr.y1]="startY" [attr.x2]="endX" [attr.y2]="endY" /> -->
-  <path [attr.d]="getPath()" stroke="black" fill="transparent" stroke-linejoin="round" stroke-linecap="round" stroke-width="10"/>
+  <path class="pathclass" [attr.d]="getPath()" stroke="black" fill="transparent" stroke-linejoin="round" stroke-linecap="round" stroke-width="10"/>
 
 </svg>`,
   styleUrl: './transition-edge.component.scss'

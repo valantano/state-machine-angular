@@ -1,13 +1,13 @@
 .graph {
     position: relative;
-    width: 100%; // Adjust as needed
-    height: 2000px; // Adjust as needed
+    width: 4000px; // Adjust as needed
+    height: 4000px; // Adjust as needed
     // display: grid;
     // grid-template-columns: repeat(5, 1fr);
     // grid-template-rows: repeat(5, 1fr);
     border-color: black;
     background-color: #37474F;
-    
+    overflow: auto;
   }
   
   .state-node {

@@ -62,14 +62,15 @@ export class StateNodeComponent {
 
   onBotCircleDrag(outputGate: string): void {
     console.log('StateNode: Mouse down');
-    this.circleDrag.emit({nodeId: this.nodeId, outputGate: outputGate, circlepos: this.getBottomCircleMidpointPosition(outputGate)});
+    this.circleDrag.emit({nodeId: this.nodeId, outputGate: outputGate, circlepos: this.getBottomCircleScreenPosition(outputGate)});
   }
 
 
   // Method to get the position of the midpoint of the bottom circle
-  getBottomCircleMidpointPosition(outputGate: string): { x: number, y: number } {
+  getBottomCircleScreenPosition(outputGate: string): { x: number, y: number } {
     const circleArray = this.bottomCircles.toArray();
     const circle = circleArray.find(circle => circle.nativeElement.getAttribute('data-output-gate') === outputGate);
+    
 
     if (circle) {
       const rect = circle.nativeElement.getBoundingClientRect();
