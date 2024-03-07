@@ -1,4 +1,4 @@
-import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, EventEmitter, Output, HostListener} from '@angular/core';
+import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, EventEmitter, Output, HostListener, ViewChildren, Query, QueryList} from '@angular/core';
 
 @Component({
   selector: 'app-state-node',
@@ -8,7 +8,8 @@ import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, EventE
 export class StateNodeComponent {
 
   // @ViewChild('infoField', { static: false }) infoField!: ElementRef;
-  @ViewChild('bottomCircle', { static: false }) bottomCircle!: ElementRef;
+  // @ViewChild('bottomCircle', { static: false }) bottomCircle!: ElementRef;
+  @ViewChildren('bottomCircle') bottomCircles!: QueryList<ElementRef>;
   @ViewChild('topCircle', { static: false }) topCircle!: ElementRef;
 
   rectangleHeight: number = 0;
@@ -27,9 +28,10 @@ export class StateNodeComponent {
   @Input() x: number = 0;
   @Input() y: number = 0;
   @Input() title: string = 'State Node';
-  @Input() informationText: string = 'Information about the state node';
-  @Input() id: number = -1;
-  @Output() circleDrag: EventEmitter<{nodeId: number}> = new EventEmitter<{nodeId: number}>();
+  @Input() infoText: string = 'Information about the state node';
+  @Input() nodeId: number = -1;
+  @Input() outputGates: string[] = ["Default"];
+  @Output() circleDrag: EventEmitter<{nodeId: number, outputGate: string, circlepos: {x: number, y: number}}> = new EventEmitter<{nodeId: number, outputGate: string, circlepos: {x: number, y: number}}>();
   @Output() nodeDrag: EventEmitter<void> = new EventEmitter<void>();
   @Output() topCircleEnter: EventEmitter<{nodeId: number}> = new EventEmitter<{nodeId: number}>();
   @Output() topCircleLeave: EventEmitter<{nodeId: number}> = new EventEmitter<{nodeId: number}>();
@@ -44,34 +46,39 @@ export class StateNodeComponent {
   // }
 
   onTopCircleEnter(event: MouseEvent) {
-    console.log('Top circle entered', this.id);
-    this.topCircleEnter.emit({nodeId: this.id});
+    console.log('Top circle entered', this.nodeId);
+    this.topCircleEnter.emit({nodeId: this.nodeId});
   }
 
   onTopCircleLeave(event: MouseEvent) {
-    console.log('Top circle left', this.id);
-    this.topCircleLeave.emit({nodeId: this.id});
+    console.log('Top circle left', this.nodeId);
+    this.topCircleLeave.emit({nodeId: this.nodeId});
   }
-
-  
 
   onNodeDrag(event: MouseEvent) {
     console.log('StateNode: Node drag');
     this.nodeDrag.emit();
   }
 
-  onBotCircleDrag(event: MouseEvent): void {
+  onBotCircleDrag(outputGate: string): void {
     console.log('StateNode: Mouse down');
-    this.circleDrag.emit({nodeId: this.id});
+    this.circleDrag.emit({nodeId: this.nodeId, outputGate: outputGate, circlepos: this.getBottomCircleMidpointPosition(outputGate)});
   }
 
 
   // Method to get the position of the midpoint of the bottom circle
-  getBottomCircleMidpointPosition(): { x: number, y: number } {
-    const rect = this.bottomCircle.nativeElement.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-    return { x, y };
+  getBottomCircleMidpointPosition(outputGate: string): { x: number, y: number } {
+    const circleArray = this.bottomCircles.toArray();
+    const circle = circleArray.find(circle => circle.nativeElement.getAttribute('data-output-gate') === outputGate);
+
+    if (circle) {
+      const rect = circle.nativeElement.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      return {x: x, y: y};
+    }
+
+    throw new Error('Circle not found ' + outputGate);
   }
 
   getTopCircleMidpointPosition(): { x: number, y: number } {

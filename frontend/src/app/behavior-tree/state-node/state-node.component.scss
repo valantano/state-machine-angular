@@ -45,7 +45,7 @@
     border-radius: 50%;
     background-color: #607D8B;
     border: 3px solid #B0BEC5;
-    position: absolute;
+    // position: absolute;
     transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
     user-select: none;
   }
@@ -53,11 +53,24 @@
   .top-circle {
     top: -10px;
     margin-left: -10px; /* Adjust margin to position the circle */
+    position: inherit;
   }
-  
+
+  .bottom-circle-container {
+    display: flex; /* This will place the circles beside each other */
+    justify-content: space-around; /* Optional: This will add space between the circles */
+    align-items: center;
+    // flex-wrap: wrap; /* Allow the items to wrap onto multiple lines */
+    width: 70%;
+    margin-top: -10px;
+    margin-left: 15%;
+    // height: 40px;
+  }
+
   .bottom-circle {
-    bottom: -10px; /* Adjust bottom position */
-    margin-left: -10px; /* Adjust margin to position the circle */
+    // bottom: -10px; /* Adjust bottom position */
+    // margin-left: -10px; /* Adjust margin to position the circle */
+    // position: inherit;
   }
   
   /* Highlight circles on hover */
@@ -67,4 +80,4 @@
     border: 3px solid #455A64;
     user-select: none;
   }
-  
+

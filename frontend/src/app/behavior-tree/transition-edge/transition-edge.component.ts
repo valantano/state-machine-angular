@@ -17,6 +17,7 @@ export class TransitionEdgeComponent {
 
   @Input() sourceId: number = -1;
   @Input() targetId: number = -1;
+  @Input() sourceNodeOutputGate: string = "Default";
 
   getPath(): string {
 

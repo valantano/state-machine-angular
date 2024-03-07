@@ -3,6 +3,7 @@ import { StateNodeComponent } from '../state-node/state-node.component';
 import { TransitionEdgeComponent } from '../transition-edge/transition-edge.component';
 import { StateNode } from '../state-node/state-node';
 import { TransitionEdge } from '../transition-edge/transition-edge';
+import { BehaviorTreeService } from '../behavior-tree.service';
 
 
 @Component({
@@ -20,41 +21,45 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   
   startXCircle: number = 0;
   startYCircle: number = 0;
-  startXNode: number = 0;
-  startYNode: number = 0;
+  private startXNode: number = 0;
+  private startYNode: number = 0;
   currentX: number = 0;
   currentY: number = 0;
   isDrawing: boolean = false;
-  botCircleNodeId: number = -1;
-  topCircleNodeId: number = -1;
+  private outputGate: string = "Default";
+  private botCircleNodeId: number = -1;
+  private topCircleNodeId: number = -1;
 
   private intervalId: any;
 
   private isDragging = false;
   private draggedNode: any; // Change the type as per your node structure
 
-  viewInitialized = false;
-
   
 
-  constructor(private cdRef: ChangeDetectorRef) { 
-    this.addNode(100, 100, 'State 1', 'Information about state 1sdfjdsjfklaefjnfkjgnflkjgbkflrhj ldkeoijnvkdejosdkl');
-    this.addNode(400, 200, 'State 2', 'Information about state 1');
-    this.addNode(400, 600, 'State 3', 'Information about state 1');
-    this.addEdge(0, 1);
+  constructor(private cdRef: ChangeDetectorRef, private behaviorTreeService: BehaviorTreeService) { 
+    // this.createNode('State 1', 'Information about state 1sdfjdsjfklaefjnfkjgnflkjgbkflrhj ldkeoijnvkdejosdkl', 100, 100);
+    // this.createNode('State 2', 'Information about state 1', 400, 200);
+    // this.createNode('State 3', 'Information about state 1', 400, 600);
+    // this.addEdge(0, 1);
     console.log(this.nodes);
   }
 
-  ngAfterViewInit(): void {
-    
-    this.redrawEdges();
-    this.cdRef.detectChanges();
+  ngOnInit(): void {
+    this.behaviorTreeService.getMockNodeData().subscribe((data: any) => {
+      console.log('TreeCanvas: getMockNodeData', data);
+      for (let node of data.StateMachine.stateNodes) {
+        this.addNode(node.title, node.infoText, node.nodeId, node.outputs, node.x, node.y);
+        for (let transition in node.transitions) {
+          this.addEdge(node.nodeId, node.transitions[transition], transition);
+        }
+      }
+    });
   }
 
-
-  
-  ngOnInit(): void {
-    // this.intervalId = setInterval(() => this.redrawEdges(), 10);
+  ngAfterViewInit(): void {
+    this.redrawEdges();
+    this.cdRef.detectChanges();
   }
 
   ngOnDestroy() {
@@ -84,7 +89,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
       const sourceNode = this.getStateNodeById(edge.sourceId);
       const targetNode = this.getStateNodeById(edge.targetId);
       if (sourceNode && targetNode) {
-        const sourceCircle = sourceNode.getBottomCircleMidpointPosition();
+        const sourceCircle = sourceNode.getBottomCircleMidpointPosition(edge.sourceNodeOutputGate);
         const targetCircle = targetNode.getTopCircleMidpointPosition();
         edge.startX = sourceCircle.x;
         edge.startY = sourceCircle.y;
@@ -121,10 +126,11 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     if (this.isDrawing) {
       const sourceId = this.botCircleNodeId;
       const targetId = this.topCircleNodeId;
+      const outputGate = this.outputGate;
       if (sourceId == -1 && targetId == -1) {
         console.error('TreeCanvas: Invalid source or target id');
       } else {
-        this.addEdge(sourceId, targetId);
+        this.addEdge(sourceId, targetId, outputGate); // TODO: remove default
       }
   
       this.isDrawing = false;
@@ -148,10 +154,11 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   handleCircleDrag(eventWithId: any) {
     console.log('TreeCanvas: handleCircleDrag', eventWithId);
     const nodeId = eventWithId.nodeId;
+    const outputGate = eventWithId.outputGate;    // TODO: currently not needed here. Maybe remove it from event
+    const circlepos = eventWithId.circlepos;
+    this.outputGate = outputGate
     this.isDrawing = true;
     this.botCircleNodeId = nodeId;
-    const circlepos = this.getBottomCirclePosition(nodeId);
-    console.log(this.getBottomCirclePosition(nodeId).x);
     this.startXCircle = circlepos.x;
     this.startYCircle = circlepos.y;
     this.currentX = circlepos.x;
@@ -193,46 +200,48 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
 
   getStateNodeById(id: number): StateNodeComponent | undefined {
     if (this.stateNodes) {
-    return this.stateNodes.find(node => node.id === id);
+    return this.stateNodes.find(node => node.nodeId === id);
     } else {
       return undefined;
     }
   }
 
-  getBottomCirclePosition(nodeId: number): { x: number, y: number } {
-    const node = this.getStateNodeById(nodeId);
-    if (node) {
-      return node.getBottomCircleMidpointPosition();
-    } else {
-      return {x: 0, y: 0};
+
+  addNode(title: string, infoText: string, nodeId: number, outputGates: string[], x: number, y: number): void {
+    if (this.nodes[nodeId]) {
+      throw new Error(`Node with id ${nodeId} already exists`);
     }
-  }
-
-  getTopCirclePosition(nodeId: number): { x: number, y: number } {
-    const node = this.getStateNodeById(nodeId);
-    if (node) {
-      return node.getBottomCircleMidpointPosition();
-    } else {
-      return {x: 200, y: 200};
-    }
-  }
-
-
-  addNode(x: number, y: number, title: string, informationText: string): void {
     const newNode: StateNode = {
-      id: Object.keys(this.nodes).length,
+      nodeId: nodeId,
       x: x,
       y: y,
       title: title,
-      informationText: informationText
+      infoText: infoText,
+      outputGates: outputGates
     }
-    this.nodes[newNode.id] = newNode;
+    this.nodes[newNode.nodeId] = newNode;
   }
 
-  addEdge(sourceNodeId: number, targetNodeId: number): void {
+  createNode(title: string, infoText: string, x: number, y: number): void {
+    const newNode: StateNode = {
+      title: title,
+      infoText: infoText,
+      nodeId: Object.keys(this.nodes).length,
+      outputGates: ["Default"], // TODO: remove default
+      x: x,
+      y: y,
+    }
+    if (newNode.nodeId in this.nodes) {
+      throw new Error(`Node with id ${newNode.nodeId} already exists`);
+    }
+    this.nodes[newNode.nodeId] = newNode;
+  }
+
+  addEdge(sourceNodeId: number, targetNodeId: number, sourceNodeOutputGate: string): void {
     const newEdge: TransitionEdge = {
       id: Object.keys(this.edges).length,
       sourceNodeId: sourceNodeId,
+      sourceNodeOutputGate: sourceNodeOutputGate,
       targetNodeId: targetNodeId
     }
     console.log('TreeCanvas: addEdge', newEdge);

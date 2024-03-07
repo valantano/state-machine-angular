@@ -6,14 +6,14 @@
 
 <div class="graph" (mouseup)="onMouseUp()">
   <app-state-node *ngFor="let node of nodes | keyvalue" class="state-node" [style.left.px]="node.value.x"
-    [style.top.px]="node.value.y" [id]="node.value.id" [title]="node.value.title"
-    [informationText]="node.value.informationText" (circleDrag)="handleCircleDrag($event)" (nodeDrag)="handleNodeDrag()"
+    [style.top.px]="node.value.y" [nodeId]="node.value.nodeId" [title]="node.value.title" [outputGates]="node.value.outputGates"
+    [informationText]="node.value.infoText" (circleDrag)="handleCircleDrag($event)" (nodeDrag)="handleNodeDrag()"
     (topCircleEnter)="handleTopCircleEnter($event)" (topCircleLeave)="handleTopCircleLeave($event)"
     (mousedown)="onNodeMouseDown($event, node.value)">
   </app-state-node>
   <!-- <ng-container *ngIf="viewInitialized"> -->
   <app-transition-edge *ngFor="let edge of edges | keyvalue"
-    [sourceId]="edge.value.sourceNodeId" [targetId]="edge.value.targetNodeId">
+    [sourceId]="edge.value.sourceNodeId" [targetId]="edge.value.targetNodeId" [sourceNodeOutputGate]="edge.value.sourceNodeOutputGate">
   </app-transition-edge>
 
  

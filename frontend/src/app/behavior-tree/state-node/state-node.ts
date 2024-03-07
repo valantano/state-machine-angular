@@ -1,7 +1,8 @@
 export interface StateNode {
-    id: number;
+    nodeId: number;
     x: number
     y: number;
     title: string;
-    informationText: string;
+    infoText: string;
+    outputGates: string[];
 }

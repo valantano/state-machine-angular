@@ -1,14 +1,19 @@
 <!-- <div class="container"> -->
-    <div class="rectangle" [style.left.px]="x" [style.top.px]="y" (mousedown)="onNodeDrag($event)">
-        <div class="title">{{title}}</div>
-        <hr> <!-- Horizontal Divider -->
-        <div class="information">
-            {{informationText}}
-        </div>
-
+<div class="rectangle" [style.left.px]="x" [style.top.px]="y" (mousedown)="onNodeDrag($event)">
+    <div class="title">{{title}}</div>
+    <hr> <!-- Horizontal Divider -->
+    <div class="information">
+        {{infoText}}
     </div>
-    <!-- <div class="circle-container"> -->
-        <div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)" (mouseleave)="onTopCircleLeave($event)"></div>
-        <div #bottomCircle class="circle bottom-circle" (mousedown)="onBotCircleDrag($event)"></div>
-    <!-- </div> -->
+
+</div>
+<!-- <div class="circle-container"> -->
+<div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)"
+    (mouseleave)="onTopCircleLeave($event)"></div>
+<div class="bottom-circle-container">
+    <div *ngFor="let outputGate of outputGates" #bottomCircle class="circle bottom-circle"
+        (mousedown)="onBotCircleDrag(outputGate)" [attr.data-output-gate]="outputGate"></div>   <!--attr used to get circle pos using outputGate name-->
+</div>
+<!-- <div #bottomCircle class="circle bottom-circle" (mousedown)="onBotCircleDrag($event)"></div> -->
+<!-- </div> -->
 <!-- </div> -->
