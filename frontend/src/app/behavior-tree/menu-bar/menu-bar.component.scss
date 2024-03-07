@@ -1,6 +1,9 @@
 .menu-bar {
     background-color: #333;
     overflow: hidden;
+    position: fixed;
+    width: 100%;
+    z-index: 2;
   }
   
   .menu-bar ul {
