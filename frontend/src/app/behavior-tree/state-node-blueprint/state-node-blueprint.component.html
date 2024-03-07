@@ -1,0 +1,14 @@
+<div class="container">
+    <div class="rectangle" (mousedown)="onBlueprintNodeDrag($event)">
+        <div class="title">{{title}}</div>
+        <hr>
+        <div class="information">
+            {{infoText}}
+        </div>
+
+    </div>
+    <div #topCircle class="circle top-circle"></div>
+    <div class="bottom-circle-container">
+        <div *ngFor="let outputGate of outputGates" #bottomCircle class="circle bottom-circle"></div>
+    </div>
+</div>

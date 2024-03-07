@@ -1,0 +1,29 @@
+.control-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    overflow-y: auto;
+    height: 100vh; /* Adjust as needed */
+  }
+  
+  .state-nodes {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    height: 100%;
+    // overflow-y: auto;
+    margin-top: 30px;
+    margin-left: 10px;
+    // position: inherit;
+  }
+
+  app-state-node-blueprint {
+    width: 100%;
+    height: 100%;
+    // padding: auto;
+  }
+  
+  .collapse-button {
+    width: 5%;
+    height: 100%;
+  }
