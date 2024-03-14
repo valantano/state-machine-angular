@@ -29,12 +29,12 @@ export class StateNodeComponent {
   @Input() y: number = 0;
   @Input() title: string = 'State Node';
   @Input() infoText: string = 'Information about the state node';
-  @Input() nodeId: number = -1;
+  @Input() nodeId: string = "";
   @Input() outputGates: string[] = ["Default"];
-  @Output() circleDrag: EventEmitter<{nodeId: number, outputGate: string, circlepos: {x: number, y: number}}> = new EventEmitter<{nodeId: number, outputGate: string, circlepos: {x: number, y: number}}>();
-  @Output() nodeDrag: EventEmitter<void> = new EventEmitter<void>();
-  @Output() topCircleEnter: EventEmitter<{nodeId: number}> = new EventEmitter<{nodeId: number}>();
-  @Output() topCircleLeave: EventEmitter<{nodeId: number}> = new EventEmitter<{nodeId: number}>();
+  @Output() circleDrag: EventEmitter<{nodeId: string, outputGate: string, circlepos: {x: number, y: number}}> = new EventEmitter<{nodeId: string, outputGate: string, circlepos: {x: number, y: number}}>();
+  @Output() nodeDrag: EventEmitter<{mouseEvent: MouseEvent, nodeId: string}> = new EventEmitter<{mouseEvent: MouseEvent, nodeId: string}>();
+  @Output() topCircleEnter: EventEmitter<{nodeId: string}> = new EventEmitter<{nodeId: string}>();
+  @Output() topCircleLeave: EventEmitter<void> = new EventEmitter<void>();
 
 
   // @HostListener('mouseenter') onMouseEnter() {
@@ -52,12 +52,12 @@ export class StateNodeComponent {
 
   onTopCircleLeave(event: MouseEvent) {
     console.log('Top circle left', this.nodeId);
-    this.topCircleLeave.emit({nodeId: this.nodeId});
+    this.topCircleLeave.emit();
   }
 
   onNodeDrag(event: MouseEvent) {
     console.log('StateNode: Node drag');
-    this.nodeDrag.emit();
+    this.nodeDrag.emit({mouseEvent: event, nodeId: this.nodeId});
   }
 
   onBotCircleDrag(outputGate: string): void {

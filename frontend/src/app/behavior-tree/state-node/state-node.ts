@@ -1,5 +1,5 @@
 export interface StateNode {
-    nodeId: number;
+    nodeId: string;
     x: number
     y: number;
     title: string;

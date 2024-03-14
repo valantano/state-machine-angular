@@ -5,6 +5,8 @@ import { StateNode } from '../state-node/state-node';
 import { TransitionEdge } from '../transition-edge/transition-edge';
 import { BehaviorTreeService } from '../behavior-tree.service';
 import { state } from '@angular/animations';
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 @Component({
@@ -14,11 +16,11 @@ import { state } from '@angular/animations';
 })
 export class TreeCanvasComponent implements AfterViewInit, OnInit{
 
-  @ViewChildren(StateNodeComponent) stateNodes!: QueryList<StateNodeComponent>;
+  @ViewChildren(StateNodeComponent) stateNodes!: QueryList<StateNodeComponent>;   // if x,y values change the corresponding x,y values in nodes also changes
   @ViewChildren(TransitionEdgeComponent) transitionEdges!: QueryList<TransitionEdgeComponent>;
 
-  nodes: { [id: number]: StateNode } = {};
-  edges: { [id: number]: TransitionEdge } = {};
+  nodes: { [id: string]: StateNode } = {};
+  edges: { [id: string]: TransitionEdge } = {};
   
   startXCircle: number = 0;
   startYCircle: number = 0;
@@ -28,10 +30,10 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   currentY: number = 0;
   isDrawing: boolean = false;
   private outputGate: string = "Default";
-  private sourceNodeId: number = -1;        // The id of the node that the line is being drawn from (-1 if nothing is being drawn currently)
-  private targetNodeId: number = -1;        // The id of the node that the line is being drawn to (-1 if no node is being hovered over while drawing)
+  private sourceNodeId: string = "";        // The id of the node that the line is being drawn from ("" if nothing is being drawn currently)
+  private targetNodeId: string = "";        // The id of the node that the line is being drawn to ("" if no node is being hovered over while drawing)
 
-  private interval: any;
+  
 
   private isDragging = false;
   private draggedNode: any; // Change the type as per your node structure
@@ -50,7 +52,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     this.behaviorTreeService.getMockNodeData().subscribe((data: any) => {
       console.log('TreeCanvas: getMockNodeData', data);
       for (let node of data.StateMachine.stateNodes) {
-        this.addNode(node.title, node.infoText, node.nodeId, node.outputs, node.x, node.y);
+        this.createNode(node.title, node.infoText, node.outputs, node.x, node.y, node.nodeId);
         for (let transition in node.transitions) {
           this.addEdge(node.nodeId, node.transitions[transition], transition);
         }
@@ -63,46 +65,43 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     this.cdRef.detectChanges();
   }
 
-  ngOnDestroy() {
-    this.stopRedrawEdgesJob();
-  }
-
+  // ngOnDestroy() {
+  //   this.stopRedrawEdgesJob();
+  // }
+  // private interval: any;
   // RedrawJob used to draw the edges between the nodes when the nodes are being dragged
   // The interval ensures they are redrawn every 10ms for a smooth dragging experience
-  startRedrawEdgesJob() {
-    console.log('TreeCanvas: startRedrawEdgesJob');
-    if (!this.interval) {
-      this.interval = setInterval(() => this.redrawEdges(), 10);
-    }
-  }
-  stopRedrawEdgesJob() {
-    console.log('TreeCanvas: stopRedrawEdgesJob');
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
-    }
-  }
+  // startRedrawEdgesJob() {
+  //   console.log('TreeCanvas: startRedrawEdgesJob');
+  //   if (!this.interval) {
+  //     this.interval = setInterval(() => this.redrawEdges(), 10);
+  //   }
+  // }
+  // stopRedrawEdgesJob() {
+  //   console.log('TreeCanvas: stopRedrawEdgesJob');
+  //   if (this.interval) {
+  //     clearInterval(this.interval);
+  //     this.interval = null;
+  //   }
+  // }
   // Redraws the edges between the nodes
   // This is either called by the redrawEdgesJob or when the nodes are being dragged
   // Or in the end of the mouseUp event to also draw the possible new edge
   redrawEdges() {
     this.transitionEdges.forEach(edge => {
-      const sourceNode = this.getStateNodeById(edge.sourceId);
-      const targetNode = this.getStateNodeById(edge.targetId);
+      const sourceNode = this.getStateNodeComponentById(edge.sourceId);
+      const targetNode = this.getStateNodeComponentById(edge.targetId);
       if (sourceNode && targetNode) {
         const sourceCircle = sourceNode.getBottomCircleScreenPosition(edge.sourceNodeOutputGate);
         const targetCircle = targetNode.getTopCircleMidpointPosition();
-        const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
-        // const graphRect = (circle.nativeElement.parentNode as HTMLElement).getBoundingClientRect();
-        edge.startX = sourceCircle.x - graphRect.left;
-        edge.startY = sourceCircle.y - graphRect.top;
-        edge.endX = targetCircle.x - graphRect.left;
-        edge.endY = targetCircle.y - graphRect.top;
+
+        [edge.startX, edge.startY] = this.offsetXYCoords(sourceCircle.x, sourceCircle.y);
+        [edge.endX, edge.endY] = this.offsetXYCoords(targetCircle.x, targetCircle.y);
       }
     });
-    if (!this.isDragging) {
-      this.stopRedrawEdgesJob();  // Stop the job if the nodes are not being dragged
-    }
+    // if (!this.isDragging) {
+    //   this.stopRedrawEdgesJob();  // Stop the job if the nodes are not being dragged
+    // }
   }
 
   private scale = 1;
@@ -142,12 +141,15 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     if (this.isDrawing) {
       // console.log(event.clientX, event.clientY);
       const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
-      this.currentX = event.clientX - graphRect.left;
-      this.currentY = event.clientY - graphRect.top;
+      // this.currentX = event.clientX - graphRect.left;
+      // this.currentY = event.clientY - graphRect.top;
+      [this.currentX, this.currentY] = this.offsetXYCoords(event.clientX, event.clientY);
     }
     if (this.isDragging && this.draggedNode) {
-      this.draggedNode.x = event.clientX - this.startXNode;
-      this.draggedNode.y = event.clientY - this.startYNode;
+      this.draggedNode.x = event.x - this.startXNode;
+      this.draggedNode.y = event.y - this.startYNode;
+      this.redrawEdges();
+      console.log('TreeCanvas: Dragged node', this.nodes[this.draggedNode.nodeId].x);
     }
   }
 
@@ -157,18 +159,18 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   onMouseUp() {
     console.log('TreeCanvas: Mouse up');
     if (this.isDrawing) {
-      const sourceId = this.sourceNodeId;
+      const sourceId = this.sourceNodeId;   // make sure values are not changed during the drawing
       const targetId = this.targetNodeId;
       const outputGate = this.outputGate;
-      if (sourceId == -1 || targetId == -1) {
+      if (sourceId == "" || targetId == "") {
         console.error('TreeCanvas: Invalid source or target id');
       } else {
         this.addEdge(sourceId, targetId, outputGate);
       }
   
       this.isDrawing = false;
-      this.sourceNodeId = -1;
-      this.targetNodeId = -1;
+      this.sourceNodeId = "";
+      this.targetNodeId = "";
       // Draw final line or handle other actions here
     }
     if (this.isDragging) {
@@ -190,47 +192,40 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     this.outputGate = eventWithId.outputGate
     this.isDrawing = true;
     this.sourceNodeId = eventWithId.nodeId;
-    const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
-    this.startXCircle = circlepos.x - graphRect.left;
-    this.startYCircle = circlepos.y - graphRect.top;
-    this.currentX = circlepos.x - graphRect.left;
-    this.currentY = circlepos.y - graphRect.top;
+
+    [this.startXCircle, this.startYCircle] = this.offsetXYCoords(circlepos.x, circlepos.y);
+    [this.currentX, this.currentY] = this.offsetXYCoords(circlepos.x, circlepos.y);
   }
 
   handleTopCircleEnter(eventWithId: any) {
     console.log('TreeCanvas: handleTopCircleEnter', eventWithId);
-    if (this.isDrawing) {
-      this.targetNodeId = eventWithId.nodeId;
-    }
+    if (this.isDrawing) { this.targetNodeId = eventWithId.nodeId; }
   }
-  handleTopCircleLeave(eventWithId: any) {
-    console.log('TreeCanvas: handleTopCircleLeave', eventWithId);
-    if (this.isDrawing) {
-      this.targetNodeId = -1;
-    }
+  handleTopCircleLeave() {
+    console.log('TreeCanvas: handleTopCircleLeave');
+    if (this.isDrawing) { this.targetNodeId = ""; }
   }
 
   // Listens to Output nodeDrag from StateNodeComponent
   // If app-state-node emits the nodeDrag event it means that the outer rectangle was clicked
   // Then everything is prepared to start dragging the node
   // The actual dragging happens in the onMouseMove event
-  handleNodeDrag() {
-    console.log('TreeCanvas: handleNodeDrag');
-    this.isDragging = true;
-    this.startRedrawEdgesJob();
-  }
-
-  // If app-state-node is clicked save it in this.draggedNode such that it can be used in the onMouseMove event
-  onNodeMouseDown(event: MouseEvent, node: any) { // Adjust the type of `node` as per your data structure
-    this.draggedNode = node;
+  handleNodeDrag(eventWithId: any) {
+    console.log('TreeCanvas: handleNodeDrag', eventWithId);
+    const event = eventWithId.mouseEvent;
+    this.draggedNode = this.getStateNodeById(eventWithId.nodeId);
     this.startXNode = event.clientX - this.draggedNode.x;
     this.startYNode = event.clientY - this.draggedNode.y;
+    this.isDragging = true;
+    // this.startRedrawEdgesJob();
   }
 
+  offsetXYCoords(x: number, y: number): [number, number] {
+    const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
+    return [x - graphRect.left, y - graphRect.top];
+  }
 
-
-
-  getStateNodeById(id: number): StateNodeComponent | undefined {
+  getStateNodeComponentById(id: string): StateNodeComponent | undefined {
     if (this.stateNodes) {
     return this.stateNodes.find(node => node.nodeId === id);
     } else {
@@ -238,8 +233,12 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     }
   }
 
+  getStateNodeById(id: number): StateNode | undefined {
+    return this.nodes[id];
+  }
 
-  addNode(title: string, infoText: string, nodeId: number, outputGates: string[], x: number, y: number): void {
+  createNode(title: string, infoText: string, outputGates: string[], x: number, y: number, nodeId?: string): void {
+    nodeId = nodeId ? nodeId : uuidv4();
     if (this.nodes[nodeId]) {
       throw new Error(`Node with id ${nodeId} already exists`);
     }
@@ -254,28 +253,40 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     this.nodes[newNode.nodeId] = newNode;
   }
 
-  createNode(title: string, infoText: string, x: number, y: number): void {
-    const newNode: StateNode = {
-      title: title,
-      infoText: infoText,
-      nodeId: Object.keys(this.nodes).length,
-      outputGates: ["Default"], // TODO: remove default
-      x: x,
-      y: y,
-    }
-    if (newNode.nodeId in this.nodes) {
-      throw new Error(`Node with id ${newNode.nodeId} already exists`);
-    }
-    this.nodes[newNode.nodeId] = newNode;
-  }
+  // createNode(title: string, infoText: string, x: number, y: number): void {
+  //   const newNode: StateNode = {
+  //     title: title,
+  //     infoText: infoText,
+  //     nodeId: uuidv4(),
+  //     outputGates: ["Default"], // TODO: remove default
+  //     x: x,
+  //     y: y,
+  //   }
+  //   if (newNode.nodeId in this.nodes) {
+  //     throw new Error(`Node with id ${newNode.nodeId} already exists`);
+  //   }
+  //   this.nodes[newNode.nodeId] = newNode;
+  // }
 
-  addEdge(sourceNodeId: number, targetNodeId: number, sourceNodeOutputGate: string): void {
-    const newEdge: TransitionEdge = {
-      id: Object.keys(this.edges).length,
-      sourceNodeId: sourceNodeId,
-      sourceNodeOutputGate: sourceNodeOutputGate,
-      targetNodeId: targetNodeId
+  // TODO: prevent duplicate edges
+  addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
+    let existingEdgeId: string | null = null;
+
+    for (let edgeId in this.edges) {
+        let edge = this.edges[edgeId];
+        if (edge.sourceNodeId === sourceNodeId && edge.sourceNodeOutputGate === sourceNodeOutputGate) {
+            existingEdgeId = edge.id;
+            break;
+        }
     }
+
+    const newEdge: TransitionEdge = {
+        id: existingEdgeId !== null ? existingEdgeId : uuidv4(),
+        sourceNodeId: sourceNodeId,
+        sourceNodeOutputGate: sourceNodeOutputGate,
+        targetNodeId: targetNodeId
+    }
+
     console.log('TreeCanvas: addEdge', newEdge);
     this.edges[newEdge.id] = newEdge;
   }

@@ -1,8 +1,8 @@
 export interface TransitionEdge {
-    id: number;
-    sourceNodeId: number;
+    id: string;
+    sourceNodeId: string;
     sourceNodeOutputGate: string;
-    targetNodeId: number;
+    targetNodeId: string;
 
     // title: string;
 }
