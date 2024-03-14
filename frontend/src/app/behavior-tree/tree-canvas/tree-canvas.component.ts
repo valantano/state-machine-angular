@@ -28,10 +28,10 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   currentY: number = 0;
   isDrawing: boolean = false;
   private outputGate: string = "Default";
-  private botCircleNodeId: number = -1;
-  private topCircleNodeId: number = -1;
+  private sourceNodeId: number = -1;        // The id of the node that the line is being drawn from (-1 if nothing is being drawn currently)
+  private targetNodeId: number = -1;        // The id of the node that the line is being drawn to (-1 if no node is being hovered over while drawing)
 
-  private intervalId: any;
+  private interval: any;
 
   private isDragging = false;
   private draggedNode: any; // Change the type as per your node structure
@@ -71,15 +71,15 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   // The interval ensures they are redrawn every 10ms for a smooth dragging experience
   startRedrawEdgesJob() {
     console.log('TreeCanvas: startRedrawEdgesJob');
-    if (!this.intervalId) {
-      this.intervalId = setInterval(() => this.redrawEdges(), 10);
+    if (!this.interval) {
+      this.interval = setInterval(() => this.redrawEdges(), 10);
     }
   }
   stopRedrawEdgesJob() {
     console.log('TreeCanvas: stopRedrawEdgesJob');
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
     }
   }
   // Redraws the edges between the nodes
@@ -157,18 +157,18 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   onMouseUp() {
     console.log('TreeCanvas: Mouse up');
     if (this.isDrawing) {
-      const sourceId = this.botCircleNodeId;
-      const targetId = this.topCircleNodeId;
+      const sourceId = this.sourceNodeId;
+      const targetId = this.targetNodeId;
       const outputGate = this.outputGate;
-      if (sourceId == -1 && targetId == -1) {
+      if (sourceId == -1 || targetId == -1) {
         console.error('TreeCanvas: Invalid source or target id');
       } else {
         this.addEdge(sourceId, targetId, outputGate);
       }
   
       this.isDrawing = false;
-      this.botCircleNodeId = -1;
-      this.topCircleNodeId = -1;
+      this.sourceNodeId = -1;
+      this.targetNodeId = -1;
       // Draw final line or handle other actions here
     }
     if (this.isDragging) {
@@ -186,12 +186,10 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   // The actual drawing happens in the onMouseMove event
   handleCircleDrag(eventWithId: any) {
     console.log('TreeCanvas: handleCircleDrag', eventWithId);
-    const nodeId = eventWithId.nodeId;
-    const outputGate = eventWithId.outputGate;    // TODO: currently not needed here. Maybe remove it from event
     const circlepos = eventWithId.circlepos;
-    this.outputGate = outputGate
+    this.outputGate = eventWithId.outputGate
     this.isDrawing = true;
-    this.botCircleNodeId = nodeId;
+    this.sourceNodeId = eventWithId.nodeId;
     const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
     this.startXCircle = circlepos.x - graphRect.left;
     this.startYCircle = circlepos.y - graphRect.top;
@@ -202,13 +200,13 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   handleTopCircleEnter(eventWithId: any) {
     console.log('TreeCanvas: handleTopCircleEnter', eventWithId);
     if (this.isDrawing) {
-      this.topCircleNodeId = eventWithId.nodeId;
+      this.targetNodeId = eventWithId.nodeId;
     }
   }
   handleTopCircleLeave(eventWithId: any) {
     console.log('TreeCanvas: handleTopCircleLeave', eventWithId);
     if (this.isDrawing) {
-      this.topCircleNodeId = -1;
+      this.targetNodeId = -1;
     }
   }
 
