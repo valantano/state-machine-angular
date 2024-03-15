@@ -37,6 +37,35 @@
     user-select: none;
   }
 
+  .input-parameters-container {
+    user-select: none;
+    border: 2px solid #B0BEC5;
+    border-radius: 20px;
+  }
+
+  .input-parameters {
+    padding: 10px;
+    white-space: pre-wrap; /* Allow line breaks */
+    color: #c7e3e7;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .input-par-label {
+    text-align: left;
+  }
+  
+  .input-par-set {
+    text-align: right;
+    width: 35%;
+    color: #c7e3e7;
+    background-color: #455A64;
+    border-color: #B0BEC5;
+    // border-radius: 15px;
+  }
+
   
   .circle {
     left: 50%;

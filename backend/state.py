@@ -10,7 +10,7 @@ class State:
     def __init__(self, name: str, id: int) -> None:
         self.name = name
         self.id = id # unique id of the state
-        self.input_par_interface = {'enum_example': {'type': 'enum', 'value': EnumExample()}, 'input2': {'number_example': 'number', 'value': 0.0}, 'string_example': {'type': 'string', 'value': 'text or path'}, 'boolean_example': {'type': 'boolean', 'value': False}}
+        self.input_par_interface = {'enum_example': {'type': 'enum', 'values': EnumExample()}, 'input2': {'number_example': 'number', 'values': [min, max]}, 'string_example': {'type': 'string', 'value': 'text or path'}, 'boolean_example': {'type': 'boolean', 'value': False}}
         # example of input_parameters = {'enum_example': EnumExample.GOALPOSE1, 'input2': 0.0, 'string_example': None, 'boolean_example': False}
 
         self.output_interface = ["Fail", "Success", "What?"]

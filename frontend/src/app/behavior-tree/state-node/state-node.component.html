@@ -1,18 +1,33 @@
 <!-- <div class="container"> -->
-    <div class="rectangle" [style.left.px]="x" [style.top.px]="y" (mousedown)="onNodeDrag($event)">
-        <div class="title">{{ getDisplayTitle() }}</div>
-        <hr> <!-- Horizontal Divider -->
-        <div class="information">
-            {{state_interface.infoText}}
-        </div>
-        
+<div class="rectangle" [style.left.px]="x" [style.top.px]="y" (mousedown)="onNodeDrag($event)">
+    <div class="title">{{ getDisplayTitle() }}</div>
+    <hr> <!-- Horizontal Divider -->
+    <div class="information">
+        {{state_interface.infoText}}
+    </div>
 
+    <div class="input-parameters-container" *ngIf="parInterfaceNotEmpty()">
+        <div *ngFor="let item of state_interface.input_par_interface | keyvalue" class="input-parameters">
+            <label class="input-par-label">{{ item.key }}</label>
+
+            <select class="input-par-set" *ngIf="item.value['type']=='enum'">
+                <option *ngFor="let value of item.value['values']">{{ value }}</option>
+            </select>
+            <input type="number" class="input-par-set" *ngIf="item.value['type']=='number'">
+
+            <input type="text" class="input-par-set" *ngIf="item.value['type']=='string'">
+            <select class="input-par-set" *ngIf="item.value['type']=='boolean'">
+                <option> False </option>
+                <option> True </option>
+            </select>
+        </div>
     </div>
-    <div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)"
-        (mouseleave)="onTopCircleLeave($event)"></div>
-    <div class="bottom-circle-container">
-        <div *ngFor="let outputGate of state_interface.output_interface" #bottomCircle class="circle bottom-circle"
-            (mousedown)="onBotCircleDrag(outputGate)" [attr.data-output-gate]="outputGate"></div>
-        <!--attr used to get circle pos using outputGate name-->
-    </div>
+</div>
+<div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)"
+    (mouseleave)="onTopCircleLeave($event)"></div>
+<div class="bottom-circle-container">
+    <div *ngFor="let outputGate of state_interface.output_interface" #bottomCircle class="circle bottom-circle"
+        (mousedown)="onBotCircleDrag(outputGate)" [attr.data-output-gate]="outputGate"></div>
+    <!--attr used to get circle pos using outputGate name-->
+</div>
 <!-- </div> -->

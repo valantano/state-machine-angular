@@ -81,4 +81,8 @@ export class StateNodeComponent {
       return this.title;
     }
   }
+
+  parInterfaceNotEmpty(): boolean {
+    return Object.keys(this.state_interface.input_par_interface).length > 0;
+  }
 }
