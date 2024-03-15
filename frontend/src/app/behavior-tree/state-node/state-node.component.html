@@ -27,7 +27,7 @@
     (mouseleave)="onTopCircleLeave($event)"></div>
 <div class="bottom-circle-container">
     <div *ngFor="let outputGate of state_interface.output_interface" #bottomCircle class="circle bottom-circle"
-        (mousedown)="onBotCircleDrag(outputGate)" [attr.data-output-gate]="outputGate"></div>
+        (mousedown)="onBotCircleDrag(outputGate)" [attr.data-output-gate]="outputGate" [title]="outputGate"></div>
     <!--attr used to get circle pos using outputGate name-->
 </div>
 <!-- </div> -->
