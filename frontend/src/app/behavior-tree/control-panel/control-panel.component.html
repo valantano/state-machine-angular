@@ -1,5 +1,5 @@
-<div class="control-panel" id="controlPanel">
-    <div class="state-nodes">
+<div [ngClass]="{'control-panel-act': activated, 'control-panel-deact': !activated}" id="controlPanel">
+    <div *ngIf="activated" class="state-nodes">
       <!-- State nodes go here -->
       <app-state-node-blueprint></app-state-node-blueprint>
       <app-state-node-blueprint></app-state-node-blueprint>
@@ -8,5 +8,5 @@
       
       <!-- Add more state nodes as needed -->
     </div>
-    <button class="collapse-button" id="collapseButton"><</button>
+    <button class="collapse-button" id="collapseButton" (click)="switchActivationState()"><</button>
   </div>

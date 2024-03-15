@@ -7,4 +7,10 @@ import { Component } from '@angular/core';
 })
 export class ControlPanelComponent {
 
+  activated: boolean = true;
+
+  switchActivationState(): void {
+    this.activated = !this.activated;
+  }
+
 }

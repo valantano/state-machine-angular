@@ -20,9 +20,9 @@
   }
   
   app-control-panel {
-    width: 20%;
+    width: auto;
     background-color: aqua;
-    position: relative;
+    position: fixed;
     z-index: 2;
     top: 48px;
   }
