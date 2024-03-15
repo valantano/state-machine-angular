@@ -1,16 +1,17 @@
 <!-- <div class="container"> -->
     <div class="rectangle" [style.left.px]="x" [style.top.px]="y" (mousedown)="onNodeDrag($event)">
-        <div class="title">{{title}}</div>
+        <div class="title">{{ getDisplayTitle() }}</div>
         <hr> <!-- Horizontal Divider -->
         <div class="information">
-            {{infoText}}
+            {{state_interface.infoText}}
         </div>
+        
 
     </div>
     <div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)"
         (mouseleave)="onTopCircleLeave($event)"></div>
     <div class="bottom-circle-container">
-        <div *ngFor="let outputGate of outputGates" #bottomCircle class="circle bottom-circle"
+        <div *ngFor="let outputGate of state_interface.output_interface" #bottomCircle class="circle bottom-circle"
             (mousedown)="onBotCircleDrag(outputGate)" [attr.data-output-gate]="outputGate"></div>
         <!--attr used to get circle pos using outputGate name-->
     </div>

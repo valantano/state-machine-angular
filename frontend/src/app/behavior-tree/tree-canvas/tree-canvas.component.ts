@@ -2,6 +2,7 @@ import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListe
 import { StateNodeComponent } from '../state-node/state-node.component';
 import { TransitionEdgeComponent } from '../transition-edge/transition-edge.component';
 import { StateNode } from '../state-node/state-node';
+import { StateNodeInterface } from '../state-node-blueprint/state-node-interface';
 import { TransitionEdge } from '../transition-edge/transition-edge';
 import { BehaviorTreeService } from '../behavior-tree.service';
 import { state } from '@angular/animations';
@@ -20,6 +21,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   @ViewChildren(TransitionEdgeComponent) transitionEdges!: QueryList<TransitionEdgeComponent>;
 
   nodes: { [id: string]: StateNode } = {};
+  node_interfaces: {[id: number]: StateNodeInterface } = {};
   edges: { [id: string]: TransitionEdge } = {};
   
   startXCircle: number = 0;
@@ -44,10 +46,23 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   }
 
   ngOnInit(): void {
+    this.behaviorTreeService.getMockInterfaceData().subscribe((data: any) => {
+      console.log('TreeCanvas: getMockInterfaceData', data);
+      for (let state of data.states) {
+        this.node_interfaces[state.stateId] = {
+          stateId: state.stateId,
+          name: state.name,
+          infoText: state.infoText,
+          input_par_interface: state.input_par_interface,
+          output_interface: state.output_interface
+        }
+      }
+    });
+
     this.behaviorTreeService.getMockNodeData().subscribe((data: any) => {
       console.log('TreeCanvas: getMockNodeData', data);
       for (let node of data.StateMachine.stateNodes) {
-        this.createNode(node.title, node.infoText, node.outputs, node.x, node.y, node.nodeId);
+        this.createNode(node.title, node.x, node.y, this.node_interfaces[node.stateId], node.nodeId);
         for (let transition in node.transitions) {
           this.addEdge(node.nodeId, node.transitions[transition], transition);
         }
@@ -202,7 +217,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     return this.nodes[id];
   }
 
-  createNode(title: string, infoText: string, outputGates: string[], x: number, y: number, nodeId?: string): void {
+  createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, nodeId?: string): void {
     nodeId = nodeId ? nodeId : uuidv4();
     if (this.nodes[nodeId]) {
       throw new Error(`Node with id ${nodeId} already exists`);
@@ -212,8 +227,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
       x: x,
       y: y,
       title: title,
-      infoText: infoText,
-      outputGates: outputGates
+      state_interface: state_interface
     }
     this.nodes[newNode.nodeId] = newNode;
   }

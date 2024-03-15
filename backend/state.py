@@ -7,25 +7,44 @@ class EnumExample(Enum):
 
 class State:
 
-    def __init__(self) -> None:
+    def __init__(self, name: str, id: int) -> None:
+        self.name = name
+        self.id = id # unique id of the state
         self.input_par_interface = {'enum_example': {'type': 'enum', 'value': EnumExample()}, 'input2': {'number_example': 'number', 'value': 0.0}, 'string_example': {'type': 'string', 'value': 'text or path'}, 'boolean_example': {'type': 'boolean', 'value': False}}
-        self.input_parameters = {'enum_example': EnumExample.GOALPOSE1, 'input2': 0.0, 'string_example': None, 'boolean_example': False}
+        # example of input_parameters = {'enum_example': EnumExample.GOALPOSE1, 'input2': 0.0, 'string_example': None, 'boolean_example': False}
 
-        self.outputs = ["Fail", "Success", "What?"]
+        self.output_interface = ["Fail", "Success", "What?"]
+
+    def _state_code():
+        # implement state here
+        return "Fail"
 
 
-    def execute(self):
-
+    def execute(self, blackboard, input_parameters):
+        self._before_execute()
+        self._state_code()
+        self._after_execute()
         return None
     
-    def before_execute():
+    def _before_execute():
         # check if input is valid if no input then ask frontend for it
         return None
     
-    def after_execute():
+    def _after_execute():
         # check if output is valid
 
         return None
+
+class IdleState(State):
+
+    def __init__(self) -> None:
+        super().__init__("IdleState", 1)
+        self.input_par_interface = {'enum_example': {'type': 'enum', 'value': EnumExample()}, 'input2': {'number_example': 'number', 'value': 0.0}, 'string_example': {'type': 'string', 'value': 'text or path'}, 'boolean_example': {'type': 'boolean', 'value': False}}
+        self.output_interface = ["Fail", "Success", "What?"]
+
+    def _state_code():
+        # implement state here
+        return "Fail"
 
 class StateMachine:
 

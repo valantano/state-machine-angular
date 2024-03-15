@@ -1,4 +1,5 @@
 import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, EventEmitter, Output, HostListener, ViewChildren, Query, QueryList} from '@angular/core';
+import { StateNodeInterface } from '../state-node-blueprint/state-node-interface';
 
 @Component({
   selector: 'app-state-node',
@@ -7,43 +8,27 @@ import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, EventE
 })
 export class StateNodeComponent {
 
-  // @ViewChild('infoField', { static: false }) infoField!: ElementRef;
-  // @ViewChild('bottomCircle', { static: false }) bottomCircle!: ElementRef;
   @ViewChildren('bottomCircle') bottomCircles!: QueryList<ElementRef>;
   @ViewChild('topCircle', { static: false }) topCircle!: ElementRef;
 
-  rectangleHeight: number = 0;
+  constructor() {
+    if (this.state_interface === null) {
+      throw new Error('StateNode: state_interface is null');
+    }
+   }
 
-  ngAfterViewInit(): void {
-    // Set initial rectangle height based on the text field height
-    // this.rectangleHeight = this.infoField.nativeElement.offsetHeight;
-    // let bottomCirclePos = this.getBottomCircleMidpointPosition();
-  }
-
-  // You might need to call this method whenever the informationText changes.
-  updateRectangleHeight(): void {
-    // this.rectangleHeight = this.infoField.nativeElement.offsetHeight;
-  }
 
   @Input() x: number = 0;
   @Input() y: number = 0;
   @Input() title: string = 'State Node';
-  @Input() infoText: string = 'Information about the state node';
   @Input() nodeId: string = "";
-  @Input() outputGates: string[] = ["Default"];
+  @Input() state_interface!: StateNodeInterface;
+
   @Output() circleDrag: EventEmitter<{nodeId: string, outputGate: string, circlepos: {x: number, y: number}}> = new EventEmitter<{nodeId: string, outputGate: string, circlepos: {x: number, y: number}}>();
   @Output() nodeDrag: EventEmitter<{mouseEvent: MouseEvent, nodeId: string}> = new EventEmitter<{mouseEvent: MouseEvent, nodeId: string}>();
   @Output() topCircleEnter: EventEmitter<{nodeId: string}> = new EventEmitter<{nodeId: string}>();
   @Output() topCircleLeave: EventEmitter<void> = new EventEmitter<void>();
 
-
-  // @HostListener('mouseenter') onMouseEnter() {
-  //   console.log('Mouse entered');
-  // }
-
-  // @HostListener('mouseleave') onMouseLeave() {
-  //   console.log('Mouse left');
-  // }
 
   onTopCircleEnter(event: MouseEvent) {
     console.log('Top circle entered', this.nodeId);
@@ -87,5 +72,13 @@ export class StateNodeComponent {
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
     return { x, y };
+  }
+
+  getDisplayTitle(): string {
+    if (this.state_interface) {
+      return this.state_interface.name + ' (' + this.title + ')';
+    } else {
+      return this.title;
+    }
   }
 }
