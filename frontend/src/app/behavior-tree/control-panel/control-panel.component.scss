@@ -37,8 +37,22 @@
     // padding: auto;
   }
   
+
   .collapse-button {
     width: 50x;
     height: 100%;
-
+    background-color: #333; /* Green background */
+    // border: none; /* Remove border */
+    border-color: #333;
+    color: white; /* White text */
+    text-align: center; /* Centered text */
+    display: inline-block;
+    font-size: 16px;
+    transition-duration: 0.4s; /* Transition effects */
+    cursor: pointer; /* Add a pointer cursor on hover */
+  }
+  
+  .collapse-button:hover {
+    background-color: #222; /* White background */
+    color: white; /* Black text */
   }
