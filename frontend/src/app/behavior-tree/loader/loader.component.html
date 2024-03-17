@@ -1,0 +1,42 @@
+<div class="loader">
+    <app-menu-bar></app-menu-bar>
+
+    <div class="file-system">
+
+        <!-- your-component.component.html -->
+        <div class="select-container">
+            <mat-form-field>
+                <mat-label>Select an Option</mat-label>
+                <mat-select [(ngModel)]="selectedOption">
+                    <mat-option *ngFor="let item of state_machines | keyvalue" [value]="item.key">{{ item.value.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </div>
+
+        <table *ngIf="selectedOption">
+            <tr *ngFor="let file of state_machines[selectedOption].configs" class="file" (click)="onFileClick(file)">
+                <td>
+                    <div class="file-content">
+                        <div class="file-icon">
+                            <i class="material-icons">insert_drive_file</i>
+                        </div>
+                        <div class="file-name">{{file['name']}}</div>
+                        <div>{{file['description']}}</div>
+                        <div>{{file['creationDate'] | date:'short'}}</div>
+                        <div>{{file['lastModified'] | date:'short'}}</div>
+                        <div>
+                            <button class="del-but" (click)="onDelete(file)">Delete</button>
+                            <button class="rename-but" (click)="onRename(file)">Rename</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div>{{selectedOption}}</div>
+
+
+</div>

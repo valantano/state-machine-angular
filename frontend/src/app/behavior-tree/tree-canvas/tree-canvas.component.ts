@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, QueryList, ViewChildren, ChangeDetectorRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, QueryList, ViewChildren, ChangeDetectorRef, OnInit, Input } from '@angular/core';
 import { StateNodeComponent } from '../state-node/state-node.component';
 import { TransitionEdgeComponent } from '../transition-edge/transition-edge.component';
 import { StateNode } from '../state-node/state-node';
@@ -19,6 +19,9 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
 
   @ViewChildren(StateNodeComponent) stateNodes!: QueryList<StateNodeComponent>;   // if x,y values change the corresponding x,y values in nodes also changes
   @ViewChildren(TransitionEdgeComponent) transitionEdges!: QueryList<TransitionEdgeComponent>;
+
+  @Input() stateMachineId: number = -1;
+  @Input() configId: number = -1;
 
   nodes: { [id: string]: StateNode } = {};
   node_interfaces: {[id: number]: StateNodeInterface } = {};
@@ -41,13 +44,12 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   private draggedNode: any; // Change the type as per your node structure
 
   
-
   constructor(private cdRef: ChangeDetectorRef, private behaviorTreeService: BehaviorTreeService) { 
   }
 
   ngOnInit(): void {
-    this.behaviorTreeService.getMockInterfaceData().subscribe((data: any) => {
-      console.log('TreeCanvas: getMockInterfaceData', data);
+    this.behaviorTreeService.getInterfaceData(this.stateMachineId).subscribe((data: any) => {
+      console.log('TreeCanvas: getInterfaceData', data);
       for (let state of data.states) {
         this.node_interfaces[state.stateId] = {
           stateId: state.stateId,
@@ -59,18 +61,24 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
       }
     });
 
-    this.behaviorTreeService.getMockNodeData().subscribe((data: any) => {
-      console.log('TreeCanvas: getMockNodeData', data);
-      for (let node of data.StateMachine.stateNodes) {
+    this.behaviorTreeService.getConfigData(this.stateMachineId, this.configId).subscribe((data: any) => {
+      console.log('TreeCanvas: getConfigData', data);
+      for (let node of data.state_machine_config.stateNodes) {
         this.createNode(node.title, node.x, node.y, this.node_interfaces[node.stateId], node.nodeId);
         for (let transition in node.transitions) {
           this.addEdge(node.nodeId, node.transitions[transition], transition);
         }
       }
     });
+
+    setTimeout(() => { // needed because of bug. Otherwise the edges are not drawn when opening the editor for the first time. Appeared after switching to backend instead of mock data
+      this.redrawEdges();
+    }, 300); // Maybe timeout needs to be even higher on some systems?
   }
 
+
   ngAfterViewInit(): void {
+    
     this.redrawEdges();
     this.cdRef.detectChanges();
   }
@@ -133,7 +141,6 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
       this.draggedNode.x = event.x - this.startXNode;
       this.draggedNode.y = event.y - this.startYNode;
       this.redrawEdges();
-      console.log('TreeCanvas: Dragged node', this.nodes[this.draggedNode.nodeId].x);
     }
   }
 

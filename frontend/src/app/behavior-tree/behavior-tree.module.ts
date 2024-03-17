@@ -8,6 +8,12 @@ import { ControlPanelComponent } from './control-panel/control-panel.component';
 import { EditorComponent } from './editor/editor.component';
 import { MenuBarComponent } from './menu-bar/menu-bar.component';
 import { StateNodeBlueprintComponent } from './state-node-blueprint/state-node-blueprint.component';
+import { LoaderComponent } from './loader/loader.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -20,10 +26,16 @@ import { StateNodeBlueprintComponent } from './state-node-blueprint/state-node-b
     ControlPanelComponent,
     EditorComponent,
     MenuBarComponent,
-    StateNodeBlueprintComponent
+    StateNodeBlueprintComponent,
+    LoaderComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    FormsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })

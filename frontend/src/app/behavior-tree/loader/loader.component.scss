@@ -1,0 +1,76 @@
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+}
+
+app-menu-bar {
+  width: 100%;
+  position: fixed;
+  z-index: 3;
+  height: 50px;
+  background-color: #333; /* Darker background color */
+  color: #fff; /* Text color */
+}
+
+.file-system {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  justify-content: center; /* Center content vertically */
+  margin-top: 70px; /* Adjust this value based on your menu bar height */
+  width: 100%;
+}
+
+.select-container {
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+tr { /* Styling for table rows */
+  border-bottom: 1px solid #ddd;
+}
+
+.file {
+  background-color: #f2f2f2;
+  cursor: pointer;
+}
+.file:hover {
+  background-color: #e0e0e0;
+}
+
+td { /* Modify existing style for table cells */
+  padding: 10px;
+  width: 100%; /* Distribute cells equally */
+  text-align: left; /* Center-align content */
+}
+.file-content {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px; /* Adjust padding as needed */
+}
+.file-icon {
+  margin-right: 10px;
+}
+.file-name {
+  font-weight: bold;
+}
+
+
+.del-but,
+.rename-but {
+  margin-left: 5px;
+  padding: 5px 10px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.del-but:hover,
+.rename-but:hover {
+  background-color: #555;
+}

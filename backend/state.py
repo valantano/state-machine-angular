@@ -3,6 +3,7 @@ from enum import Enum
 class EnumExample(Enum):
     GOALPOSE1 = 1
     GOALPOSE2 = 2
+        # example of input_parameters = {'enum_example': EnumExample.GOALPOSE1, 'input2': 0.0, 'string_example': None, 'boolean_example': False}
 
 
 class State:
@@ -10,10 +11,12 @@ class State:
     def __init__(self, name: str, id: int) -> None:
         self.name = name
         self.id = id # unique id of the state
-        self.input_par_interface = {'enum_example': {'type': 'enum', 'values': EnumExample()}, 'input2': {'number_example': 'number', 'values': [min, max]}, 'string_example': {'type': 'string', 'value': 'text or path'}, 'boolean_example': {'type': 'boolean', 'value': False}}
-        # example of input_parameters = {'enum_example': EnumExample.GOALPOSE1, 'input2': 0.0, 'string_example': None, 'boolean_example': False}
+        self.input_par_interface = {'GoalPose': {'type': 'enum', 'values': ['GoalPose1', 'GoalPose2']}, 'Number-Select': {'type': 'number'}, 'String-Enter': {'type': 'string'}, 'Boolean-Select': {'type': 'boolean'}}
 
         self.output_interface = ["Fail", "Success", "What?"]
+
+        self.infoText = "This is an Info Text"
+
 
     def _state_code():
         # implement state here
@@ -34,6 +37,12 @@ class State:
         # check if output is valid
 
         return None
+    
+    def to_json(self):
+        return {'name': self.name, 'stateId': self.id, 'infoText': self.infoText, 'input_par_interface': self.input_par_interface, 'output_interface': self.output_interface}
+    
+        # { name: "Idle", stateId: 45, infoText: "This is an Info Text and also especially long. So I mean very very very long. But not that long either", input_par_interface: {}, output_interface: ["Fail", "Success", "What?"] },
+
 
 class IdleState(State):
 
@@ -46,28 +55,8 @@ class IdleState(State):
         # implement state here
         return "Fail"
 
-class StateMachine:
-
-    def __init__(self, available_states: list[State]) -> None:
-        
-
-        self.available_states = {'state1': State(), 'state2': State()}
-        self.current_state = 'state1'
-        self.next_state = None
-
-    def execute(self, config):
-        pass
 
 
-    def execute(self):
-        self.states[self.current_state].execute()
-        self.current_state = self.next_state
-        self.next_state = None
-
-    def init_execute(self):
-        self.states[self.current_state].init_execute()
-        self.current_state = self.next_state
-        self.next_state = None
 
 class Backend:
     enter_update = {'entering_state': 'state1name'}
