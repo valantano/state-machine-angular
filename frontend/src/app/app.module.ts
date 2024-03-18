@@ -17,8 +17,6 @@ import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/d
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { BehaviorTreeModule } from './behavior-tree/behavior-tree.module';
-import { EmptyStateNodeComponent } from './empty-state-node/empty-state-node.component';
-import { EditCanvasToolbarComponent } from './edit-canvas-toolbar/edit-canvas-toolbar.component';
 
 
 
@@ -28,8 +26,6 @@ import { EditCanvasToolbarComponent } from './edit-canvas-toolbar/edit-canvas-to
     AppComponent,
     WzlStateMachineComponent,
     ControlPopupComponent,
-    EmptyStateNodeComponent,
-    EditCanvasToolbarComponent,
   ],
   imports: [
     BrowserModule,

@@ -7,4 +7,8 @@ import { Component } from '@angular/core';
 })
 export class MenuBarComponent {
 
+  onClickSave(): void {
+    console.log('MenuBar: Save button clicked');
+  }
+
 }

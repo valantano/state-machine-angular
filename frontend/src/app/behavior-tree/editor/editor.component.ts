@@ -125,6 +125,13 @@ export class EditorComponent {
     this.edges[newEdge.id] = newEdge;
   }
 
+  saveStateMachineConfig(): void {
+    const configData = this.convertToConfigData();
+    this.behaviorTreeService.saveConfigData(this.stateMachineId, this.filename, configData).subscribe((data: any) => {
+      console.log('EditorComponent: saveStateMachineConfig', data);
+    });
+  }
+
   // Convert the data to the format that the backend expects
   convertToConfigData() {
     let transitions: { [soureNodeId: string]: { [outputGate: string]: string } } = {};  
