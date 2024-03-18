@@ -3,7 +3,7 @@
     <!-- State nodes go here -->
 
 
-    <app-state-node-blueprint *ngFor="let node of node_interfaces" class="state-node" [title]="node.name"
+    <app-state-node-blueprint *ngFor="let node of node_interfaces" class="state-node-blueprint" [title]="node.name"
       [state_interface]="node" (mousedown)="onMouseDown($event, node.stateId)">
     </app-state-node-blueprint>
 

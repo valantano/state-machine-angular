@@ -6,8 +6,6 @@ import { SharedServiceService } from '../shared-service.service';
 import { Subscription } from 'rxjs';
 
 
-
-
 @Component({
   selector: 'app-tree-canvas',
   templateUrl: './tree-canvas.component.html',
@@ -57,7 +55,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
 
     setTimeout(() => { // needed because of bug. Otherwise the edges are not drawn when opening the editor for the first time. Appeared after switching to backend instead of mock data
       this.redrawEdges();
-    }, 600); // Maybe timeout needs to be even higher on some systems?
+    }, 300); // Maybe timeout needs to be even higher on some systems?
   }
 
 
