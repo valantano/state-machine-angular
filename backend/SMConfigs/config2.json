@@ -10,8 +10,8 @@
                 "title": "State 1",
                 "nodeId": "22048495-fa82-4347-a78c-e6daa705ad1c",
                 "stateId": 45,
-                "x": 1399,
-                "y": 337,
+                "x": 1238,
+                "y": 279,
                 "transitions": {
                     "Fail": "22048495-fa82-4347-a78c-e6daa705ad1e",
                     "What?": "22048495-fa82-4347-a78c-e6daa705ad1e"
@@ -21,16 +21,18 @@
                 "title": "State 2",
                 "nodeId": "22048495-fa82-4347-a78c-e6daa705ad1d",
                 "stateId": 46,
-                "x": 797,
-                "y": 112,
-                "transitions": {}
+                "x": 270,
+                "y": 84,
+                "transitions": {
+                    "What?": "22048495-fa82-4347-a78c-e6daa705ad1c"
+                }
             },
             {
                 "title": "State 3",
                 "nodeId": "22048495-fa82-4347-a78c-e6daa705ad1e",
                 "stateId": 47,
-                "x": 800,
-                "y": 500,
+                "x": 1265,
+                "y": 664,
                 "transitions": {}
             }
         ]

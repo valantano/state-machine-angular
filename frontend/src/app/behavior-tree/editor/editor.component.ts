@@ -32,6 +32,11 @@ export class EditorComponent {
 
   unsavedChanges: boolean = false;
 
+  getNodeInterfacesValues() {
+    console.log('EditorComponent: getNodeInterfacesValues', Object.values(this.node_interfaces));
+    return Object.values(this.node_interfaces);
+  }
+
   
 
 

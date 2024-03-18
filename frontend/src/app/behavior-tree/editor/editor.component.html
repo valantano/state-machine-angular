@@ -1,7 +1,7 @@
 <div class="editor">
     <app-menu-bar (saveClick)="handleSaveClick()"></app-menu-bar>
     <div class="toolbox">
-        <app-control-panel></app-control-panel>
+        <app-control-panel [node_interfaces]="getNodeInterfacesValues()"></app-control-panel>
         <div class="canvas-area">
             <app-tree-canvas [nodes]="nodes" [node_interfaces]="node_interfaces" [edges]="edges"
                 (addEdgeEvent)="handleAddEdgeEvent($event)"

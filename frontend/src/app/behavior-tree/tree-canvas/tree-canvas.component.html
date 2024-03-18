@@ -3,7 +3,7 @@
     
 
   </div> -->
-
+<div class="outer">
 <div class="graph" (mouseup)="onMouseUp()">
   <app-state-node *ngFor="let node of nodes | keyvalue" class="state-node" [style.left.px]="node.value.x"
     [style.top.px]="node.value.y" [nodeId]="node.value.nodeId" [title]="node.value.title" [state_interface]="node.value.state_interface"
@@ -21,4 +21,4 @@
   <app-transition-edge class="drawing-edge" *ngIf="isDrawing" [startX]="startXCircle" [startY]="startYCircle"
     [endX]="currentX" [endY]="currentY"></app-transition-edge>
 
-</div>
+</div></div>

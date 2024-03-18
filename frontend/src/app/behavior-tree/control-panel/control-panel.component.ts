@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { StateNodeInterface } from '../editor/data_model';
 
 @Component({
   selector: 'app-control-panel',
@@ -8,6 +9,8 @@ import { Component } from '@angular/core';
 export class ControlPanelComponent {
 
   activated: boolean = true;
+
+  @Input() node_interfaces: StateNodeInterface[] = [];
 
   switchActivationState(): void {
     this.activated = !this.activated;

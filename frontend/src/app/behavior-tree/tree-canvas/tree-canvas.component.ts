@@ -46,7 +46,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   ngOnInit(): void {
     setTimeout(() => { // needed because of bug. Otherwise the edges are not drawn when opening the editor for the first time. Appeared after switching to backend instead of mock data
       this.redrawEdges();
-    }, 300); // Maybe timeout needs to be even higher on some systems?
+    }, 600); // Maybe timeout needs to be even higher on some systems?
   }
 
 
