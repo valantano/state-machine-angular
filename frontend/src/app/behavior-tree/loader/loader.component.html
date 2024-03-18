@@ -5,7 +5,7 @@
 
         <!-- your-component.component.html -->
         <div class="select-container">
-            <mat-form-field>
+            <mat-form-field class="wide-form-field">
                 <mat-label>Select an Option</mat-label>
                 <mat-select [(ngModel)]="selectedOption">
                     <mat-option *ngFor="let item of state_machines | keyvalue" [value]="item.key">{{ item.value.name }}</mat-option>

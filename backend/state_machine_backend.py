@@ -54,9 +54,11 @@ import os
 def main():
     script_dir = os.path.dirname(os.path.realpath(__file__))
     config_dir = os.path.join(script_dir, 'SMConfigs')
+    config_dir2 = os.path.join(script_dir, 'SMConfigs2')
 
     sm1 = StateMachine('WZL1', 0, [IdleState(), MoveBaseToGoalState(), SpinState()], config_dir)
-    sms = [sm1]
+    sm2 = StateMachine('WZL_other_SM_with_long_name', 1, [IdleState(), MoveBaseToGoalState()], config_dir2)
+    sms = [sm1, sm2]
     flask = FlaskBackend(sms)
 
     flask.start()
