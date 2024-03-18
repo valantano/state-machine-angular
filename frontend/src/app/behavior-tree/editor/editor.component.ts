@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorTreeService } from '../behavior-tree.service';
 import { TransitionEdge, StateNode, StateNodeInterface } from './data_model';
@@ -29,6 +29,8 @@ export class EditorComponent {
   nodes: { [id: string]: StateNode } = {};
   node_interfaces: { [id: number]: StateNodeInterface } = {};
   edges: { [id: string]: TransitionEdge } = {};
+
+  unsavedChanges: boolean = false;
 
   
 
@@ -94,13 +96,22 @@ export class EditorComponent {
     this.nodes[newNode.nodeId] = newNode;
   }
 
+  handleNodeDragEvent(): void {
+    console.log('EditorComponent: Node was dragged in tree-canvas. Unsaved Changes.');
+    this.unsavedChanges = true;
+  }
+
+  handleAddNodeEvent(event: any): void {
+    this.unsavedChanges = true;
+  }
+
   handleAddEdgeEvent(event: any): void {
     // sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string
     const sourceNodeId = event.sourceNodeId;
     const targetNodeId = event.targetNodeId;
     const sourceNodeOutputGate = event.sourceNodeOutputGate;
     this.addEdge(sourceNodeId, targetNodeId, sourceNodeOutputGate);
-
+    this.unsavedChanges = true;
   }
 
   addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
@@ -125,16 +136,32 @@ export class EditorComponent {
     this.edges[newEdge.id] = newEdge;
   }
 
+  // Warn user if they try to leave the page with unsaved changes
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any) {
+    console.log(this.unsavedChanges);
+    if (this.unsavedChanges) {
+      $event.returnValue = true;
+    } else {
+      $event.returnValue = "";
+    }
+  }
+
   handleSaveClick(): void {
     console.log('EditorComponent: Save button clicked');
     this.saveStateMachineConfig();
   }
+  
 
   saveStateMachineConfig(): void {
     const configData = this.convertToConfigData();
     this.behaviorTreeService.saveConfigData(this.stateMachineId, this.filename, configData).subscribe((data: any) => {
       console.log('EditorComponent: saveStateMachineConfig', data);
+      if (data.success) {
+        this.unsavedChanges = false;
+      }
     });
+    
   }
 
   // Convert the data to the format that the backend expects

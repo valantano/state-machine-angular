@@ -21,7 +21,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   @Input() edges: { [id: string]: TransitionEdge } = {};
 
   @Output() addEdgeEvent: EventEmitter<{sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string}> = new EventEmitter<{sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string}>();
-
+  @Output() nodeDragEvent: EventEmitter<void> = new EventEmitter<void>();
   
   startXCircle: number = 0;
   startYCircle: number = 0;
@@ -139,6 +139,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     if (this.isDragging) {
       this.isDragging = false;
       this.draggedNode = null;
+      this.nodeDragEvent.emit();
     }
     this.redrawEdges();
   }

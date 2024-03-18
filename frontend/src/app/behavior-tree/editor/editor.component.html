@@ -3,7 +3,9 @@
     <div class="toolbox">
         <app-control-panel></app-control-panel>
         <div class="canvas-area">
-            <app-tree-canvas [nodes]="nodes" [node_interfaces]="node_interfaces" [edges]="edges" (addEdgeEvent)="handleAddEdgeEvent($event)"></app-tree-canvas>
+            <app-tree-canvas [nodes]="nodes" [node_interfaces]="node_interfaces" [edges]="edges"
+                (addEdgeEvent)="handleAddEdgeEvent($event)"
+                (nodeDragEvent)="handleNodeDragEvent()"></app-tree-canvas>
             <app-overlay></app-overlay>
         </div>
     </div>
