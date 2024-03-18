@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { StateNodeInterface } from '../editor/data_model';
 
 @Component({
@@ -12,12 +12,16 @@ export class ControlPanelComponent {
 
   @Input() node_interfaces: StateNodeInterface[] = [];
 
+  @Output() nodeCreate: EventEmitter<{mouseEvent: MouseEvent, stateId: string}> = new EventEmitter<{mouseEvent: MouseEvent, stateId: string}>();
+
+
   switchActivationState(): void {
     this.activated = !this.activated;
   }
 
-  onMouseDown(event: MouseEvent): void {
-    console.log('ControlPanel: Mouse down');
+  onMouseDown(event: MouseEvent, stateId: number): void {
+    console.log('ControlPanel: Mouse down', stateId);
+    this.nodeCreate.emit({mouseEvent: event, stateId: stateId.toString()});
   }
 
 }

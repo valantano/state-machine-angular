@@ -2,6 +2,8 @@ import { AfterViewInit, Component, HostListener, QueryList, ViewChildren, Change
 import { StateNodeComponent } from '../state-node/state-node.component';
 import { TransitionEdgeComponent } from '../transition-edge/transition-edge.component';
 import { StateNode, TransitionEdge,StateNodeInterface } from '../editor/data_model';
+import { SharedServiceService } from '../shared-service.service';
+import { Subscription } from 'rxjs';
 
 
 
@@ -39,11 +41,20 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   private isDragging = false;
   private draggedNode: any; // Change the type as per your node structure
 
+  nodeCreationSubscription: Subscription;
+
   
-  constructor(private cdRef: ChangeDetectorRef) { 
+  constructor(private cdRef: ChangeDetectorRef, private sharedService: SharedServiceService) { 
+    this.nodeCreationSubscription = this.sharedService.eventEmit.subscribe((event) => {
+      console.log('TreeCanvas: Node created', event);
+      const [clientX, clientY] = this.offsetXYCoordsInverse(event.mouseEvent.clientX, event.mouseEvent.clientY);    // Adjust to the graph container position
+      this.handleNodeDrag({mouseEvent: {clientX: clientX, clientY: clientY}, nodeId: event.nodeId});      
+    });
   }
 
   ngOnInit(): void {
+    
+
     setTimeout(() => { // needed because of bug. Otherwise the edges are not drawn when opening the editor for the first time. Appeared after switching to backend instead of mock data
       this.redrawEdges();
     }, 600); // Maybe timeout needs to be even higher on some systems?
@@ -181,6 +192,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     console.log('TreeCanvas: handleNodeDrag', eventWithId);
     const event = eventWithId.mouseEvent;
     this.draggedNode = this.getStateNodeById(eventWithId.nodeId);
+
     this.startXNode = event.clientX - this.draggedNode.x;
     this.startYNode = event.clientY - this.draggedNode.y;
     this.isDragging = true;
@@ -189,6 +201,11 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   offsetXYCoords(x: number, y: number): [number, number] {
     const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
     return [x - graphRect.left, y - graphRect.top];
+  }
+
+  offsetXYCoordsInverse(x: number, y: number): [number, number] {
+    const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
+    return [x + graphRect.left, y + graphRect.top];
   }
 
   getStateNodeComponentById(id: string): StateNodeComponent | undefined {

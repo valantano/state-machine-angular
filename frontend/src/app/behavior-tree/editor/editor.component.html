@@ -1,9 +1,9 @@
 <div class="editor">
     <app-menu-bar (saveClick)="handleSaveClick()"></app-menu-bar>
     <div class="toolbox">
-        <app-control-panel [node_interfaces]="node_interfaces_list"></app-control-panel>
+        <app-control-panel [node_interfaces]="node_interfaces_list" (nodeCreate)="handleNodeCreate($event)"></app-control-panel>
         <div class="canvas-area">
-            <app-tree-canvas [nodes]="nodes" [node_interfaces]="node_interfaces" [edges]="edges"
+            <app-tree-canvas [nodes]="nodes" [node_interfaces]="node_interfaces" [edges]="edges" [freshlyCreatedNodeId]="freshlyCreatedNodeId"
                 (addEdgeEvent)="handleAddEdgeEvent($event)"
                 (nodeDragEvent)="handleNodeDragEvent()"></app-tree-canvas>
             <app-overlay></app-overlay>

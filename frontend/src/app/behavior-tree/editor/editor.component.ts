@@ -1,9 +1,10 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorTreeService } from '../behavior-tree.service';
 import { TransitionEdge, StateNode, StateNodeInterface } from './data_model';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
+import { SharedServiceService } from '../shared-service.service';
 
 
 
@@ -30,12 +31,16 @@ export class EditorComponent {
   node_interfaces: { [id: number]: StateNodeInterface } = {};
   node_interfaces_list: StateNodeInterface[] = [];
   edges: { [id: string]: TransitionEdge } = {};
+  freshlyCreatedNodeId: string = "";
 
   unsavedChanges: boolean = false;
 
+  @Output() nodeDrag: EventEmitter<{mouseEvent: MouseEvent, nodeId: string}> = new EventEmitter<{mouseEvent: MouseEvent, nodeId: string}>();
 
 
-  constructor(private router: Router, private behaviorTreeService: BehaviorTreeService) {
+
+
+  constructor(private router: Router, private behaviorTreeService: BehaviorTreeService, private sharedService: SharedServiceService) {
     const navigation = this.router.getCurrentNavigation();
     if (!navigation) {
       throw new Error('Navigation is null');
@@ -46,10 +51,6 @@ export class EditorComponent {
     this.filename = state.filename;
     console.log('EditorComponent: File', state.filename, state.smId);
 
-    
-  }
-
-  ngOnInit() {
     this.behaviorTreeService.getInterfaceData(this.stateMachineId).subscribe((data: any) => {
       console.log('TreeCanvas: getInterfaceData', data);
       for (let state of data.states) {
@@ -85,7 +86,16 @@ export class EditorComponent {
     });
   }
 
-  createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, nodeId?: string): void {
+
+  handleNodeCreate(eventWithStateId: any) {
+    const mouse = eventWithStateId.mouseEvent;
+    const stateId = eventWithStateId.stateId;
+    this.freshlyCreatedNodeId = this.createNode('State Node', mouse.clientX, mouse.clientY, this.node_interfaces[stateId]);
+    console.log('EditorComponent: Node create', stateId);
+    this.sharedService.eventEmit.emit({mouseEvent: mouse, nodeId: this.freshlyCreatedNodeId});
+  }
+
+  createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, nodeId?: string): string {
     nodeId = nodeId ? nodeId : uuidv4();
     if (this.nodes[nodeId]) {
       throw new Error(`Node with id ${nodeId} already exists`);
@@ -98,6 +108,7 @@ export class EditorComponent {
       state_interface: state_interface
     }
     this.nodes[newNode.nodeId] = newNode;
+    return newNode.nodeId;
   }
 
   handleNodeDragEvent(): void {
