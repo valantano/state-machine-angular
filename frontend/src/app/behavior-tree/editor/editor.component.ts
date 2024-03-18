@@ -125,6 +125,11 @@ export class EditorComponent {
     this.edges[newEdge.id] = newEdge;
   }
 
+  handleSaveClick(): void {
+    console.log('EditorComponent: Save button clicked');
+    this.saveStateMachineConfig();
+  }
+
   saveStateMachineConfig(): void {
     const configData = this.convertToConfigData();
     this.behaviorTreeService.saveConfigData(this.stateMachineId, this.filename, configData).subscribe((data: any) => {

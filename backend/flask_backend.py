@@ -74,7 +74,7 @@ class FlaskBackend:
         filename = str(data['filename'])
         config = data['config']
         print(f'Saving config file {filename} for state machine {sm_id}')
-        success = self.state_machines[sm_id].save_config(filename, config)
+        success = self.state_machines[sm_id].save_config_file(filename, config)
         return jsonify({'success': success})
 
     

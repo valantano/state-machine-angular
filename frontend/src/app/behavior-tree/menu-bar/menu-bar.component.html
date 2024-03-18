@@ -1,20 +1,24 @@
 <nav class="menu-bar">
     <ul>
       <li>
-        <a href="#">File</a>
+        <a href="/loader"><</a>
+      </li>
+      <li>
+        
+        <a>File</a>
         <ul>
           <li><a (click)="onClickSave()">Save</a></li>
-          <li><a href="#">Load</a></li>
-          <li><a href="#">Export</a></li>
-          <li><a href="#">Import</a></li>
+          <li><a (click)="onClickLoad()">Load</a></li>
+          <li><a (click)="onClickExport()">Export</a></li>
+          <li><a (click)="onClickImport()">Import</a></li>
           <!-- Add more file options here -->
         </ul>
       </li>
       <li>
         <a href="#">Edit</a>
         <ul>
-          <li><a href="#">Undo</a></li>
-          <li><a href="#">Redo</a></li>
+          <li><a (click)="onClickUndo()">Undo</a></li>
+          <li><a (click)="onClickRedo()">Redo</a></li>
           <!-- Add more edit options here -->
         </ul>
       </li>
