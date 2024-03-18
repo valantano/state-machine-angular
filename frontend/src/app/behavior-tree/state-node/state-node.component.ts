@@ -31,22 +31,22 @@ export class StateNodeComponent {
 
 
   onTopCircleEnter(event: MouseEvent) {
-    console.log('Top circle entered', this.nodeId);
+    console.log('StateNode: Send Top circle entered to TreeCanvas', this.nodeId);
     this.topCircleEnter.emit({nodeId: this.nodeId});
   }
 
   onTopCircleLeave(event: MouseEvent) {
-    console.log('Top circle left', this.nodeId);
+    console.log('StateNode: Send Top circle left to TreeCanvas', this.nodeId);
     this.topCircleLeave.emit();
   }
 
   onNodeDrag(event: MouseEvent) {
-    console.log('StateNode: Node drag');
+    console.log('StateNode: Send Node drag to TreeCanvas');
     this.nodeDrag.emit({mouseEvent: event, nodeId: this.nodeId});
   }
 
   onBotCircleDrag(outputGate: string): void {
-    console.log('StateNode: Mouse down');
+    console.log('StateNode: send Circle Drag to TreeCanvas');
     this.circleDrag.emit({nodeId: this.nodeId, outputGate: outputGate, circlepos: this.getBottomCircleScreenPosition(outputGate)});
   }
 
