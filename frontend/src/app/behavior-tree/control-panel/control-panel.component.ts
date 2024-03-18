@@ -16,4 +16,8 @@ export class ControlPanelComponent {
     this.activated = !this.activated;
   }
 
+  onMouseDown(event: MouseEvent): void {
+    console.log('ControlPanel: Mouse down');
+  }
+
 }

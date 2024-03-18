@@ -4,14 +4,9 @@
 
 
     <app-state-node-blueprint *ngFor="let node of node_interfaces" class="state-node" [title]="node.name"
-      [state_interface]="node">
+      [state_interface]="node" (mousedown)="onMouseDown($event)">
     </app-state-node-blueprint>
-    <app-state-node-blueprint *ngFor="let node of node_interfaces" class="state-node" [title]="node.name"
-      [state_interface]="node">
-    </app-state-node-blueprint>
-    <app-state-node-blueprint *ngFor="let node of node_interfaces" class="state-node" [title]="node.name"
-      [state_interface]="node">
-    </app-state-node-blueprint>
+
 
     <!-- Add more state nodes as needed -->
   </div>

@@ -28,16 +28,11 @@ export class EditorComponent {
   // Data structures passed to the tree-canvas component
   nodes: { [id: string]: StateNode } = {};
   node_interfaces: { [id: number]: StateNodeInterface } = {};
+  node_interfaces_list: StateNodeInterface[] = [];
   edges: { [id: string]: TransitionEdge } = {};
 
   unsavedChanges: boolean = false;
 
-  getNodeInterfacesValues() {
-    console.log('EditorComponent: getNodeInterfacesValues', Object.values(this.node_interfaces));
-    return Object.values(this.node_interfaces);
-  }
-
-  
 
 
   constructor(private router: Router, private behaviorTreeService: BehaviorTreeService) {
@@ -51,16 +46,21 @@ export class EditorComponent {
     this.filename = state.filename;
     console.log('EditorComponent: File', state.filename, state.smId);
 
+    
+  }
+
+  ngOnInit() {
     this.behaviorTreeService.getInterfaceData(this.stateMachineId).subscribe((data: any) => {
       console.log('TreeCanvas: getInterfaceData', data);
       for (let state of data.states) {
-        this.node_interfaces[state.stateId] = {
+        const node_interface: StateNodeInterface = {
           stateId: state.stateId,
           name: state.name,
           infoText: state.infoText,
           input_par_interface: state.input_par_interface,
-          output_interface: state.output_interface
-        }
+          output_interface: state.output_interface }
+        this.node_interfaces[state.stateId] = node_interface;
+        this.node_interfaces_list.push(node_interface);
       }
     });
 
@@ -83,7 +83,6 @@ export class EditorComponent {
       }
       
     });
-    
   }
 
   createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, nodeId?: string): void {
