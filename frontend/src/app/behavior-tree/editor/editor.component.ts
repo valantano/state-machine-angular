@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { BehaviorTreeService } from '../behavior-tree.service';
 import { TransitionEdge, StateNode, StateNodeInterface } from './data_model';
 import { v4 as uuidv4 } from 'uuid';
-import { state } from '@angular/animations';
 import _ from 'lodash';
 
 

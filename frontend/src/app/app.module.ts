@@ -16,8 +16,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { StateNodeComponent } from './behavior-tree/state-node/state-node.component';
-import { TreeCanvasComponent } from './behavior-tree/tree-canvas/tree-canvas.component';
 import { BehaviorTreeModule } from './behavior-tree/behavior-tree.module';
 import { EmptyStateNodeComponent } from './empty-state-node/empty-state-node.component';
 import { EditCanvasToolbarComponent } from './edit-canvas-toolbar/edit-canvas-toolbar.component';
@@ -32,8 +30,6 @@ import { EditCanvasToolbarComponent } from './edit-canvas-toolbar/edit-canvas-to
     ControlPopupComponent,
     EmptyStateNodeComponent,
     EditCanvasToolbarComponent,
-    // StateNodeComponent,
-    // TreeCanvasComponent
   ],
   imports: [
     BrowserModule,

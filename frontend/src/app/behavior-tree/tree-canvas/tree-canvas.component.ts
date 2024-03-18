@@ -1,10 +1,8 @@
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, QueryList, ViewChildren, ChangeDetectorRef, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { AfterViewInit, Component, HostListener, QueryList, ViewChildren, ChangeDetectorRef, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { StateNodeComponent } from '../state-node/state-node.component';
 import { TransitionEdgeComponent } from '../transition-edge/transition-edge.component';
 import { StateNode, TransitionEdge,StateNodeInterface } from '../editor/data_model';
-import { BehaviorTreeService } from '../behavior-tree.service';
-import { state } from '@angular/animations';
-import { v4 as uuidv4 } from 'uuid';
+
 
 
 
