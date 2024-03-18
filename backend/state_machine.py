@@ -7,13 +7,12 @@ from state import State
 class StateMachine:
 
     def __init__(self, name: str, id: int, state_interface: list[State], config_folder_path: str) -> None:
-        self.name = name
-        self.id = id
-        self.config_folder = config_folder_path
-        self.config_files = self.scan_config_folder()
+        self.name: str = name
+        self.id: int = id
+        self.config_folder: os.path = os.path.normpath(config_folder_path)
 
 
-        self.states = {}
+        self.states: dict = {}
         for state in state_interface:
             self.states[state.id] = state
 
@@ -35,37 +34,39 @@ class StateMachine:
     
     def to_json_config(self) -> dict:
         return {'name': self.name, 'id': self.id, 'configs': self.load_config_files_info()}
-    
-    def load_config(self, config_id):
-        with open(self.config_files[config_id], 'r') as f:
-            return json.load(f)
 
         
         
     def scan_config_folder(self):
-        config_files = []
+        """Scans the config folder for all json files and returns a dictionary with the filenames as keys and the full path as values."""
+        files = {}
 
         for filename in os.listdir(self.config_folder):
             if filename.endswith('.json'):
                 full_path = os.path.join(self.config_folder, filename)
-                config_files.append(full_path)
-
-        files = {}
-        for id, file in enumerate(config_files):
-            files[id] = file
+                files[filename] = full_path
 
         return files
     
+    def load_config_file(self, name = 'config1.json') -> dict:
+        """Loads a json config file from the config folder and returns it as dict."""
+        try:
+            with open(os.path.join(self.config_folder, name), 'r') as f:
+                return json.load(f)
+        except:
+            print(f'Error: File {name} not found in config folder or could not be opened.')
+            return {}
+    
     
     # { 'name': 'File 1', 'id': 0, 'description': 'Description 1', 'creationDate': new Date(), 'lastModified': new Date() },
+    # { 'name': 'File 1', 'filename': 'config1.json, 'description': 'Description 1', 'creationDate': new Date(), 'lastModified': new Date() },
     def load_config_files_info(self):
         config_infos = []
 
-        for id, file in self.config_files.items():
-            with open(file, 'r') as f:
-                file_contents = json.load(f)
-                file_contents = file_contents["state_machine_config"]
-            info = { 'name': file_contents['name'], 'id': id, 'description': file_contents['description'], 'creationDate': file_contents['creationDate'], 'lastModified': file_contents['lastModified'] }
+        for filename, filepath in self.scan_config_folder().items():
+            with open(filepath, 'r') as f:
+                file_contents = json.load(f)["state_machine_config"]
+            info = { 'name': file_contents['name'], 'filename': filename, 'description': file_contents['description'], 'creationDate': file_contents['creationDate'], 'lastModified': file_contents['lastModified'] }
             config_infos.append(info)
 
         return config_infos

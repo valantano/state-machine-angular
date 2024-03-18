@@ -35,8 +35,8 @@ export class BehaviorTreeService {
     return this.http.get<any>(address + 'api/available_state_machines_and_configs');
   }
 
-  getConfigData(smId: number, configId: number): Observable<any> {
-    return this.http.post<any>(address + 'api/config_data', {smId: smId, configId: configId});
+  getConfigData(smId: number, filename: string): Observable<any> {
+    return this.http.post<any>(address + 'api/config_data', {smId: smId, filename: filename});
   }
 
   getInterfaceData(smId: number): Observable<any> {
@@ -45,25 +45,25 @@ export class BehaviorTreeService {
   }
 
 
-  getMockNodeData(): Observable<any> {
-    return this.mockNodeData;
-  }
+  // getMockNodeData(): Observable<any> {
+  //   return this.mockNodeData;
+  // }
 
-  getMockInterfaceData(): Observable<any> {
-    return this.mockInterfaceData;
-  }
+  // getMockInterfaceData(): Observable<any> {
+  //   return this.mockInterfaceData;
+  // }
 
-  getMockAvailableConfigs(): Observable<any> {
-    return this.mockAvailableConfigs;
-  }
+  // getMockAvailableConfigs(): Observable<any> {
+  //   return this.mockAvailableConfigs;
+  // }
 
-  getMockAvailableStateMachines(): Observable<any> {
-    return this.mockAvailableStateMachines;
-  }
+  // getMockAvailableStateMachines(): Observable<any> {
+  //   return this.mockAvailableStateMachines;
+  // }
 
-  getMockAvailableStateMachinesConfigs(): Observable<any> {
-    return this.mockAvailableConfigs;
-  }
+  // getMockAvailableStateMachinesConfigs(): Observable<any> {
+  //   return this.mockAvailableConfigs;
+  // }
 
 
 

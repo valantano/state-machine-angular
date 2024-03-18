@@ -55,9 +55,10 @@ class FlaskBackend:
     def send_config_data(self):
         data = request.get_json()
         sm_id = int(data['smId'])
-        config_id = int(data['configId'])
+        filename = str(data['filename'])
+        print(f'Loading config file {filename} for state machine {sm_id}')
 
-        config = self.state_machines[sm_id].load_config(config_id)
+        config = self.state_machines[sm_id].load_config_file(filename)
         return jsonify(config)
     
     def send_interface_data(self):

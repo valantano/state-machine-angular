@@ -9,7 +9,7 @@ interface StateMachineList {
 
 export interface File {
   name: string;
-  id: number;
+  filename: string;
   description: string;
   creationDate: Date;
   lastModified: Date;
@@ -37,6 +37,7 @@ export class LoaderComponent {
 
       for (let sm_data of data.state_machines) {
         const sm: StateMachine = {name: sm_data.name, id: sm_data.id, configs: sm_data.configs};
+        console
 
         this.state_machines[sm.id] = sm;
       }
@@ -49,7 +50,7 @@ export class LoaderComponent {
   onFileClick(file: File) {
     const navigationExtras: NavigationExtras = {
       state: {
-        configId: file.id,
+        filename: file.filename,
         smId: this.selectedOption
       }
     };

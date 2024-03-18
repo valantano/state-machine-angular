@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, QueryList, ViewChildren, ChangeDetectorRef, OnInit, Input } from '@angular/core';
+import { AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, HostListener, QueryList, ViewChildren, ChangeDetectorRef, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { StateNodeComponent } from '../state-node/state-node.component';
 import { TransitionEdgeComponent } from '../transition-edge/transition-edge.component';
 import { StateNode } from '../state-node/state-node';
@@ -20,12 +20,12 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   @ViewChildren(StateNodeComponent) stateNodes!: QueryList<StateNodeComponent>;   // if x,y values change the corresponding x,y values in nodes also changes
   @ViewChildren(TransitionEdgeComponent) transitionEdges!: QueryList<TransitionEdgeComponent>;
 
-  @Input() stateMachineId: number = -1;
-  @Input() configId: number = -1;
+  @Input() nodes: { [id: string]: StateNode } = {};
+  @Input() node_interfaces: {[id: number]: StateNodeInterface } = {};
+  @Input() edges: { [id: string]: TransitionEdge } = {};
 
-  nodes: { [id: string]: StateNode } = {};
-  node_interfaces: {[id: number]: StateNodeInterface } = {};
-  edges: { [id: string]: TransitionEdge } = {};
+  @Output() addEdgeEvent: EventEmitter<{sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string}> = new EventEmitter<{sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string}>();
+
   
   startXCircle: number = 0;
   startYCircle: number = 0;
@@ -44,33 +44,10 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   private draggedNode: any; // Change the type as per your node structure
 
   
-  constructor(private cdRef: ChangeDetectorRef, private behaviorTreeService: BehaviorTreeService) { 
+  constructor(private cdRef: ChangeDetectorRef) { 
   }
 
   ngOnInit(): void {
-    this.behaviorTreeService.getInterfaceData(this.stateMachineId).subscribe((data: any) => {
-      console.log('TreeCanvas: getInterfaceData', data);
-      for (let state of data.states) {
-        this.node_interfaces[state.stateId] = {
-          stateId: state.stateId,
-          name: state.name,
-          infoText: state.infoText,
-          input_par_interface: state.input_par_interface,
-          output_interface: state.output_interface
-        }
-      }
-    });
-
-    this.behaviorTreeService.getConfigData(this.stateMachineId, this.configId).subscribe((data: any) => {
-      console.log('TreeCanvas: getConfigData', data);
-      for (let node of data.state_machine_config.stateNodes) {
-        this.createNode(node.title, node.x, node.y, this.node_interfaces[node.stateId], node.nodeId);
-        for (let transition in node.transitions) {
-          this.addEdge(node.nodeId, node.transitions[transition], transition);
-        }
-      }
-    });
-
     setTimeout(() => { // needed because of bug. Otherwise the edges are not drawn when opening the editor for the first time. Appeared after switching to backend instead of mock data
       this.redrawEdges();
     }, 300); // Maybe timeout needs to be even higher on some systems?
@@ -170,6 +147,11 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     this.redrawEdges();
   }
 
+  addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
+    console.log('TreeCanvas: addEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
+    this.addEdgeEvent.emit({sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, sourceNodeOutputGate: sourceNodeOutputGate});
+  }
+
   // Listens to Output circleDrag from StateNodeComponent
   // If app-state-node emits the circleDrag event it means that the bottom circle was clicked
   // Then everything is prepared to start drawing a line from the bottom circle to the current mouse position
@@ -222,42 +204,5 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
 
   getStateNodeById(id: number): StateNode | undefined {
     return this.nodes[id];
-  }
-
-  createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, nodeId?: string): void {
-    nodeId = nodeId ? nodeId : uuidv4();
-    if (this.nodes[nodeId]) {
-      throw new Error(`Node with id ${nodeId} already exists`);
-    }
-    const newNode: StateNode = {
-      nodeId: nodeId,
-      x: x,
-      y: y,
-      title: title,
-      state_interface: state_interface
-    }
-    this.nodes[newNode.nodeId] = newNode;
-  }
-
-  addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
-    let existingEdgeId: string | null = null;
-
-    for (let edgeId in this.edges) {
-        let edge = this.edges[edgeId];
-        if (edge.sourceNodeId === sourceNodeId && edge.sourceNodeOutputGate === sourceNodeOutputGate) {
-            existingEdgeId = edge.id;
-            break;
-        }
-    }
-
-    const newEdge: TransitionEdge = {
-        id: existingEdgeId !== null ? existingEdgeId : uuidv4(),
-        sourceNodeId: sourceNodeId,
-        sourceNodeOutputGate: sourceNodeOutputGate,
-        targetNodeId: targetNodeId
-    }
-
-    console.log('TreeCanvas: addEdge', newEdge);
-    this.edges[newEdge.id] = newEdge;
   }
 }
