@@ -56,6 +56,16 @@ class StateMachine:
         except:
             print(f'Error: File {name} not found in config folder or could not be opened.')
             return {}
+        
+    def save_config_file(self, name: str, config: dict):
+        """Saves a json config file to the config folder."""
+        if name.endswith('.json') and self.isValidConfigFile(config):
+            with open(os.path.join(self.config_folder, name), 'w') as f:
+                json.dump(config, f, indent=4)
+            return True
+        else:
+            print(f'Error: File {name} is not a valid config file.')
+            return False
     
     
     # { 'name': 'File 1', 'id': 0, 'description': 'Description 1', 'creationDate': new Date(), 'lastModified': new Date() },
@@ -72,7 +82,8 @@ class StateMachine:
         return config_infos
 
         
-    
+    def isValidConfigFile(self, config: dict) -> bool:
+        return 'state_machine_config' in config and 'startStateNode' in config['state_machine_config'] and 'stateNodes' in config['state_machine_config'] and 'name' in config['state_machine_config']
 
     # def save_config(self, config, name):
     #     # check if file exists

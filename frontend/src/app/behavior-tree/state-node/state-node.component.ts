@@ -1,5 +1,5 @@
 import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, EventEmitter, Output, HostListener, ViewChildren, Query, QueryList} from '@angular/core';
-import { StateNodeInterface } from '../state-node-blueprint/state-node-interface';
+import { StateNodeInterface } from '../editor/data_model';
 
 @Component({
   selector: 'app-state-node',

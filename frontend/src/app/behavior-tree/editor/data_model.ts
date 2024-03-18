@@ -1,3 +1,22 @@
+
+export interface StateNode {
+    nodeId: string;
+    x: number
+    y: number;
+    title: string;
+    state_interface: StateNodeInterface;
+}
+
+export interface TransitionEdge {
+    id: string;
+    sourceNodeId: string;
+    sourceNodeOutputGate: string;
+    targetNodeId: string;
+
+    // title: string;
+}
+
+
 // states: [
 //     { name: "Idle", stateId: 45, infoText: "This is an Info Text", input_par_interface: {}, output_interface: ["Fail", "Success", "What?"] },
 //     { name: "MoveBaseToGoal", stateId: 46, infoText: "This is an Info Text", input_par_interface: {}, output_interface: ["Fail", "Success", "What?"] },

@@ -44,6 +44,10 @@ export class BehaviorTreeService {
     return this.http.post<any>(address + 'api/interface_data', {smId: smId});
   }
 
+  saveConfigData(smId: number, filename: string, config_data: any): Observable<any> {
+    return this.http.post<any>(address + 'api/save_config_data', {smId: smId, filename: filename, config: config_data});
+  }
+
 
   // getMockNodeData(): Observable<any> {
   //   return this.mockNodeData;

@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2024-03-14T16:43:33.964Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="T0eq_yCJTuEqUwd8N6Sj" version="23.1.5" type="device" pages="5">
+<mxfile host="Electron" modified="2024-03-18T12:27:51.956Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.0.4 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="oby0UWe3mEnuUhEy1Liq" version="24.0.4" type="device" pages="6">
   <diagram name="Page-1" id="TrC-4PNrgTcOm5PliKTd">
     <mxGraphModel dx="1434" dy="870" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -580,6 +580,41 @@
             <mxPoint x="624.38" y="-227" as="sourcePoint" />
             <mxPoint x="624.38" y="-1167" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="FCkNct04RAuhJ5eTdj3u" name="BehaviorTreeService">
+    <mxGraphModel dx="1434" dy="870" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="PjmkbO2kmkLFvpqgUoGD-12" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="PjmkbO2kmkLFvpqgUoGD-3" target="PjmkbO2kmkLFvpqgUoGD-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PjmkbO2kmkLFvpqgUoGD-14" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="PjmkbO2kmkLFvpqgUoGD-3" target="PjmkbO2kmkLFvpqgUoGD-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="PjmkbO2kmkLFvpqgUoGD-3" value="tree-canvas" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="190" width="160" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="PjmkbO2kmkLFvpqgUoGD-5" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="PjmkbO2kmkLFvpqgUoGD-3">
+          <mxGeometry y="26" width="160" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="PjmkbO2kmkLFvpqgUoGD-7" value="behavior-tree.service.ts" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="124" width="460" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="PjmkbO2kmkLFvpqgUoGD-8" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="PjmkbO2kmkLFvpqgUoGD-7">
+          <mxGeometry y="26" width="460" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="PjmkbO2kmkLFvpqgUoGD-9" value="+ getAvailableSMsandConfigs(): Observable&amp;lt;any&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="PjmkbO2kmkLFvpqgUoGD-7">
+          <mxGeometry y="34" width="460" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="PjmkbO2kmkLFvpqgUoGD-10" value="+ getConfigData(smId: number, filename: string): Observable&amp;lt;any&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="PjmkbO2kmkLFvpqgUoGD-7">
+          <mxGeometry y="60" width="460" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="PjmkbO2kmkLFvpqgUoGD-11" value="+&amp;nbsp;getInterfaceData(smId: number): Observable&amp;lt;any&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="PjmkbO2kmkLFvpqgUoGD-7">
+          <mxGeometry y="86" width="460" height="26" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

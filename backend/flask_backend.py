@@ -24,6 +24,7 @@ class FlaskBackend:
 
         self.add_endpoint('/api/config_data', 'get_config_data', self.send_config_data, methods=['POST'])
         self.add_endpoint('/api/interface_data', 'get_interface_data', self.send_interface_data, methods=['POST'])
+        self.add_endpoint('/api/save_config_data', 'save_config_data', self.save_config_data, methods=['POST'])
 
         # self.add_endpoint('/api/check_connection', 'check_connection', self.check_connection, methods=['GET'])
         # self.add_endpoint('/api/get_states', 'get_states', self.send_states, methods=['GET'])
@@ -67,8 +68,16 @@ class FlaskBackend:
 
         return jsonify(self.state_machines[sm_id].to_json_interface())
     
+    def save_config_data(self):
+        data = request.get_json()
+        sm_id = int(data['smId'])
+        filename = str(data['filename'])
+        config = data['config']
+        print(f'Saving config file {filename} for state machine {sm_id}')
+        success = self.state_machines[sm_id].save_config(filename, config)
+        return jsonify({'success': success})
 
-
+    
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=['GET'], *args, **kwargs):
         self.app.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
