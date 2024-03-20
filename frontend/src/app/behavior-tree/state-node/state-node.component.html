@@ -1,9 +1,11 @@
-<div class="rectangle" [style.left.px]="x" [style.top.px]="y" (mousedown)="onNodeDrag($event)">
+<div class="rectangle" [style.left.px]="x" [style.top.px]="y" (mousedown)="onNodeDrag($event)" (contextmenu)="onRightClick($event)">
     <div class="title">{{ getDisplayTitle() }}</div>
     <hr> <!-- Horizontal Divider -->
     <div class="information">
         {{state_interface.infoText}}
     </div>
+
+    
 
     <div class="input-parameters-container" *ngIf="parInterfaceNotEmpty()">
         <div *ngFor="let item of state_interface.input_par_interface | keyvalue" class="input-parameters">
@@ -28,3 +30,8 @@
     <div *ngFor="let outputGate of state_interface.output_interface" #bottomCircle class="circle bottom-circle"
         (mousedown)="onBotCircleDrag(outputGate)" [attr.data-output-gate]="outputGate" [title]="outputGate"></div>
 </div>
+
+<mat-menu #contextMenu="matMenu">
+    <button mat-menu-item (click)="onDelete()">Delete</button>
+</mat-menu>
+<div [matMenuTriggerFor]="contextMenu" #contextMenuTrigger="matMenuTrigger"></div>

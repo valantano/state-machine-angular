@@ -5,6 +5,7 @@ import { TransitionEdge, StateNode, StateNodeInterface } from './data_model';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { SharedServiceService } from './shared-service.service';
+import { Subscription } from 'rxjs';
 
 
 
@@ -38,7 +39,8 @@ export class EditorComponent {
   @Output() nodeDrag: EventEmitter<{mouseEvent: MouseEvent, nodeId: string}> = new EventEmitter<{mouseEvent: MouseEvent, nodeId: string}>();
 
 
-
+  nodeDeleteSub: Subscription;
+  edgeDeleteSub: Subscription;
 
   constructor(private router: Router, private behaviorTreeService: BehaviorTreeService, private sharedService: SharedServiceService) {
     const navigation = this.router.getCurrentNavigation();
@@ -51,6 +53,18 @@ export class EditorComponent {
     this.filename = state.filename;
     console.log('EditorComponent: File', state.filename, state.smId);
 
+    this.nodeDeleteSub = this.sharedService.nodeDeleteEvent.subscribe((event) => {
+      this.deleteNode(event.nodeId);
+    });
+    this.edgeDeleteSub = this.sharedService.edgeDeleteEvent.subscribe((event) => {
+      this.deleteEdge(event.sourceNodeId, event.targetNodeId, event.outputGate);
+    });
+
+    this.loadComponent();
+
+  }
+
+  loadComponent() {
     this.behaviorTreeService.getInterfaceData(this.stateMachineId).subscribe((data: any) => {
       console.log('TreeCanvas: getInterfaceData', data);
       for (let state of data.states) {
@@ -92,7 +106,7 @@ export class EditorComponent {
     const stateId = eventWithStateId.stateId;
     this.freshlyCreatedNodeId = this.createNode('State Node', mouse.clientX, mouse.clientY, this.node_interfaces[stateId]);
     console.log('EditorComponent: Node create', stateId);
-    this.sharedService.eventEmit.emit({mouseEvent: mouse, nodeId: this.freshlyCreatedNodeId});
+    this.sharedService.nodeCreatedEvent.emit({mouseEvent: mouse, nodeId: this.freshlyCreatedNodeId});
   }
 
   createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, nodeId?: string): string {
@@ -109,6 +123,34 @@ export class EditorComponent {
     }
     this.nodes[newNode.nodeId] = newNode;
     return newNode.nodeId;
+  }
+
+  deleteNode(nodeId: string): void {
+    console.log('EditorComponent: deleteNode', nodeId);
+    this.unsavedChanges = true;
+    delete this.nodes[nodeId];
+    for (let edgeId in this.edges) {
+      let edge = this.edges[edgeId];
+      if (edge.sourceNodeId === nodeId || edge.targetNodeId === nodeId) {
+        delete this.edges[edgeId];
+      }
+    }
+    // this.sharedService.redrawEdgesEvent.emit();
+  }
+
+  // Workaround on how to delete edges. TODO: fix how edges are drawn in order to delete them properly
+  deleteEdge(sourceNodeId: string, targetNodeId: string, outputGate: string): void {
+    console.log('EditorComponent: deleteEdge', sourceNodeId, targetNodeId, outputGate);
+    this.unsavedChanges = true;
+    const edge = this.findEdge(sourceNodeId, outputGate);
+    if (edge) {
+      delete this.edges[edge.id];
+    }
+  }
+  findEdge(sourceNodeId: string, sourceNodeOutputGate: string): any {
+    return Object.values(this.edges).find(edge => 
+      edge.sourceNodeId === sourceNodeId && edge.sourceNodeOutputGate === sourceNodeOutputGate
+    );
   }
 
   handleNodeDragEvent(): void {

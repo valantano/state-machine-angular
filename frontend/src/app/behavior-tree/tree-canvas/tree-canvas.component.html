@@ -11,9 +11,10 @@
     (topCircleEnter)="handleTopCircleEnter($event)" (topCircleLeave)="handleTopCircleLeave()">
   </app-state-node>
   <!-- <ng-container *ngIf="viewInitialized"> -->
-  <app-transition-edge *ngFor="let edge of edges | keyvalue" class="drawn-edge"
-    [sourceId]="edge.value.sourceNodeId" [targetId]="edge.value.targetNodeId" [sourceNodeOutputGate]="edge.value.sourceNodeOutputGate">
-  </app-transition-edge>
+
+    <app-transition-edge *ngFor="let edge of edges | keyvalue" class="drawn-edge"
+    [sourceId]="edge.value.sourceNodeId" [targetId]="edge.value.targetNodeId" [sourceNodeOutputGate]="edge.value.sourceNodeOutputGate" [edgeId]="edge.value.id">
+    </app-transition-edge>
 
  
   

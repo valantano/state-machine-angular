@@ -40,35 +40,61 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   private draggedNode: any; // Change the type as per your node structure
 
   nodeCreationSubscription: Subscription;
+  // redrawSubscription: Subscription;
+  deleteNodeSubscription: Subscription;
+  deleteEdgeSubscription: Subscription;
 
   
   constructor(private cdRef: ChangeDetectorRef, private sharedService: SharedServiceService) { 
-    this.nodeCreationSubscription = this.sharedService.eventEmit.subscribe((event) => {
+    this.nodeCreationSubscription = this.sharedService.nodeCreatedEvent.subscribe((event) => {
       console.log('TreeCanvas: Node created', event);
       const [clientX, clientY] = this.offsetXYCoordsInverse(event.mouseEvent.clientX, event.mouseEvent.clientY);    // Adjust to the graph container position
       this.handleNodeDrag({mouseEvent: {clientX: clientX, clientY: clientY}, nodeId: event.nodeId});      
     });
+
+    this.deleteNodeSubscription = this.sharedService.nodeDeleteEvent.subscribe((event) => {
+      this.startRedrawJob();
+    });
+    this.deleteEdgeSubscription = this.sharedService.edgeDeleteEvent.subscribe((event) => {
+      this.startRedrawJob();
+    });
+
   }
 
   ngOnInit(): void {
-    
-
-    setTimeout(() => { // needed because of bug. Otherwise the edges are not drawn when opening the editor for the first time. Appeared after switching to backend instead of mock data
-      this.redrawEdges();
-    }, 300); // Maybe timeout needs to be even higher on some systems?
+    this.startRedrawJob();// needed because of bug. Otherwise the edges are not drawn when opening the editor for the first time. Appeared after switching to backend instead of mock data
   }
 
 
   ngAfterViewInit(): void {
-    
     this.redrawEdges();
     this.cdRef.detectChanges();
   }
+
+  private redrawIntervalId: any;
+  startRedrawJob(): void {
+    console.log('TreeCanvas: Start redraw job');
+    if (this.redrawIntervalId) {  // ensure only one running job
+      this.stopRedrawJob();
+    }
+    this.redrawIntervalId = setInterval(() => {
+      this.redrawEdges();
+    }, 50);
+  }
+
+  stopRedrawJob(): void {
+    if (this.redrawIntervalId) {
+      console.log('TreeCanvas: Stop redraw job');
+      clearInterval(this.redrawIntervalId);
+    }
+  }
+
 
   // Redraws the edges between the nodes
   // This is either called by the redrawEdgesJob or when the nodes are being dragged
   // Or in the end of the mouseUp event to also draw the possible new edge
   redrawEdges() {
+    console.log('TreeCanvas: Redraw edges');
     this.transitionEdges.forEach(edge => {
       const sourceNode = this.getStateNodeComponentById(edge.sourceId);
       const targetNode = this.getStateNodeComponentById(edge.targetId);
@@ -78,6 +104,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
 
         [edge.startX, edge.startY] = this.offsetXYCoords(sourceCircle.x, sourceCircle.y);
         [edge.endX, edge.endY] = this.offsetXYCoords(targetCircle.x, targetCircle.y);
+        this.stopRedrawJob();
       }
     });
   }
@@ -135,11 +162,14 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
       const sourceId = this.sourceNodeId;   // make sure values are not changed during the drawing
       const targetId = this.targetNodeId;
       const outputGate = this.outputGate;
-      if (sourceId == "" || targetId == "") {
-        console.error('TreeCanvas: Invalid source or target id');
-      } else {
+      if (sourceId != "" && targetId != "") {
         this.addEdge(sourceId, targetId, outputGate);
+      } else if (sourceId != "" && targetId == "") {
+        this.deleteEdge(sourceId, targetId, outputGate);
+      } else {
+        console.error('TreeCanvas: Invalid source or target id');
       }
+
   
       this.isDrawing = false;
       this.sourceNodeId = "";
@@ -156,6 +186,11 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
     console.log('TreeCanvas: addEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
     this.addEdgeEvent.emit({sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, sourceNodeOutputGate: sourceNodeOutputGate});
+  }
+
+  deleteEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
+    console.log('TreeCanvas: deleteEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
+    this.sharedService.edgeDeleteEvent.emit({sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate});
   }
 
   // Listens to Output circleDrag from StateNodeComponent

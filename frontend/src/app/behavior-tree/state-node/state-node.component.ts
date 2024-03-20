@@ -1,5 +1,7 @@
 import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, EventEmitter, Output, HostListener, ViewChildren, Query, QueryList} from '@angular/core';
 import { StateNodeInterface } from '../editor/data_model';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { SharedServiceService } from '../editor/shared-service.service';
 
 @Component({
   selector: 'app-state-node',
@@ -11,7 +13,9 @@ export class StateNodeComponent {
   @ViewChildren('bottomCircle') bottomCircles!: QueryList<ElementRef>;
   @ViewChild('topCircle', { static: false }) topCircle!: ElementRef;
 
-  constructor() {
+  @ViewChild(MatMenuTrigger) contextMenuTrigger!: MatMenuTrigger;
+
+  constructor(private sharedService: SharedServiceService) {
     if (this.state_interface === null) {
       throw new Error('StateNode: state_interface is null');
     }
@@ -41,8 +45,21 @@ export class StateNodeComponent {
   }
 
   onNodeDrag(event: MouseEvent) {
-    console.log('StateNode: Send Node drag to TreeCanvas');
-    this.nodeDrag.emit({mouseEvent: event, nodeId: this.nodeId});
+    if (event.button === 0){
+      console.log('StateNode: Send Node drag to TreeCanvas');
+      this.nodeDrag.emit({mouseEvent: event, nodeId: this.nodeId});
+    }
+  }
+
+  onRightClick(event: MouseEvent) {
+    console.log('StateNode: Right click', event);
+    event.preventDefault();
+    this.contextMenuTrigger.openMenu();
+  }
+
+  onDelete(){
+    console.log('StateNode: Delete', this.nodeId);
+    this.sharedService.nodeDeleteEvent.emit({nodeId: this.nodeId});
   }
 
   onBotCircleDrag(outputGate: string): void {

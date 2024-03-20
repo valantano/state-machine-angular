@@ -1,12 +1,11 @@
-import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, HostListener} from '@angular/core';
+import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, HostListener, ViewChild} from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { SharedServiceService } from '../editor/shared-service.service';
+import { TransitionEdge } from '../editor/data_model';
 
 @Component({
   selector: 'app-transition-edge',
-  template: `<svg>
-  <!-- <line [attr.x1]="startX" [attr.y1]="startY" [attr.x2]="endX" [attr.y2]="endY" /> -->
-  <path class="pathclass" [attr.d]="getPath()" stroke="black" fill="transparent" stroke-linejoin="round" stroke-linecap="round" stroke-width="10"/>
-
-</svg>`,
+  templateUrl: './transition-edge.component.html',
   styleUrl: './transition-edge.component.scss'
 })
 export class TransitionEdgeComponent {
@@ -15,13 +14,20 @@ export class TransitionEdgeComponent {
   @Input() endX: number = 0;
   @Input() endY: number = 0;
 
+  @Input() edgeId: string = "";
   @Input() sourceId: string = "";
   @Input() targetId: string = "";
   @Input() sourceNodeOutputGate: string = "Default";
 
-  getPath(): string {
+  @ViewChild(MatMenuTrigger) contextMenuTrigger!: MatMenuTrigger;
 
-    
+  // This way only the last drawn edge is available to be hovered or selected
+  // This is since for each edge a new svg is created and obscuring the previous one
+  // To fix this one would need to only create one svg and draw all paths in this svg
+  // This requires a different approach to draw the edges
+  // TODO: Implement this
+
+  getPath(): string { // Path is drawn in redrawEdges. There the soure and target ids are used. See tree-canvas
     if (this.startY > this.endY) {
       const belowStartY = this.startY + 50;
       const aboveEndY = this.endY - 50;
@@ -42,9 +48,26 @@ export class TransitionEdgeComponent {
       return `M ${this.startX} ${this.startY} C ${controlPointStartX} ${controlPointStartY} ${controlPointEndX} ${controlPointEndY} ${this.endX} ${this.endY}`;
 
     }
-  
   }
 
+
+  constructor(private sharedService: SharedServiceService) {
+  }
+
+  onRightClick(event: MouseEvent) {
+    console.log('TransitionEdge: Right click', event);
+    // event.preventDefault();
+    // this.contextMenuTrigger.openMenu();
+  }
+
+  onDelete(){
+    console.log('TransitionEdge: Delete', this.edgeId);
+    // this.sharedService.edgeDeleteEvent.emit({edgeId: this.edgeId});
+  }
+  onMouseOver(event: MouseEvent) {
+    // const target = event.target as SVGElement;
+    // target.parentNode?.appendChild(target);
+  }
 
 
 }
