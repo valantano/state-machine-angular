@@ -48,7 +48,7 @@ export class LoaderComponent {
 
         this.state_machines[sm.id] = sm;
       }
-      if (Object.keys(this.state_machines).length > 0) {
+      if (Object.keys(this.state_machines).length > 0 && this.selectedOption === "") {
         this.selectedOption = Object.keys(this.state_machines)[0];
       }
 
