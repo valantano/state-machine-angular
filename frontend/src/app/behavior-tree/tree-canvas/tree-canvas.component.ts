@@ -2,7 +2,7 @@ import { AfterViewInit, Component, HostListener, QueryList, ViewChildren, Change
 import { StateNodeComponent } from '../state-node/state-node.component';
 import { TransitionEdgeComponent } from '../transition-edge/transition-edge.component';
 import { StateNode, TransitionEdge,StateNodeInterface } from '../editor/data_model';
-import { SharedServiceService } from '../shared-service.service';
+import { SharedServiceService } from '../editor/shared-service.service';
 import { Subscription } from 'rxjs';
 
 

@@ -48,6 +48,15 @@ export class BehaviorTreeService {
     return this.http.post<any>(address + 'api/save_config_data', {smId: smId, filename: filename, config: config_data});
   }
 
+  createNewConfig(smId: number, name: string, description: any): Observable<any> {
+    console.log('createNewConfig', smId, name, description);
+    return this.http.post<any>(address + 'api/create_new_config_file', {smId: smId, name: name, description: description});
+  }
+
+  deleteConfig(smId: number, filename: string): Observable<any> {
+    return this.http.post<any>(address + 'api/delete_config_file', {smId: smId, filename: filename});
+  }
+
 
 
 

@@ -26,8 +26,8 @@
                         <div>{{file['creationDate'] | date:'short'}}</div>
                         <div>{{file['lastModified'] | date:'short'}}</div>
                         <div>
-                            <button class="del-but" (click)="onDelete(file)">Delete</button>
-                            <button class="rename-but" (click)="onRename(file)">Rename</button>
+                            <button class="del-but" (click)="onDelete(file); $event.stopPropagation()">Delete</button>  <!-- Prevent onFileClick event -->
+                            <button class="rename-but" (click)="onRename(file); $event.stopPropagation()">Rename</button> <!-- Prevent onFileClick event -->
                         </div>
                     </div>
                 </td>
@@ -35,8 +35,9 @@
         </table>
 
     </div>
-
     <div>{{selectedOption}}</div>
+
+    <button class="add-but" (click)="onAdd()">+</button>
 
 
 </div>

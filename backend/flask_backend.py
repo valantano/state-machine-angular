@@ -25,6 +25,8 @@ class FlaskBackend:
         self.add_endpoint('/api/config_data', 'get_config_data', self.send_config_data, methods=['POST'])
         self.add_endpoint('/api/interface_data', 'get_interface_data', self.send_interface_data, methods=['POST'])
         self.add_endpoint('/api/save_config_data', 'save_config_data', self.save_config_data, methods=['POST'])
+        self.add_endpoint('/api/create_new_config_file', 'create_new_config_file', self.create_new_config_file, methods=['POST'])
+        self.add_endpoint('/api/delete_config_file', 'delete_config_file', self.delete_config_file, methods=['POST'])
 
         # self.add_endpoint('/api/check_connection', 'check_connection', self.check_connection, methods=['GET'])
         # self.add_endpoint('/api/get_states', 'get_states', self.send_states, methods=['GET'])
@@ -76,6 +78,24 @@ class FlaskBackend:
         print(f'Saving config file {filename} for state machine {sm_id}')
         success = self.state_machines[sm_id].save_config_file(filename, config)
         return jsonify({'success': success})
+    
+    def create_new_config_file(self):
+        data = request.get_json()
+        sm_id = int(data['smId'])
+        name = str(data['name'])
+        description = str(data['description'])
+        print(f'Creating new config file {name} for state machine {sm_id}')
+        success = self.state_machines[sm_id].create_new_config_file(name, description)
+        return jsonify({'success': success})
+    
+    def delete_config_file(self):
+        data = request.get_json()
+        sm_id = int(data['smId'])
+        filename = str(data['filename'])
+        print(f'Deleting config file {filename} for state machine {sm_id}')
+        success = self.state_machines[sm_id].delete_config_file(filename)
+        return jsonify({'success': success})
+
 
     
 

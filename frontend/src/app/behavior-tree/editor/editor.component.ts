@@ -4,7 +4,7 @@ import { BehaviorTreeService } from '../behavior-tree.service';
 import { TransitionEdge, StateNode, StateNodeInterface } from './data_model';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
-import { SharedServiceService } from '../shared-service.service';
+import { SharedServiceService } from './shared-service.service';
 
 
 

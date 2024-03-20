@@ -10,29 +10,57 @@
                 "title": "State 1",
                 "nodeId": "22048495-fa82-4347-a78c-e6daa705ad1c",
                 "stateId": 45,
-                "x": 783,
-                "y": 134,
+                "x": 820,
+                "y": 47,
                 "transitions": {
                     "Fail": "22048495-fa82-4347-a78c-e6daa705ad1e",
-                    "Success": "22048495-fa82-4347-a78c-e6daa705ad1d",
-                    "What?": "22048495-fa82-4347-a78c-e6daa705ad1e"
+                    "Success": "17b70f8f-2dc3-4960-b430-40b8415126ce",
+                    "What?": "bb4fff92-beca-4d66-9bce-101d672702c8"
                 }
             },
             {
                 "title": "State 2",
                 "nodeId": "22048495-fa82-4347-a78c-e6daa705ad1d",
                 "stateId": 46,
-                "x": 1271,
-                "y": 439,
+                "x": 1510,
+                "y": 733,
                 "transitions": {}
             },
             {
                 "title": "State 3",
                 "nodeId": "22048495-fa82-4347-a78c-e6daa705ad1e",
                 "stateId": 47,
-                "x": 730,
-                "y": 637,
+                "x": 735,
+                "y": 871,
                 "transitions": {}
+            },
+            {
+                "title": "State Node",
+                "nodeId": "d38971fa-f1b1-4553-8168-0775e840e480",
+                "stateId": 45,
+                "x": 1375,
+                "y": 88,
+                "transitions": {}
+            },
+            {
+                "title": "State Node",
+                "nodeId": "17b70f8f-2dc3-4960-b430-40b8415126ce",
+                "stateId": 46,
+                "x": 441,
+                "y": 405,
+                "transitions": {}
+            },
+            {
+                "title": "State Node",
+                "nodeId": "bb4fff92-beca-4d66-9bce-101d672702c8",
+                "stateId": 46,
+                "x": 1078,
+                "y": 354,
+                "transitions": {
+                    "Success": "22048495-fa82-4347-a78c-e6daa705ad1e",
+                    "Fail": "22048495-fa82-4347-a78c-e6daa705ad1d",
+                    "What?": "22048495-fa82-4347-a78c-e6daa705ad1d"
+                }
             }
         ]
     }

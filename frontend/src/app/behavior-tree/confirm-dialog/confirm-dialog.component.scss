@@ -1,0 +1,25 @@
+h1 {
+    margin: 5%;
+    font-weight: bold;
+}
+
+.dialog-content {
+    width: 90%;
+    margin-top: 0;
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+
+button {
+    margin: 5%;
+    border-radius: 5px;
+    border-color: #555;
+    border-width: 2px;
+    cursor: pointer;
+    background-color: #bbbbbb;
+}
+
+button:hover {
+    background-color: #555;
+}

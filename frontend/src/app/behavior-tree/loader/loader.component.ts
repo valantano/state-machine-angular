@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { BehaviorTreeService } from '../behavior-tree.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateConfigDialogComponent } from '../create-config-dialog/create-config-dialog.component';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 
 interface StateMachineList {
@@ -31,7 +34,11 @@ export class LoaderComponent {
   selectedOption: any = "";
 
   // 'state_machines': [ {'name': 'WZL1', 'id': 0, 'states': states}, {'name': 'WZL2', 'id': 1, 'states': states}]
-  constructor(private router: Router, private service: BehaviorTreeService) {
+  constructor(private router: Router, private service: BehaviorTreeService, private dialog: MatDialog) {
+    this.loadComponent();
+  }
+
+  loadComponent() {
     this.service.getAvailableSMsandConfigs().subscribe((data: any) => {
       console.log('LoaderComponent: getAvailableSMsandConfigs', data);
 
@@ -61,11 +68,48 @@ export class LoaderComponent {
   }
 
   onRename(file: File) {
-    console.log('Rename file', file);
+    console.log('LoaderComponent: Rename file', file);
   }
   onDelete(file: File) {
-    console.log('Delete file', file);
+    console.log('LoaderComponent: Delete file', file);
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '250px',
+      data: {
+        message: 'Are you sure you want to delete ' + file.filename + '?'
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.service.deleteConfig(this.selectedOption, file.filename).subscribe((data: any) => {
+          console.log('LoaderComponent: deleteConfig', data);
+          this.loadComponent();
+        });
+      }
+    });
     
+  }
+
+  onAdd() {
+    console.log('LoaderComponent: Open Create Config Dialog');
+    const dialogRef = this.dialog.open(CreateConfigDialogComponent, {
+      width: '450px',
+      // height: '400px',
+      data: {},
+      // panelClass: 'create-config-dialog'
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('LoaderComponent: Create Config Dialog was closed with: ', result);
+      if (result) {
+        this.service.createNewConfig(this.selectedOption, result.config_name, result.description).subscribe((data: any) => {
+          console.log('LoaderComponent: createNewConfig', data);
+          this.loadComponent();
+        });
+      }
+      // You can use the result here
+    });
   }
 
 }
