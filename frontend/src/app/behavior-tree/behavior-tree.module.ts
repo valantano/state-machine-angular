@@ -16,6 +16,8 @@ import { FormsModule } from '@angular/forms';
 import { CreateConfigDialogComponent } from './create-config-dialog/create-config-dialog.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { StartNodeComponent } from './start-node/start-node.component';
+import { DrawingEdgeComponent } from './drawing-edge/drawing-edge.component';
 
 
 
@@ -32,6 +34,8 @@ import { MatMenuModule } from '@angular/material/menu';
     LoaderComponent,
     CreateConfigDialogComponent,
     ConfirmDialogComponent,
+    StartNodeComponent,
+    DrawingEdgeComponent,
   ],
   imports: [
     CommonModule,

@@ -10,6 +10,7 @@ export class SharedServiceService {
   public nodeDeleteEvent: EventEmitter<{nodeId: string}> = new EventEmitter<{nodeId: string}>();
   public edgeDeleteEventWorkaround: EventEmitter<{sourceNodeId: string, targetNodeId: string, outputGate: string}> = new EventEmitter<{sourceNodeId: string, targetNodeId: string, outputGate: string}>();
   public edgeDeleteEvent: EventEmitter<{edgeId: string}> = new EventEmitter<{edgeId: string}>();
+  public setStartNodeEvent: EventEmitter<{targetNodeId: string}> = new EventEmitter<{targetNodeId: string}>();
 
 
   public sendStateNodeComponents: EventEmitter<{stateNodes: QueryList<StateNodeComponent>}> = new EventEmitter<{stateNodes: QueryList<StateNodeComponent>}>();

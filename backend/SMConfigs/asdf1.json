@@ -1,37 +1,37 @@
 {
     "state_machine_config": {
         "name": "asdf",
-        "lastModified": "2024-03-20T13:38:29.919168",
+        "lastModified": "2024-03-21T15:41:51.484190",
         "creationDate": "2024-03-20T13:38:00.269986",
         "description": "asdf1",
-        "startStateNode": "",
+        "startStateNode": "45b7e446-4bf1-438f-b370-7ef75048db87",
         "stateNodes": [
             {
                 "title": "State Node",
                 "nodeId": "0ae9c748-425f-4186-a840-e09f86bc59cd",
                 "stateId": 45,
-                "x": 996,
-                "y": 102,
+                "x": 1227,
+                "y": 300,
                 "transitions": {
+                    "Fail": "0ae9c748-425f-4186-a840-e09f86bc59cd",
                     "Success": "45b7e446-4bf1-438f-b370-7ef75048db87",
-                    "What?": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1",
-                    "Fail": "0ae9c748-425f-4186-a840-e09f86bc59cd"
+                    "What?": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1"
                 }
             },
             {
                 "title": "State Node",
                 "nodeId": "45b7e446-4bf1-438f-b370-7ef75048db87",
                 "stateId": 46,
-                "x": 765,
-                "y": 442,
+                "x": 652,
+                "y": 531,
                 "transitions": {}
             },
             {
                 "title": "State Node",
                 "nodeId": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1",
                 "stateId": 47,
-                "x": 1370,
-                "y": 475,
+                "x": 1601,
+                "y": 611,
                 "transitions": {}
             }
         ]

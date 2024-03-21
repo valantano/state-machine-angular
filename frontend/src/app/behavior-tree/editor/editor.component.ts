@@ -25,7 +25,7 @@ export class EditorComponent {
   lastModified: string = "";
   creationDate: string = "";
   description: string = "";
-  startStateNode: string = "";
+  startStateNodeId: string = "";
 
   // Data structures passed to the tree-canvas component
   nodes: { [id: string]: StateNode } = {};
@@ -42,6 +42,7 @@ export class EditorComponent {
   nodeDeleteSub: Subscription;
   edgeDeleteSubWorkaround: Subscription;
   edgeDeleteSub: Subscription;
+  setStartNodeSub: Subscription;
 
 
   constructor(private router: Router, private behaviorTreeService: BehaviorTreeService, private sharedService: SharedServiceService) {
@@ -63,6 +64,9 @@ export class EditorComponent {
     });
     this.edgeDeleteSub = this.sharedService.edgeDeleteEvent.subscribe((event) => {
       this.deleteEdge(event.edgeId);
+    });
+    this.setStartNodeSub = this.sharedService.setStartNodeEvent.subscribe((event) => {
+      this.setStartNode(event.targetNodeId);
     });
 
     this.loadComponent();
@@ -90,7 +94,7 @@ export class EditorComponent {
       this.lastModified = data.state_machine_config.lastModified;
       this.creationDate = data.state_machine_config.creationDate;
       this.description = data.state_machine_config.description;
-      this.startStateNode = data.state_machine_config.startStateNode;
+      this.startStateNodeId = data.state_machine_config.startStateNode;
       for (let node of data.state_machine_config.stateNodes) {
         this.createNode(node.title, node.x, node.y, this.node_interfaces[node.stateId], node.nodeId);
         for (let transition in node.transitions) {
@@ -199,8 +203,12 @@ export class EditorComponent {
       targetNodeId: targetNodeId
     }
 
-    console.log('TreeCanvas: addEdge', newEdge);
+    console.log('Editor: addEdge', newEdge);
     this.edges[newEdge.id] = newEdge;
+  }
+  setStartNode(nodeId: string): void {
+    this.unsavedChanges = true;
+    this.startStateNodeId = nodeId;
   }
 
   // Warn user if they try to leave the page with unsaved changes
@@ -260,7 +268,7 @@ export class EditorComponent {
         "lastModified": this.lastModified,
         "creationDate": this.creationDate,
         "description": this.description,
-        "startStateNode": this.startStateNode, // Assuming the first node is the start node
+        "startStateNode": this.startStateNodeId, // Assuming the first node is the start node
         "stateNodes": stateNodes
       }
     };

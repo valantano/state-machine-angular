@@ -1,7 +1,7 @@
 {
     "state_machine_config": {
         "name": "WZLStateMachine",
-        "lastModified": "2024-03-21T14:40:17.418241",
+        "lastModified": "2024-03-21T15:20:09.672001",
         "creationDate": "2019-07-01T00:00:00Z",
         "description": "This is a state machine",
         "startStateNode": "22048495-fa82-4347-a78c-e6daa705ad1c",
@@ -10,8 +10,8 @@
                 "title": "State 1",
                 "nodeId": "22048495-fa82-4347-a78c-e6daa705ad1c",
                 "stateId": 45,
-                "x": 820,
-                "y": 47,
+                "x": 525,
+                "y": 356,
                 "transitions": {
                     "Fail": "bb4fff92-beca-4d66-9bce-101d672702c8"
                 }
@@ -28,16 +28,16 @@
                 "title": "State Node",
                 "nodeId": "d38971fa-f1b1-4553-8168-0775e840e480",
                 "stateId": 45,
-                "x": 1375,
-                "y": 88,
+                "x": 1450,
+                "y": 153,
                 "transitions": {}
             },
             {
                 "title": "State Node",
                 "nodeId": "bb4fff92-beca-4d66-9bce-101d672702c8",
                 "stateId": 46,
-                "x": 1078,
-                "y": 354,
+                "x": 1266,
+                "y": 507,
                 "transitions": {
                     "Success": "22048495-fa82-4347-a78c-e6daa705ad1e"
                 }

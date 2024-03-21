@@ -5,6 +5,9 @@
   </div> -->
 <div class="outer">
 <div class="graph" (mouseup)="onMouseUp()">
+
+  <app-start-node class="start-node" [style.left.px]="800" [style.top.px]="100" (circleDrag)="handleCircleDrag($event)"></app-start-node>
+
   <app-state-node *ngFor="let node of nodes | keyvalue" class="state-node" [style.left.px]="node.value.x"
     [style.top.px]="node.value.y" [nodeId]="node.value.nodeId" [title]="node.value.title" [state_interface]="node.value.state_interface"
     (circleDrag)="handleCircleDrag($event)" (nodeDrag)="handleNodeDrag($event)"
@@ -17,6 +20,8 @@
    <!-- </svg> -->
     <!-- <app-transition-edges [edges]="edges" [nodes]="nodes"></app-transition-edges> -->
     <svg *ngIf="stateNodes">
+      <path  *ngIf="startNodeId != ''" class="pathclass" [attr.d]="getPath('start-node', startNodeId, 'Start')" stroke="black" fill="transparent" stroke-linejoin="round"
+          stroke-linecap="round" stroke-width="1"pointer-events="all"/>
       <path  *ngFor = "let edge of edges | keyvalue" class="pathclass" [attr.d]="getPath(edge.value.sourceNodeId, edge.value.targetNodeId, edge.value.sourceNodeOutputGate)" stroke="black" fill="transparent" stroke-linejoin="round"
           stroke-linecap="round" stroke-width="1" (contextmenu)="onRightClick($event, edge.value.id)" (mouseover)="onMouseOver($event, edge.value.id)" pointer-events="all"/>
     </svg>
@@ -24,8 +29,8 @@
  
   
   <!-- circleDrag is output of app-state-node and not an event. Therefore, it needs to be forwarded to handleCircleDrag this way. -->
-  <app-transition-edge class="drawing-edge" *ngIf="isDrawing" [startX]="startXCircle" [startY]="startYCircle"
-    [endX]="currentX" [endY]="currentY"></app-transition-edge>
+  <app-drawing-edge class="drawing-edge" *ngIf="isDrawing" [startX]="startXCircle" [startY]="startYCircle"
+    [endX]="currentX" [endY]="currentY"></app-drawing-edge>
 
 </div></div>
 

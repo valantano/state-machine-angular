@@ -1,0 +1,29 @@
+{
+    "state_machine_config": {
+        "name": "test",
+        "lastModified": "2024-03-21T15:41:01.354495",
+        "creationDate": "2024-03-21T15:38:27.727676",
+        "description": "f",
+        "startStateNode": "a330ebf7-7c3b-4ae7-9412-e84ffdcb3818",
+        "stateNodes": [
+            {
+                "title": "State Node",
+                "nodeId": "e32074ea-7404-4cde-b33a-5741c9b40996",
+                "stateId": 45,
+                "x": 999,
+                "y": 429,
+                "transitions": {}
+            },
+            {
+                "title": "State Node",
+                "nodeId": "a330ebf7-7c3b-4ae7-9412-e84ffdcb3818",
+                "stateId": 47,
+                "x": 571,
+                "y": 339,
+                "transitions": {
+                    "Fail": "e32074ea-7404-4cde-b33a-5741c9b40996"
+                }
+            }
+        ]
+    }
+}

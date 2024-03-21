@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, HostListener, QueryList, ViewChildren, ChangeDetectorRef, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { StateNodeComponent } from '../state-node/state-node.component';
-import { StateNode, TransitionEdge,StateNodeInterface } from '../editor/data_model';
+import { StateNode, TransitionEdge, StateNodeInterface } from '../editor/data_model';
 import { SharedServiceService } from '../editor/shared-service.service';
 import { Subscription } from 'rxjs';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { StartNodeComponent } from '../start-node/start-node.component';
 
 
 @Component({
@@ -11,17 +12,19 @@ import { MatMenuTrigger } from '@angular/material/menu';
   templateUrl: './tree-canvas.component.html',
   styleUrl: './tree-canvas.component.scss',
 })
-export class TreeCanvasComponent implements AfterViewInit, OnInit{
+export class TreeCanvasComponent implements AfterViewInit, OnInit {
 
   @ViewChildren(StateNodeComponent) stateNodes!: QueryList<StateNodeComponent>;   // if x,y values change the corresponding x,y values in nodes also changes
+  @ViewChild(StartNodeComponent) startNode!: StartNodeComponent;
 
   @Input() nodes: { [id: string]: StateNode } = {};
-  @Input() node_interfaces: {[id: number]: StateNodeInterface } = {};
+  @Input() node_interfaces: { [id: number]: StateNodeInterface } = {};
   @Input() edges: { [id: string]: TransitionEdge } = {};
+  @Input() startNodeId: string = "";
 
-  @Output() addEdgeEvent: EventEmitter<{sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string}> = new EventEmitter<{sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string}>();
+  @Output() addEdgeEvent: EventEmitter<{ sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string }> = new EventEmitter<{ sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string }>();
   @Output() nodeDragEvent: EventEmitter<void> = new EventEmitter<void>();
-  
+
   startXCircle: number = 0;
   startYCircle: number = 0;
   private startXNode: number = 0;
@@ -33,28 +36,28 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   private sourceNodeId: string = "";        // The id of the node that the line is being drawn from ("" if nothing is being drawn currently)
   private targetNodeId: string = "";        // The id of the node that the line is being drawn to ("" if no node is being hovered over while drawing)
 
-  
+
 
   private isDragging = false;
   private draggedNode: any; // Change the type as per your node structure
 
   nodeCreationSubscription: Subscription;
 
-  
-  constructor(private cdRef: ChangeDetectorRef, private sharedService: SharedServiceService) { 
+
+  constructor(private cdRef: ChangeDetectorRef, private sharedService: SharedServiceService) {
     this.nodeCreationSubscription = this.sharedService.nodeCreatedEvent.subscribe((event) => {
       console.log('TreeCanvas: Node created', event);
       const [clientX, clientY] = this.offsetXYCoordsInverse(event.mouseEvent.clientX, event.mouseEvent.clientY);    // Adjust to the graph container position
-      this.handleNodeDrag({mouseEvent: {clientX: clientX, clientY: clientY}, nodeId: event.nodeId});      
+      this.handleNodeDrag({ mouseEvent: { clientX: clientX, clientY: clientY }, nodeId: event.nodeId });
     });
 
   }
 
   ngOnInit(): void {
-    
+
   }
   ngAfterViewInit(): void {
-    
+
   }
 
   // Scaling Not workin at the moment /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
@@ -111,14 +114,19 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
       const targetId = this.targetNodeId;
       const outputGate = this.outputGate;
       if (sourceId != "" && targetId != "") {
-        this.addEdge(sourceId, targetId, outputGate);
+        if (sourceId == "start-node") {
+          this.setStartNode(targetId);
+        }
+        else {
+          this.addEdge(sourceId, targetId, outputGate);
+        }
       } else if (sourceId != "" && targetId == "") {
         this.deleteEdge(sourceId, targetId, outputGate);
       } else {
         console.error('TreeCanvas: Invalid source or target id');
       }
 
-  
+
       this.isDrawing = false;
       this.sourceNodeId = "";
       this.targetNodeId = "";
@@ -131,11 +139,15 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   }
   addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
     console.log('TreeCanvas->Editor: addEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
-    this.addEdgeEvent.emit({sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, sourceNodeOutputGate: sourceNodeOutputGate});
+    this.addEdgeEvent.emit({ sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, sourceNodeOutputGate: sourceNodeOutputGate });
   }
   deleteEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
     console.log('TreeCanvas->Editor: deleteEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
-    this.sharedService.edgeDeleteEventWorkaround.emit({sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate});
+    this.sharedService.edgeDeleteEventWorkaround.emit({ sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate });
+  }
+  setStartNode(targetNodeId: string): void {
+    console.log('TreeCanvas->Editor: setStartNode', targetNodeId);
+    this.sharedService.setStartNodeEvent.emit({ targetNodeId: targetNodeId });
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -191,9 +203,9 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  
 
-  
+
+
   // Drawing Edges ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   getPath(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): string {
     const [startX, startY, endX, endY] = this.getStartEndPos(sourceNodeId, targetNodeId, sourceNodeOutputGate);
@@ -202,7 +214,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
       const aboveEndY = endY - 50;
       let besideX;
       if (startX > endX) {
-      
+
         besideX = Math.max(startX + 200, endX + 200);
       } else {
         besideX = Math.min(startX - 200, endX - 200);
@@ -219,24 +231,24 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
   }
   getStartEndPos(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): [number, number, number, number] {
     console.log('TreeCanvas: getStartEndPos');
-      const sourceNode = this.getStateNodeComponentById(sourceNodeId);
-      const targetNode = this.getStateNodeComponentById(targetNodeId);
-      if (sourceNode && targetNode) {
-        const sourceCircle = sourceNode.getBottomCircleScreenPosition(sourceNodeOutputGate);
-        const targetCircle = targetNode.getTopCircleMidpointPosition();
+    const sourceNode = sourceNodeId === "start-node" ? this.startNode : this.getStateNodeComponentById(sourceNodeId);
+    const targetNode = this.getStateNodeComponentById(targetNodeId);
+    if (sourceNode && targetNode) {
+      const sourceCircle = sourceNode.getBottomCircleScreenPosition(sourceNodeOutputGate);
+      const targetCircle = targetNode.getTopCircleMidpointPosition();
 
-        const [startX, startY] = this.offsetXYCoords(sourceCircle.x, sourceCircle.y);
-        const [endX, endY] = this.offsetXYCoords(targetCircle.x, targetCircle.y);
-        return [startX, startY, endX, endY];
-      } else {
-        console.log('TreeCanvas: getStartEndPos: Could not find source or target node');
-        return [0, 0, 0, 0]
-      }
+      const [startX, startY] = this.offsetXYCoords(sourceCircle.x, sourceCircle.y);
+      const [endX, endY] = this.offsetXYCoords(targetCircle.x, targetCircle.y);
+      return [startX, startY, endX, endY];
+    } else {
+      console.log('TreeCanvas: getStartEndPos: Could not find source or target node');
+      return [0, 0, 0, 0]
+    }
   }
-  // Used to get the StateNodeComponent to get the start and end positions for the edges later on
+    // Used to get the StateNodeComponent to get the start and end positions for the edges later on
   getStateNodeComponentById(id: string): StateNodeComponent | undefined {
     if (this.stateNodes) {
-    return this.stateNodes.find(node => node.nodeId === id);
+      return this.stateNodes.find(node => node.nodeId === id);
     } else {
       return undefined;
     }
@@ -253,9 +265,9 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit{
     // this.contextMenuTrigger.menuPositionX = 
     this.contextMenuTrigger.openMenu();
   }
-  onDelete(){
+  onDelete() {
     console.log('TreeCanvas->Editor: Delete', this.selectedEdgeId);
-    this.sharedService.edgeDeleteEvent.emit({edgeId: this.selectedEdgeId});
+    this.sharedService.edgeDeleteEvent.emit({ edgeId: this.selectedEdgeId });
   }
   onMouseOver(event: MouseEvent, edgeId: string) {
     // const target = event.target as SVGElement;
