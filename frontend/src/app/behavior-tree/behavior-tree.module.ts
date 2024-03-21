@@ -1,7 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StateNodeComponent } from './state-node/state-node.component';
-import { TransitionEdgeComponent } from './transition-edge/transition-edge.component';
 import { TreeCanvasComponent } from './tree-canvas/tree-canvas.component';
 import { OverlayComponent } from './overlay/overlay.component';
 import { ControlPanelComponent } from './control-panel/control-panel.component';
@@ -24,7 +23,6 @@ import { MatMenuModule } from '@angular/material/menu';
 @NgModule({
   declarations: [
     StateNodeComponent,
-    TransitionEdgeComponent,
     TreeCanvasComponent,
     OverlayComponent,
     ControlPanelComponent,
