@@ -11,10 +11,15 @@
     (topCircleEnter)="handleTopCircleEnter($event)" (topCircleLeave)="handleTopCircleLeave()">
   </app-state-node>
   <!-- <ng-container *ngIf="viewInitialized"> -->
-
-    <app-transition-edge *ngFor="let edge of edges | keyvalue" class="drawn-edge"
-    [sourceId]="edge.value.sourceNodeId" [targetId]="edge.value.targetNodeId" [sourceNodeOutputGate]="edge.value.sourceNodeOutputGate" [edgeId]="edge.value.id">
-    </app-transition-edge>
+      <!-- <app-transition-edge *ngFor="let edge of edges | keyvalue" class="drawn-edge"
+      [sourceId]="edge.value.sourceNodeId" [targetId]="edge.value.targetNodeId" [sourceNodeOutputGate]="edge.value.sourceNodeOutputGate" [edgeId]="edge.value.id">
+      </app-transition-edge> -->
+   <!-- </svg> -->
+    <!-- <app-transition-edges [edges]="edges" [nodes]="nodes"></app-transition-edges> -->
+    <svg *ngIf="stateNodes">
+      <path  *ngFor = "let edge of edges | keyvalue" class="pathclass" [attr.d]="getPath(edge.value.sourceNodeId, edge.value.targetNodeId, edge.value.sourceNodeOutputGate)" stroke="black" fill="transparent" stroke-linejoin="round"
+          stroke-linecap="round" stroke-width="1" (contextmenu)="onRightClick($event, edge.value.id)" (mouseover)="onMouseOver($event, edge.value.id)" pointer-events="all"/>
+    </svg>
 
  
   
@@ -23,3 +28,8 @@
     [endX]="currentX" [endY]="currentY"></app-transition-edge>
 
 </div></div>
+
+<mat-menu #contextMenu="matMenu" [overlapTrigger]="true" [style.left.px]="100">
+  <button mat-menu-item (click)="onDelete()">Delete</button>
+</mat-menu>
+<div [matMenuTriggerFor]="contextMenu" #contextMenuTrigger="matMenuTrigger" ></div>

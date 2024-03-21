@@ -40,7 +40,9 @@ export class EditorComponent {
 
 
   nodeDeleteSub: Subscription;
+  edgeDeleteSubWorkaround: Subscription;
   edgeDeleteSub: Subscription;
+
 
   constructor(private router: Router, private behaviorTreeService: BehaviorTreeService, private sharedService: SharedServiceService) {
     const navigation = this.router.getCurrentNavigation();
@@ -56,8 +58,11 @@ export class EditorComponent {
     this.nodeDeleteSub = this.sharedService.nodeDeleteEvent.subscribe((event) => {
       this.deleteNode(event.nodeId);
     });
+    this.edgeDeleteSubWorkaround = this.sharedService.edgeDeleteEventWorkaround.subscribe((event) => {
+      this.deleteEdgeWorkaround(event.sourceNodeId, event.targetNodeId, event.outputGate);
+    });
     this.edgeDeleteSub = this.sharedService.edgeDeleteEvent.subscribe((event) => {
-      this.deleteEdge(event.sourceNodeId, event.targetNodeId, event.outputGate);
+      this.deleteEdge(event.edgeId);
     });
 
     this.loadComponent();
@@ -139,7 +144,7 @@ export class EditorComponent {
   }
 
   // Workaround on how to delete edges. TODO: fix how edges are drawn in order to delete them properly
-  deleteEdge(sourceNodeId: string, targetNodeId: string, outputGate: string): void {
+  deleteEdgeWorkaround(sourceNodeId: string, targetNodeId: string, outputGate: string): void {
     console.log('EditorComponent: deleteEdge', sourceNodeId, targetNodeId, outputGate);
     this.unsavedChanges = true;
     const edge = this.findEdge(sourceNodeId, outputGate);
@@ -151,6 +156,11 @@ export class EditorComponent {
     return Object.values(this.edges).find(edge => 
       edge.sourceNodeId === sourceNodeId && edge.sourceNodeOutputGate === sourceNodeOutputGate
     );
+  }
+  deleteEdge(edgeId: string): void {
+    console.log('EditorComponent: deleteEdge', edgeId);
+    this.unsavedChanges = true;
+    delete this.edges[edgeId];
   }
 
   handleNodeDragEvent(): void {

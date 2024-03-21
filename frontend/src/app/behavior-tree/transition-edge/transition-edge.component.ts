@@ -1,4 +1,4 @@
-import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, HostListener, ViewChild} from '@angular/core';
+import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, HostListener, ViewChild, ElementRef, OnInit} from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { SharedServiceService } from '../editor/shared-service.service';
 import { TransitionEdge } from '../editor/data_model';
@@ -9,6 +9,7 @@ import { TransitionEdge } from '../editor/data_model';
   styleUrl: './transition-edge.component.scss'
 })
 export class TransitionEdgeComponent {
+
   @Input() startX: number = 0;
   @Input() startY: number = 0;
   @Input() endX: number = 0;
@@ -28,6 +29,7 @@ export class TransitionEdgeComponent {
   // TODO: Implement this
 
   getPath(): string { // Path is drawn in redrawEdges. There the soure and target ids are used. See tree-canvas
+    console.log('TransitionEdge: getPath');
     if (this.startY > this.endY) {
       const belowStartY = this.startY + 50;
       const aboveEndY = this.endY - 50;

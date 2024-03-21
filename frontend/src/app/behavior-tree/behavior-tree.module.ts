@@ -33,7 +33,7 @@ import { MatMenuModule } from '@angular/material/menu';
     StateNodeBlueprintComponent,
     LoaderComponent,
     CreateConfigDialogComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
   ],
   imports: [
     CommonModule,
