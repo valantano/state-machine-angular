@@ -3,6 +3,7 @@
 from flask_backend import FlaskBackend
 from state_machine import StateMachine
 from state import State
+import time
 
 # { name: "Idle", stateId: 45, infoText: "This is an Info Text and also especially long. So I mean very very very long. But not that long either", input_par_interface: {}, output_interface: ["Fail", "Success", "What?"] },
 #     { name: "MoveBaseToGoal", stateId: 46, infoText: "This is an Info Text", input_par_interface: {'GoalPose': {'type': 'enum', 'values': ['GoalPose1', 'GoalPose2']}, 'Number-Select': {'type': 'number'}, 'String-Enter': {'type': 'string'}, 'Boolean-Select': {'type': 'boolean'}}, output_interface: ["Fail", "Success", "What?"] },
@@ -17,8 +18,10 @@ class IdleState(State):
         self.output_interface = ["Success", "Fail", "What?"]
         self.infoText = "This is an Info Text and also especially long. So I mean very very very long. But not that long either"
 
-    def _state_code():
+    def _state_code(self, input_parameters, global_vars):
         # implement state here
+        print("Idle")
+        time.sleep(1)
         return "Fail"
 
 
@@ -33,8 +36,10 @@ class MoveBaseToGoalState(State):
         self.output_interface = ["Success", "Fail", "What?"]
         self.infoText = "This is an Info Text"
 
-    def _state_code():
+    def _state_code(self, input_parameters, global_vars):
         # implement state here
+        print("MoveBaseToGoal")
+        time.sleep(5)
         return "Fail"
 
 
@@ -46,8 +51,10 @@ class SpinState(State):
         self.output_interface = ["Success", "Fail"]
         self.infoText = "This is an Info Text"
 
-    def _state_code():
+    def _state_code(self, input_parameters, global_vars):
         # implement state here
+        print("Spin")
+        time.sleep(3)
         return "Fail"
 
 import os

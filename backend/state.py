@@ -18,25 +18,27 @@ class State:
         self.infoText = "This is an Info Text"
 
 
-    def _state_code():
+    def _state_code(self, input_parameters, global_vars):
         # implement state here
         return "Fail"
 
 
-    def execute(self, blackboard, input_parameters):
-        self._before_execute()
-        self._state_code()
-        self._after_execute()
-        return None
+    def execute(self, input_parameters, global_vars=None):
+        self._before_execute(input_parameters, global_vars)
+        outcome: str = self._state_code(input_parameters, global_vars)
+        outcome = self._after_execute(outcome)
+        return outcome
     
-    def _before_execute():
+    def _before_execute(self, input_parameters, global_vars):
         # check if input is valid if no input then ask frontend for it
+        # check if global_vars are valid
+        # send state is now executing message to frontend
         return None
     
-    def _after_execute():
-        # check if output is valid
-
-        return None
+    def _after_execute(self, outcome: str):
+        # check if outcome is valid
+        # send state is now finished message to frontend
+        return outcome
     
     def to_json(self):
         return {'name': self.name, 'stateId': self.id, 'infoText': self.infoText, 'input_par_interface': self.input_par_interface, 'output_interface': self.output_interface}
@@ -51,7 +53,7 @@ class IdleState(State):
         self.input_par_interface = {'enum_example': {'type': 'enum', 'value': EnumExample()}, 'input2': {'number_example': 'number', 'value': 0.0}, 'string_example': {'type': 'string', 'value': 'text or path'}, 'boolean_example': {'type': 'boolean', 'value': False}}
         self.output_interface = ["Fail", "Success", "What?"]
 
-    def _state_code():
+    def _state_code(self, input_parameters, global_vars=None):
         # implement state here
         return "Fail"
 

@@ -41,9 +41,8 @@ export class EditorComponent {
   edgeDeleteSubWorkaround: Subscription;
   edgeDeleteSub: Subscription;
   setStartNodeSub: Subscription;
+  startEventSub: Subscription;
   
-
-
   constructor(private router: Router, private behaviorTreeService: BehaviorTreeService, private sharedService: SharedServiceService) {
     const navigation = this.router.getCurrentNavigation();
     if (!navigation) {
@@ -66,6 +65,9 @@ export class EditorComponent {
     });
     this.setStartNodeSub = this.sharedService.setStartNodeEvent.subscribe((event) => {
       this.setStartNode(event.targetNodeId);
+    });
+    this.startEventSub = this.sharedService.startEvent.subscribe(() => {
+      this.handleStartClick();
     });
 
     this.loadComponent();
@@ -228,7 +230,11 @@ export class EditorComponent {
   }
 
   handleStartClick(): void {
-
+    console.log('EditorComponent: Start button clicked');
+    const configData = this.convertToConfigData();
+    this.behaviorTreeService.startStateMachine(this.stateMachineId, configData).subscribe((data: any) => {
+      console.log('EditorComponent: startStateMachine', data);
+    });
   }
 
   handleSaveClick(): void {

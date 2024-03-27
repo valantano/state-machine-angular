@@ -230,7 +230,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     }
   }
   getStartEndPos(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): [number, number, number, number] {
-    console.log('TreeCanvas: getStartEndPos');
+    // console.log('TreeCanvas: getStartEndPos');
     const sourceNode = sourceNodeId === "start-node" ? this.startNode : this.getStateNodeComponentById(sourceNodeId);
     const targetNode = this.getStateNodeComponentById(targetNodeId);
     if (sourceNode && targetNode) {
@@ -241,7 +241,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
       const [endX, endY] = this.offsetXYCoords(targetCircle.x, targetCircle.y);
       return [startX, startY, endX, endY];
     } else {
-      console.log('TreeCanvas: getStartEndPos: Could not find source or target node');
+      // console.log('TreeCanvas: getStartEndPos: Could not find source or target node');
       return [0, 0, 0, 0]
     }
   }

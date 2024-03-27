@@ -57,6 +57,9 @@ export class BehaviorTreeService {
     return this.http.post<any>(address + 'api/delete_config_file', {smId: smId, filename: filename});
   }
 
+  startStateMachine(smId: number, config_data: any): Observable<any> {
+    return this.http.post<any>(address + 'api/start_state_machine', {smId: smId, config: config_data});
+  }
 
 
 

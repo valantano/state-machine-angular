@@ -2,6 +2,7 @@ import os
 import json
 from datetime import datetime
 
+
 from state import State
 
 
@@ -16,16 +17,28 @@ class StateMachine:
         for state in state_interface:
             self.states[state.id] = state
 
-        self.current_state = 'state1'
-        self.next_state = None
+        self.global_vars = {}        # global variables
 
-        self.blackboard = {}        # global variables
+    def start(self, config):
+        nodes = {}  # each node in the graph corresponds to one of the states in the state machine with different input parameters transitions etc.
+        for node in config['stateNodes']:
+            nodes[node['nodeId']] = node
+        
+        current_node_id = config['startStateNode']
 
-    def start(config):
-        current_state = config['initial_state']
-        # execute state
-        # get next state
-        # execute next state...
+        while True:
+            current_node = nodes[current_node_id]
+            input_parameters = None     # TODO: implement input parameters
+
+            outcome: str = self.states[current_node['stateId']].execute(input_parameters, global_vars=self.global_vars)
+
+            if outcome in current_node['transitions']:
+                current_node_id = current_node['transitions'][outcome]
+            else:
+                break
+        print('State machine finished.')
+        return True
+
 
     def to_json_interface(self) -> dict:
         states = [state.to_json() for state in self.states.values()]

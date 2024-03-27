@@ -28,6 +28,8 @@ class FlaskBackend:
         self.add_endpoint('/api/create_new_config_file', 'create_new_config_file', self.create_new_config_file, methods=['POST'])
         self.add_endpoint('/api/delete_config_file', 'delete_config_file', self.delete_config_file, methods=['POST'])
 
+        self.add_endpoint('/api/start_state_machine', 'start_state_machine', self.start_state_machine, methods=['POST'])
+
         # self.add_endpoint('/api/check_connection', 'check_connection', self.check_connection, methods=['GET'])
         # self.add_endpoint('/api/get_states', 'get_states', self.send_states, methods=['GET'])
         # self.add_endpoint('/api/update_state_status', 'updates_states', self.activate_deactivate_states, methods=['POST'])
@@ -94,6 +96,14 @@ class FlaskBackend:
         filename = str(data['filename'])
         print(f'Deleting config file {filename} for state machine {sm_id}')
         success = self.state_machines[sm_id].delete_config_file(filename)
+        return jsonify({'success': success})
+    
+    def start_state_machine(self):
+        data = request.get_json()
+        sm_id = int(data['smId'])
+        config = data['config']
+        print(f'Starting state machine {sm_id} with config {config}')
+        success = self.state_machines[sm_id].start(config['state_machine_config'])
         return jsonify({'success': success})
 
 

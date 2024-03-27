@@ -48,5 +48,10 @@ export class StartNodeComponent {
     throw new Error('Circle not found ');
   }
 
+  onStart() {
+    console.log('StartNode: Start clicked');
+    this.sharedService.startEvent.emit();
+  }
+
 
 }
