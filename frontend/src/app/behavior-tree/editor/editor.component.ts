@@ -36,13 +36,12 @@ export class EditorComponent {
 
   unsavedChanges: boolean = false;
 
-  @Output() nodeDrag: EventEmitter<{mouseEvent: MouseEvent, nodeId: string}> = new EventEmitter<{mouseEvent: MouseEvent, nodeId: string}>();
-
 
   nodeDeleteSub: Subscription;
   edgeDeleteSubWorkaround: Subscription;
   edgeDeleteSub: Subscription;
   setStartNodeSub: Subscription;
+  
 
 
   constructor(private router: Router, private behaviorTreeService: BehaviorTreeService, private sharedService: SharedServiceService) {
@@ -144,10 +143,12 @@ export class EditorComponent {
         delete this.edges[edgeId];
       }
     }
-    // this.sharedService.redrawEdgesEvent.emit();
+    if (this.startStateNodeId === nodeId) {
+      this.startStateNodeId = "";
+    }
   }
 
-  // Workaround on how to delete edges. TODO: fix how edges are drawn in order to delete them properly
+  // Workaround on how to delete edges.
   deleteEdgeWorkaround(sourceNodeId: string, targetNodeId: string, outputGate: string): void {
     console.log('EditorComponent: deleteEdge', sourceNodeId, targetNodeId, outputGate);
     this.unsavedChanges = true;
@@ -226,12 +227,14 @@ export class EditorComponent {
     }
   }
 
+  handleStartClick(): void {
+
+  }
+
   handleSaveClick(): void {
     console.log('EditorComponent: Save button clicked');
     this.saveStateMachineConfig();
   }
-  
-
   saveStateMachineConfig(): void {
     const configData = this.convertToConfigData();
     this.behaviorTreeService.saveConfigData(this.stateMachineId, this.filename, configData).subscribe((data: any) => {
