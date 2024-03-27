@@ -151,9 +151,13 @@ export class EditorComponent {
   deleteEdgeWorkaround(sourceNodeId: string, targetNodeId: string, outputGate: string): void {
     console.log('EditorComponent: deleteEdge', sourceNodeId, targetNodeId, outputGate);
     this.unsavedChanges = true;
-    const edge = this.findEdge(sourceNodeId, outputGate);
-    if (edge) {
-      delete this.edges[edge.id];
+    if (sourceNodeId === "start-node") {
+      this.startStateNodeId = "";
+    } else {
+      const edge = this.findEdge(sourceNodeId, outputGate);
+      if (edge) {
+        delete this.edges[edge.id];
+      }
     }
   }
   findEdge(sourceNodeId: string, sourceNodeOutputGate: string): any {
