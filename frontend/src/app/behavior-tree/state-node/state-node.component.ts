@@ -15,13 +15,32 @@ export class StateNodeComponent {
 
   @ViewChild(MatMenuTrigger) contextMenuTrigger!: MatMenuTrigger;
 
+
   constructor(private sharedService: SharedServiceService) {
     if (this.state_interface === null) {
       throw new Error('StateNode: state_interface is null');
     }
+    
    }
 
+  //  <div class="input-parameters-container" *ngIf="parInterfaceNotEmpty()">
+  //       <div *ngFor="let item of state_interface.input_par_interface | keyvalue" class="input-parameters">
+  //           <label class="input-par-label">{{ item.key }}</label>
 
+  //           <select class="input-par-set" *ngIf="item.value['type']=='enum'">
+  //               <option *ngFor="let value of item.value['values']">{{ value }}</option>
+  //           </select>
+  //           <input type="number" class="input-par-set" *ngIf="item.value['type']=='number'">
+
+  //           <input type="text" class="input-par-set" *ngIf="item.value['type']=='string'">
+  //           <select class="input-par-set" *ngIf="item.value['type']=='boolean'">
+  //               <option> False </option>
+  //               <option> True </option>
+  //           </select>
+  //       </div>
+  //   </div>
+
+  inputParameters = {};
   @Input() x: number = 0;
   @Input() y: number = 0;
   @Input() title: string = 'State Node';
@@ -35,8 +54,10 @@ export class StateNodeComponent {
 
 
   onTopCircleEnter(event: MouseEvent) {
-    console.log('StateNode: Send Top circle entered to TreeCanvas', this.nodeId);
+    console.log('StateNode1: Send Top circle entered to TreeCanvas', this.nodeId);
+    console.log('StateNode:', this.inputParameters);
     this.topCircleEnter.emit({nodeId: this.nodeId});
+    
   }
 
   onTopCircleLeave(event: MouseEvent) {

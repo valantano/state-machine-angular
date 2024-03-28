@@ -10,14 +10,16 @@
     <div class="input-parameters-container" *ngIf="parInterfaceNotEmpty()">
         <div *ngFor="let item of state_interface.input_par_interface | keyvalue" class="input-parameters">
             <label class="input-par-label">{{ item.key }}</label>
-
-            <select class="input-par-set" *ngIf="item.value['type']=='enum'">
+    
+            <select [(ngModel)]="inputParameters[item.key]" class="input-par-set" *ngIf="item.value['type']=='enum'">
                 <option *ngFor="let value of item.value['values']">{{ value }}</option>
             </select>
-            <input type="number" class="input-par-set" *ngIf="item.value['type']=='number'">
-
-            <input type="text" class="input-par-set" *ngIf="item.value['type']=='string'">
-            <select class="input-par-set" *ngIf="item.value['type']=='boolean'">
+    
+            <input type="number" [(ngModel)]="inputParameters[item.key]" class="input-par-set" *ngIf="item.value['type']=='number'">
+    
+            <input type="text" [(ngModel)]="inputParameters[item.key]" class="input-par-set" *ngIf="item.value['type']=='string'">
+    
+            <select [(ngModel)]="inputParameters[item.key]" class="input-par-set" *ngIf="item.value['type']=='boolean'">
                 <option> False </option>
                 <option> True </option>
             </select>
