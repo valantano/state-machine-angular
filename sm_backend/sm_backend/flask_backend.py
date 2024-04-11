@@ -2,7 +2,7 @@ from os import PathLike
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from state_machine import StateMachine
+from .state_machine import StateMachine
 
 
 class FlaskBackend:
