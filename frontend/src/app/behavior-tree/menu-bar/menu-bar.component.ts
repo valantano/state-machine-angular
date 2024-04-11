@@ -16,9 +16,9 @@ export class MenuBarComponent {
   @Output() configNameChange: EventEmitter<string> = new EventEmitter<string>();
 
   @Input() executionRunning: boolean = true;
-  @Input() not_saved: boolean = true;
+  @Input() not_saved: boolean = false;
 
-  @Input() configName: string = 'Untitled';
+  @Input() configName: string = '';
   configNameTmp: string = '';
 
 

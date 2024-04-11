@@ -29,7 +29,7 @@
       <a>Unsaved Changes</a> <!-- Your new text element -->
     </div>
     <div class="config-name-container">
-      <input class="config-name"  type="text" [(ngModel)]="configName" (focus)="onFieldEnter()" (blur)="onFieldLeft()"> <!-- Your new input field -->
+      <input class="config-name"  type="text" [(ngModel)]="configName" [disabled]="!configName" (focus)="onFieldEnter()" (blur)="onFieldLeft()"> <!-- Your new input field -->
     </div>
     <div>
       <div *ngIf="executionRunning" class="loader"></div> <!-- Your new loading symbol -->
