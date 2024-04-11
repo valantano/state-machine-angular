@@ -17,32 +17,33 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   @ViewChildren(StateNodeComponent) stateNodes!: QueryList<StateNodeComponent>;   // if x,y values change the corresponding x,y values in nodes also changes
   @ViewChild(StartNodeComponent) startNode!: StartNodeComponent;
 
-  @Input() nodes: { [id: string]: StateNode } = {};
-  @Input() node_interfaces: { [id: number]: StateNodeInterface } = {};
-  @Input() edges: { [id: string]: TransitionEdge } = {};
+  @Input() nodes: { [id: string]: StateNode } = {};                     // Given by EditorComponent by reference.
+  @Input() node_interfaces: { [id: number]: StateNodeInterface } = {};  // Given by EditorComponent by reference.
+  @Input() edges: { [id: string]: TransitionEdge } = {};                // Given by EditorComponent by reference.
   @Input() startNodeId: string = "";
 
   @Output() addEdgeEvent: EventEmitter<{ sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string }> = new EventEmitter<{ sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string }>();
   @Output() nodeDragEvent: EventEmitter<void> = new EventEmitter<void>();
 
-  startXCircle: number = 0;
-  startYCircle: number = 0;
+  // Used to drag nodes
   private startXNode: number = 0;
   private startYNode: number = 0;
+  private isDragging = false;
+  private draggedNode: any; // Change the type as per your node structure
+
+  // Used to draw current drawing edge
+  startXCircle: number = 0;
+  startYCircle: number = 0;
   currentX: number = 0;
   currentY: number = 0;
   isDrawing: boolean = false;
+  // Used to add Edge after successful drawing
   private outputGate: string = "";
   private sourceNodeId: string = "";        // The id of the node that the line is being drawn from ("" if nothing is being drawn currently)
   private targetNodeId: string = "";        // The id of the node that the line is being drawn to ("" if no node is being hovered over while drawing)
 
 
-
-  private isDragging = false;
-  private draggedNode: any; // Change the type as per your node structure
-
   nodeCreationSubscription: Subscription;
-
 
   constructor(private cdRef: ChangeDetectorRef, private sharedService: SharedServiceService) {
     this.nodeCreationSubscription = this.sharedService.nodeCreatedEvent.subscribe((event) => {
@@ -119,8 +120,6 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
       } else {
         console.error('TreeCanvas: Invalid source or target id');
       }
-
-
       this.isDrawing = false;
       this.sourceNodeId = "";
       this.targetNodeId = "";
