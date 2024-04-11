@@ -1,8 +1,6 @@
 from os import PathLike
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import copy
-import threading
 
 from state_machine import StateMachine
 
