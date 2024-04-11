@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 
 
-from state import State
+from .state import State
 
 
 class StateMachine:
