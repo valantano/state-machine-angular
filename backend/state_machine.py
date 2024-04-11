@@ -20,6 +20,7 @@ class StateMachine:
         self.global_vars = {}        # global variables
 
     def start(self, config):
+        print(f"########\nStarting StateMachine {self.name}")
         nodes = {}  # each node in the graph corresponds to one of the states in the state machine with different input parameters transitions etc.
         for node in config['stateNodes']:
             nodes[node['nodeId']] = node
@@ -28,7 +29,7 @@ class StateMachine:
 
         while True:
             current_node = nodes[current_node_id]
-            input_parameters = None     # TODO: implement input parameters
+            input_parameters = current_node['input_parameters']
 
             outcome: str = self.states[current_node['stateId']].execute(input_parameters, global_vars=self.global_vars)
 
@@ -36,7 +37,7 @@ class StateMachine:
                 current_node_id = current_node['transitions'][outcome]
             else:
                 break
-        print('State machine finished.')
+        print('State machine finished.\n########')
         return True
 
 

@@ -33,6 +33,7 @@ class State:
         # check if input is valid if no input then ask frontend for it
         # check if global_vars are valid
         # send state is now executing message to frontend
+        print(f"Executing {self.name}")
         return None
     
     def _after_execute(self, outcome: str):

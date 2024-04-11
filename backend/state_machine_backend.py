@@ -20,7 +20,6 @@ class IdleState(State):
 
     def _state_code(self, input_parameters, global_vars):
         # implement state here
-        print("Idle")
         time.sleep(1)
         return "Fail"
 
@@ -38,7 +37,6 @@ class MoveBaseToGoalState(State):
 
     def _state_code(self, input_parameters, global_vars):
         # implement state here
-        print("MoveBaseToGoal")
         print(input_parameters)
         print(global_vars)
         time.sleep(5)
@@ -55,7 +53,6 @@ class SpinState(State):
 
     def _state_code(self, input_parameters, global_vars):
         # implement state here
-        print("Spin")
         time.sleep(3)
         return "Fail"
 

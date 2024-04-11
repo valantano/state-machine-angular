@@ -102,7 +102,7 @@ class FlaskBackend:
         data = request.get_json()
         sm_id = int(data['smId'])
         config = data['config']
-        print(f'Starting state machine {sm_id} with config {config}')
+        print(f'Received state machine {sm_id} with config {config}')
         success = self.state_machines[sm_id].start(config['state_machine_config'])
         return jsonify({'success': success})
 
