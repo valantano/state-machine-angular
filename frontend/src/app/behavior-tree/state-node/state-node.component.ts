@@ -40,10 +40,9 @@ export class StateNodeComponent {
   //       </div>
   //   </div>
 
-  inputParameters = {};
-  @Input() x: number = 0;
-  @Input() y: number = 0;
-  @Input() title: string = 'State Node';
+  @Input() inputParameters!: {[key: string]: any};
+
+  @Input() title: string = "";
   @Input() nodeId: string = "";
   @Input() state_interface!: StateNodeInterface;
 
@@ -54,20 +53,18 @@ export class StateNodeComponent {
 
 
   onTopCircleEnter(event: MouseEvent) {
-    console.log('StateNode1: Send Top circle entered to TreeCanvas', this.nodeId);
-    console.log('StateNode:', this.inputParameters);
+    console.log('StateNode -> TreeCanvas: Top circle entered', this.nodeId);
     this.topCircleEnter.emit({nodeId: this.nodeId});
-    
   }
 
   onTopCircleLeave(event: MouseEvent) {
-    console.log('StateNode: Send Top circle left to TreeCanvas', this.nodeId);
+    console.log('StateNode -> TreeCanvas: Top circle left', this.nodeId);
     this.topCircleLeave.emit();
   }
 
   onNodeDrag(event: MouseEvent) {
     if (event.button === 0){
-      console.log('StateNode: Send Node drag to TreeCanvas');
+      console.log('StateNode -> TreeCanvas: Node dragged + id');
       this.nodeDrag.emit({mouseEvent: event, nodeId: this.nodeId});
     }
   }
@@ -79,12 +76,12 @@ export class StateNodeComponent {
   }
 
   onDelete(){
-    console.log('StateNode: Delete', this.nodeId);
+    console.log('StateNode --sharedService--> Editor: Delete node + id', this.nodeId);
     this.sharedService.nodeDeleteEvent.emit({nodeId: this.nodeId});
   }
 
   onBotCircleDrag(outputGate: string): void {
-    console.log('StateNode: send Circle Drag to TreeCanvas');
+    console.log('StateNode -> TreeCanvas: BotCircle Drag');
     this.circleDrag.emit({nodeId: this.nodeId, outputGate: outputGate, circlepos: this.getBottomCircleScreenPosition(outputGate)});
   }
 
@@ -93,8 +90,6 @@ export class StateNodeComponent {
   getBottomCircleScreenPosition(outputGate: string): { x: number, y: number } {
     const circleArray = this.bottomCircles.toArray();
     const circle = circleArray.find(circle => circle.nativeElement.getAttribute('data-output-gate') === outputGate);
-    
-
     if (circle) {
       const rect = circle.nativeElement.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
@@ -102,7 +97,7 @@ export class StateNodeComponent {
       return {x: x, y: y};
     }
 
-    throw new Error('Circle not found ' + outputGate);
+    throw new Error('StateNode: Circle not found ' + outputGate);
   }
 
   getTopCircleMidpointPosition(): { x: number, y: number } {

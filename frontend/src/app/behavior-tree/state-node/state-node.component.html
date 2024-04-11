@@ -1,4 +1,4 @@
-<div class="rectangle" [style.left.px]="x" [style.top.px]="y" (mousedown)="onNodeDrag($event)" (contextmenu)="onRightClick($event)">
+<div class="rectangle" (mousedown)="onNodeDrag($event)" (contextmenu)="onRightClick($event)">
     <div class="title">{{ getDisplayTitle() }}</div>
     <hr> <!-- Horizontal Divider -->
     <div class="information">

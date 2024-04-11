@@ -39,6 +39,8 @@ class MoveBaseToGoalState(State):
     def _state_code(self, input_parameters, global_vars):
         # implement state here
         print("MoveBaseToGoal")
+        print(input_parameters)
+        print(global_vars)
         time.sleep(5)
         return "Fail"
 

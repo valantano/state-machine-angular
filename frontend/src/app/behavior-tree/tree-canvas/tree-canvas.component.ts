@@ -51,13 +51,13 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
       this.handleNodeDrag({ mouseEvent: { clientX: clientX, clientY: clientY }, nodeId: event.nodeId });
     });
 
+    
+
   }
 
   ngOnInit(): void {
-
   }
   ngAfterViewInit(): void {
-
   }
 
   // Scaling Not workin at the moment /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 

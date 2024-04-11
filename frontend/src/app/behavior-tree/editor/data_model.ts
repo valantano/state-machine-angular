@@ -5,6 +5,7 @@ export interface StateNode {
     y: number;
     title: string;
     state_interface: StateNodeInterface;
+    input_parameters: { [key: string ]: any};
 }
 
 export interface TransitionEdge {

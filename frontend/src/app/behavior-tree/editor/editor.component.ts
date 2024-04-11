@@ -76,7 +76,7 @@ export class EditorComponent {
 
   loadComponent() {
     this.behaviorTreeService.getInterfaceData(this.stateMachineId).subscribe((data: any) => {
-      console.log('TreeCanvas: getInterfaceData', data);
+      console.log('EditorComponent: getInterfaceData', data);
       for (let state of data.states) {
         const node_interface: StateNodeInterface = {
           stateId: state.stateId,
@@ -90,14 +90,14 @@ export class EditorComponent {
     });
 
     this.behaviorTreeService.getConfigData(this.stateMachineId, this.filename).subscribe((data: any) => {
-      console.log('TreeCanvas: getConfigData', data);
+      console.log('EditorComponent: getConfigData', data);
       this.name = data.state_machine_config.name;
       this.lastModified = data.state_machine_config.lastModified;
       this.creationDate = data.state_machine_config.creationDate;
       this.description = data.state_machine_config.description;
       this.startStateNodeId = data.state_machine_config.startStateNode;
       for (let node of data.state_machine_config.stateNodes) {
-        this.createNode(node.title, node.x, node.y, this.node_interfaces[node.stateId], node.nodeId);
+        this.createNode(node.title, node.x, node.y, this.node_interfaces[node.stateId], node.input_parameters, node.nodeId);
         for (let transition in node.transitions) {
           this.addEdge(node.nodeId, node.transitions[transition], transition);
         }
@@ -114,12 +114,12 @@ export class EditorComponent {
   handleNodeCreate(eventWithStateId: any) {
     const mouse = eventWithStateId.mouseEvent;
     const stateId = eventWithStateId.stateId;
-    this.freshlyCreatedNodeId = this.createNode('State Node', mouse.clientX, mouse.clientY, this.node_interfaces[stateId]);
+    this.freshlyCreatedNodeId = this.createNode('State Node', mouse.clientX, mouse.clientY, this.node_interfaces[stateId], {});
     console.log('EditorComponent: Node create', stateId);
     this.sharedService.nodeCreatedEvent.emit({mouseEvent: mouse, nodeId: this.freshlyCreatedNodeId});
   }
 
-  createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, nodeId?: string): string {
+  createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, input_parameters: {}, nodeId?: string): string {
     nodeId = nodeId ? nodeId : uuidv4();
     if (this.nodes[nodeId]) {
       throw new Error(`Node with id ${nodeId} already exists`);
@@ -129,7 +129,8 @@ export class EditorComponent {
       x: x,
       y: y,
       title: title,
-      state_interface: state_interface
+      state_interface: state_interface,
+      input_parameters: input_parameters
     }
     this.nodes[newNode.nodeId] = newNode;
     return newNode.nodeId;
@@ -271,7 +272,8 @@ export class EditorComponent {
         "stateId": node.state_interface.stateId,
         "x": node.x,
         "y": node.y,
-        "transitions": nodeTransitions
+        "transitions": nodeTransitions,
+        "input_parameters": node.input_parameters
       });
     }
 

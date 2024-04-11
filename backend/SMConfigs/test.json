@@ -1,27 +1,43 @@
 {
     "state_machine_config": {
         "name": "test",
-        "lastModified": "2024-03-27T16:36:58.112652",
+        "lastModified": "2024-04-11T11:32:10.948235",
         "creationDate": "2024-03-21T15:38:27.727676",
         "description": "f",
-        "startStateNode": "755e0d4d-7de2-419a-a6e2-b1bb6e3447b3",
+        "startStateNode": "11fa1bf6-7674-4007-ad80-f57e8ad75b41",
         "stateNodes": [
             {
-                "title": "State Node",
+                "title": "State Node1",
                 "nodeId": "e32074ea-7404-4cde-b33a-5741c9b40996",
                 "stateId": 45,
-                "x": 1155,
-                "y": 584,
-                "transitions": {}
+                "x": 855,
+                "y": 680,
+                "transitions": {},
+                "input_parameters": {}
             },
             {
-                "title": "State Node",
+                "title": "State Node2",
                 "nodeId": "755e0d4d-7de2-419a-a6e2-b1bb6e3447b3",
                 "stateId": 47,
-                "x": 649,
-                "y": 355,
+                "x": 503,
+                "y": 426,
                 "transitions": {
                     "Fail": "e32074ea-7404-4cde-b33a-5741c9b40996"
+                },
+                "input_parameters": {}
+            },
+            {
+                "title": "State Node3",
+                "nodeId": "11fa1bf6-7674-4007-ad80-f57e8ad75b41",
+                "stateId": 46,
+                "x": 1225,
+                "y": 351,
+                "transitions": {},
+                "input_parameters": {
+                    "Boolean-Select": "False",
+                    "Number-Select": -1,
+                    "GoalPose": "GoalPose2",
+                    "String-Enter": "555"
                 }
             }
         ]
