@@ -76,7 +76,7 @@ export class StateNodeComponent {
   }
 
   onDelete(){
-    console.log('StateNode --sharedService--> Editor: Delete node + id', this.nodeId);
+    console.log('StateNode --sharedService--> Editor: Delete node', this.nodeId);
     this.sharedService.nodeDeleteEvent.emit({nodeId: this.nodeId});
   }
 

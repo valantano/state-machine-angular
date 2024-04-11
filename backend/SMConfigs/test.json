@@ -1,7 +1,7 @@
 {
     "state_machine_config": {
         "name": "test",
-        "lastModified": "2024-04-11T11:32:10.948235",
+        "lastModified": "2024-04-11T11:50:01.794268",
         "creationDate": "2024-03-21T15:38:27.727676",
         "description": "f",
         "startStateNode": "11fa1bf6-7674-4007-ad80-f57e8ad75b41",
@@ -12,7 +12,9 @@
                 "stateId": 45,
                 "x": 855,
                 "y": 680,
-                "transitions": {},
+                "transitions": {
+                    "What?": "11fa1bf6-7674-4007-ad80-f57e8ad75b41"
+                },
                 "input_parameters": {}
             },
             {
@@ -30,13 +32,13 @@
                 "title": "State Node3",
                 "nodeId": "11fa1bf6-7674-4007-ad80-f57e8ad75b41",
                 "stateId": 46,
-                "x": 1225,
-                "y": 351,
+                "x": 1384,
+                "y": 603,
                 "transitions": {},
                 "input_parameters": {
                     "Boolean-Select": "False",
-                    "Number-Select": -1,
                     "GoalPose": "GoalPose2",
+                    "Number-Select": -1,
                     "String-Enter": "555"
                 }
             }

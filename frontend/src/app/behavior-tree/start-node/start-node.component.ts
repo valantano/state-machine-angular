@@ -7,26 +7,23 @@ import { SharedServiceService } from '../editor/shared-service.service';
   styleUrl: './start-node.component.scss'
 })
 export class StartNodeComponent {
-  @ViewChild('bottomCircle', { static: false }) bottomCircle!: ElementRef;
 
+  @ViewChild('bottomCircle', { static: false }) bottomCircle!: ElementRef;
 
   constructor(private sharedService: SharedServiceService) {
 
    }
 
-
-  @Input() x: number = 0;
-  @Input() y: number = 0;
-  title: string = 'Start Node';
-  infoText: string = 'This is an Info Text';
-  nodeId: string = "start-node";
-  outputGate: string = "Start";
+  readonly title: string = 'Start Node';
+  infoText: string = 'InfoText';
+  readonly nodeId: string = "start-node"; 
+  readonly outputGate: string = "Start";
 
   @Output() circleDrag: EventEmitter<{nodeId: string, outputGate: string, circlepos: {x: number, y: number}}> = new EventEmitter<{nodeId: string, outputGate: string, circlepos: {x: number, y: number}}>();
 
 
   onBotCircleDrag(): void {
-    console.log('Start: send Circle Drag to TreeCanvas');
+    console.log('StartNode -> TreeCanvas: BotCircle Drag');
     this.circleDrag.emit({nodeId: this.nodeId, outputGate: this.outputGate, circlepos: this.getBottomCircleScreenPosition(this.outputGate)});
   }
 
@@ -45,13 +42,11 @@ export class StartNodeComponent {
       return {x: x, y: y};
     }
 
-    throw new Error('Circle not found ');
+    throw new Error('StartNode: Circle not found');
   }
 
   onStart() {
-    console.log('StartNode: Start clicked');
+    console.log('StartNode --sharedService--> Editor: Start clicked');
     this.sharedService.startEvent.emit();
   }
-
-
 }

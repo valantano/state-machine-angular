@@ -52,7 +52,7 @@ export class EditorComponent {
     const state = navigation.extras.state as { filename: string, smId: number };
     this.stateMachineId = state.smId;
     this.filename = state.filename;
-    console.log('EditorComponent: File', state.filename, state.smId);
+    console.log('Editor: Opened File', state.filename, "with StateMachineId", state.smId);
 
     this.nodeDeleteSub = this.sharedService.nodeDeleteEvent.subscribe((event) => {
       this.deleteNode(event.nodeId);
@@ -74,9 +74,9 @@ export class EditorComponent {
 
   }
 
-  loadComponent() {
+  loadComponent() {   // TODO: ensure InterfaceData is received first before getConfigData is called.
     this.behaviorTreeService.getInterfaceData(this.stateMachineId).subscribe((data: any) => {
-      console.log('EditorComponent: getInterfaceData', data);
+      console.log('Editor <- backend: getInterfaceData', data);
       for (let state of data.states) {
         const node_interface: StateNodeInterface = {
           stateId: state.stateId,
@@ -90,7 +90,7 @@ export class EditorComponent {
     });
 
     this.behaviorTreeService.getConfigData(this.stateMachineId, this.filename).subscribe((data: any) => {
-      console.log('EditorComponent: getConfigData', data);
+      console.log('Editor <- backend: getConfigData', data);
       this.name = data.state_machine_config.name;
       this.lastModified = data.state_machine_config.lastModified;
       this.creationDate = data.state_machine_config.creationDate;
@@ -104,9 +104,8 @@ export class EditorComponent {
       }
       const converted_data = this.convertToConfigData();
       if (!_.isEqual(converted_data, data)) {
-        throw new Error('EditorComponent: Data conversion failed - convertToConfigData() function does not work correctly!!!');
+        throw new Error('Editor: Data conversion failed - convertToConfigData() function does not work correctly!!!');
       }
-      
     });
   }
 
@@ -115,14 +114,14 @@ export class EditorComponent {
     const mouse = eventWithStateId.mouseEvent;
     const stateId = eventWithStateId.stateId;
     this.freshlyCreatedNodeId = this.createNode('State Node', mouse.clientX, mouse.clientY, this.node_interfaces[stateId], {});
-    console.log('EditorComponent: Node create', stateId);
+    console.log('Editor -> TreeCanvas: Node created', stateId);
     this.sharedService.nodeCreatedEvent.emit({mouseEvent: mouse, nodeId: this.freshlyCreatedNodeId});
   }
 
   createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, input_parameters: {}, nodeId?: string): string {
     nodeId = nodeId ? nodeId : uuidv4();
     if (this.nodes[nodeId]) {
-      throw new Error(`Node with id ${nodeId} already exists`);
+      throw new Error(`Editor: Node with id ${nodeId} already exists`);
     }
     const newNode: StateNode = {
       nodeId: nodeId,
@@ -137,7 +136,7 @@ export class EditorComponent {
   }
 
   deleteNode(nodeId: string): void {
-    console.log('EditorComponent: deleteNode', nodeId);
+    console.log('Editor <--sharedService-- StateNode: deleteNode', nodeId);
     this.unsavedChanges = true;
     delete this.nodes[nodeId];
     for (let edgeId in this.edges) {
@@ -153,7 +152,7 @@ export class EditorComponent {
 
   // Workaround on how to delete edges.
   deleteEdgeWorkaround(sourceNodeId: string, targetNodeId: string, outputGate: string): void {
-    console.log('EditorComponent: deleteEdge', sourceNodeId, targetNodeId, outputGate);
+    console.log('Editor: deleteEdge', sourceNodeId, targetNodeId, outputGate);
     this.unsavedChanges = true;
     if (sourceNodeId === "start-node") {
       this.startStateNodeId = "";
@@ -170,22 +169,19 @@ export class EditorComponent {
     );
   }
   deleteEdge(edgeId: string): void {
-    console.log('EditorComponent: deleteEdge', edgeId);
+    console.log('Editor: deleteEdge', edgeId);
     this.unsavedChanges = true;
     delete this.edges[edgeId];
   }
 
   handleNodeDragEvent(): void {
-    console.log('EditorComponent: Node was dragged in tree-canvas. Unsaved Changes.');
-    this.unsavedChanges = true;
-  }
-
-  handleAddNodeEvent(event: any): void {
+    console.log('Editor <- TreeCanvas: Node was dragged. Unsaved Changes.');
     this.unsavedChanges = true;
   }
 
   handleAddEdgeEvent(event: any): void {
     // sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string
+    console.log("Editor <- TreeCanvas: Add Edge")
     const sourceNodeId = event.sourceNodeId;
     const targetNodeId = event.targetNodeId;
     const sourceNodeOutputGate = event.sourceNodeOutputGate;
@@ -222,7 +218,6 @@ export class EditorComponent {
   // Warn user if they try to leave the page with unsaved changes
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
-    console.log(this.unsavedChanges);
     if (this.unsavedChanges) {
       $event.returnValue = true;
     } else {
@@ -231,21 +226,21 @@ export class EditorComponent {
   }
 
   handleStartClick(): void {
-    console.log('EditorComponent: Start button clicked');
+    console.log('Editor <--sharedService-- StartNode: Start button clicked');
     const configData = this.convertToConfigData();
     this.behaviorTreeService.startStateMachine(this.stateMachineId, configData).subscribe((data: any) => {
-      console.log('EditorComponent: startStateMachine', data);
+      console.log('Editor -> backend: startStateMachine', data);
     });
   }
 
   handleSaveClick(): void {
-    console.log('EditorComponent: Save button clicked');
+    console.log('Editor <- MenuBar: Save button clicked');
     this.saveStateMachineConfig();
   }
   saveStateMachineConfig(): void {
     const configData = this.convertToConfigData();
     this.behaviorTreeService.saveConfigData(this.stateMachineId, this.filename, configData).subscribe((data: any) => {
-      console.log('EditorComponent: saveStateMachineConfig', data);
+      console.log('Editor -> backend: saveStateMachineConfig', data);
       if (data.success) {
         this.unsavedChanges = false;
       }
@@ -287,7 +282,7 @@ export class EditorComponent {
         "stateNodes": stateNodes
       }
     };
-    console.log('EditorComponent: convertToConfigData', jsonObject);
+    console.log('Editor: convertToConfigData', jsonObject);
     return jsonObject
   }
 }

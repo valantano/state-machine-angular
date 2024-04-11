@@ -46,19 +46,14 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
 
   constructor(private cdRef: ChangeDetectorRef, private sharedService: SharedServiceService) {
     this.nodeCreationSubscription = this.sharedService.nodeCreatedEvent.subscribe((event) => {
-      console.log('TreeCanvas: Node created', event);
+      console.log('TreeCanvas <--sharedService-- Editor: Node created', event);
       const [clientX, clientY] = this.offsetXYCoordsInverse(event.mouseEvent.clientX, event.mouseEvent.clientY);    // Adjust to the graph container position
       this.handleNodeDrag({ mouseEvent: { clientX: clientX, clientY: clientY }, nodeId: event.nodeId });
     });
-
-    
-
   }
 
-  ngOnInit(): void {
-  }
-  ngAfterViewInit(): void {
-  }
+  ngOnInit(): void {}
+  ngAfterViewInit(): void {}
 
   // Scaling Not workin at the moment /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
   private scale = 1;
@@ -94,7 +89,6 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   // or moves the node that was dragged to cursor position
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
-    // console.log('TreeCanvas: Mouse move');
     if (this.isDrawing) {
       [this.currentX, this.currentY] = this.offsetXYCoords(event.clientX, event.clientY);
     }
@@ -138,15 +132,15 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     }
   }
   addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
-    console.log('TreeCanvas->Editor: addEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
+    console.log('TreeCanvas -> Editor: addEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
     this.addEdgeEvent.emit({ sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, sourceNodeOutputGate: sourceNodeOutputGate });
   }
   deleteEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
-    console.log('TreeCanvas->Editor: deleteEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
+    console.log('TreeCanvas -> Editor: deleteEdge Workaround', sourceNodeId, targetNodeId, sourceNodeOutputGate);
     this.sharedService.edgeDeleteEventWorkaround.emit({ sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate });
   }
   setStartNode(targetNodeId: string): void {
-    console.log('TreeCanvas->Editor: setStartNode', targetNodeId);
+    console.log('TreeCanvas -> Editor: setStartNode', targetNodeId);
     this.sharedService.setStartNodeEvent.emit({ targetNodeId: targetNodeId });
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,7 +150,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   // Then everything is prepared to start drawing a line from the bottom circle to the current mouse position
   // The actual drawing happens in the onMouseMove event
   handleCircleDrag(eventWithId: any) {
-    console.log('TreeCanvas: handleCircleDrag', eventWithId);
+    console.log('TreeCanvas <- StateNode: handleCircleDrag', eventWithId);
     const circlepos = eventWithId.circlepos;
     this.outputGate = eventWithId.outputGate
     this.isDrawing = true;
@@ -166,11 +160,11 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     [this.currentX, this.currentY] = this.offsetXYCoords(circlepos.x, circlepos.y);
   }
   handleTopCircleEnter(eventWithId: any) {
-    console.log('TreeCanvas: handleTopCircleEnter', eventWithId);
+    console.log('TreeCanvas <- StateNode: handleTopCircleEnter', eventWithId);
     if (this.isDrawing) { this.targetNodeId = eventWithId.nodeId; }
   }
   handleTopCircleLeave() {
-    console.log('TreeCanvas: handleTopCircleLeave');
+    console.log('TreeCanvas <- StateNode: handleTopCircleLeave');
     if (this.isDrawing) { this.targetNodeId = ""; }
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,7 +174,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   // Then everything is prepared to start dragging the node
   // The actual dragging happens in the onMouseMove event
   handleNodeDrag(eventWithId: any) {
-    console.log('TreeCanvas: handleNodeDrag', eventWithId);
+    console.log('TreeCanvas <- StateNode: handleNodeDrag', eventWithId);
     const event = eventWithId.mouseEvent;
     this.draggedNode = this.getStateNodeById(eventWithId.nodeId);
 
@@ -266,7 +260,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     this.contextMenuTrigger.openMenu();
   }
   onDelete() {
-    console.log('TreeCanvas->Editor: Delete', this.selectedEdgeId);
+    console.log('TreeCanvas --sharedService--> Editor: Delete', this.selectedEdgeId);
     this.sharedService.edgeDeleteEvent.emit({ edgeId: this.selectedEdgeId });
   }
   onMouseOver(event: MouseEvent, edgeId: string) {
