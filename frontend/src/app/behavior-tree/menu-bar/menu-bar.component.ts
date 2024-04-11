@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-menu-bar',
@@ -13,6 +13,13 @@ export class MenuBarComponent {
   @Output() exportClick: EventEmitter<void> = new EventEmitter<void>();
   @Output() undoClick: EventEmitter<void> = new EventEmitter<void>();
   @Output() redoClick: EventEmitter<void> = new EventEmitter<void>();
+  @Output() configNameChange: EventEmitter<string> = new EventEmitter<string>();
+
+  @Input() executionRunning: boolean = true;
+  @Input() not_saved: boolean = true;
+
+  @Input() configName: string = 'Untitled';
+  configNameTmp: string = '';
 
 
   onClickSave(): void {
@@ -39,6 +46,18 @@ export class MenuBarComponent {
   onClickRedo(): void {
     console.log('MenuBar: Redo button clicked');
     this.redoClick.emit();
+  }
+
+  // Send configNameChanged event if the field is changed
+  onFieldEnter(): void {
+    console.log('MenuBar: Field entered');
+    this.configNameTmp = this.configName;
+  }
+  onFieldLeft(): void {
+    console.log('MenuBar: Field left');
+    if (this.configNameTmp !== this.configName) {
+      this.configNameChange.emit(this.configName);
+    }
   }
 
 }

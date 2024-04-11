@@ -35,6 +35,7 @@ export class EditorComponent {
   freshlyCreatedNodeId: string = "";
 
   unsavedChanges: boolean = false;
+  executing: boolean = false;
 
 
   nodeDeleteSub: Subscription;
@@ -228,8 +229,10 @@ export class EditorComponent {
   handleStartClick(): void {
     console.log('Editor <--sharedService-- StartNode: Start button clicked');
     const configData = this.convertToConfigData();
+    this.executing = true;
     this.behaviorTreeService.startStateMachine(this.stateMachineId, configData).subscribe((data: any) => {
       console.log('Editor -> backend: startStateMachine', data);
+      this.executing = false;
     });
   }
 
@@ -245,7 +248,10 @@ export class EditorComponent {
         this.unsavedChanges = false;
       }
     });
-    
+  }
+  renameConfig(newName: string): void {
+    this.name = newName;
+    this.unsavedChanges = true;
   }
 
   // Convert the data to the format that the backend expects

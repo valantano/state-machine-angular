@@ -1,5 +1,7 @@
 <div class="editor">
-    <app-menu-bar (saveClick)="handleSaveClick()"></app-menu-bar>
+    <app-menu-bar [configName]="name" [not_saved]="unsavedChanges" [executionRunning]="executing"
+    (saveClick)="handleSaveClick()" (configNameChange)="renameConfig($event)"
+    ></app-menu-bar>
     <div class="toolbox">
         <app-control-panel [node_interfaces]="node_interfaces_list" (nodeCreate)="handleNodeCreate($event)"></app-control-panel>
         <div class="canvas-area">

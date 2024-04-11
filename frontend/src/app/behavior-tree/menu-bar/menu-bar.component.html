@@ -1,10 +1,10 @@
 <nav class="menu-bar">
+  <div class="item-container">
     <ul>
       <li>
         <a href="/loader"><</a>
       </li>
       <li>
-        
         <a>File</a>
         <ul>
           <li><a (click)="onClickSave()">Save</a></li>
@@ -24,4 +24,15 @@
       </li>
       <!-- Add more main menu options here -->
     </ul>
+
+    <div [class.saved]="!not_saved" [class.unsaved]="not_saved">
+      <a>Unsaved Changes</a> <!-- Your new text element -->
+    </div>
+    <div class="config-name-container">
+      <input class="config-name"  type="text" [(ngModel)]="configName" (focus)="onFieldEnter()" (blur)="onFieldLeft()"> <!-- Your new input field -->
+    </div>
+    <div>
+      <div *ngIf="executionRunning" class="loader"></div> <!-- Your new loading symbol -->
+    </div>
+  </div>
   </nav>

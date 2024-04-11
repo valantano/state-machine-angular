@@ -1,10 +1,29 @@
 {
     "state_machine_config": {
-        "name": "dfg",
-        "lastModified": "2024-04-11T17:36:09.358626",
+        "name": "This is a real tree",
+        "lastModified": "2024-04-11T18:43:25.655879",
         "creationDate": "2024-04-11T17:36:09.358632",
         "description": "fg",
-        "startStateNode": "",
-        "stateNodes": []
+        "startStateNode": "2f7474c0-6de2-451a-b868-ca59c822d382",
+        "stateNodes": [
+            {
+                "title": "State Node",
+                "nodeId": "156b2d66-53d5-41b0-9845-4577146a1188",
+                "stateId": 47,
+                "x": 715,
+                "y": 531,
+                "transitions": {},
+                "input_parameters": {}
+            },
+            {
+                "title": "State Node",
+                "nodeId": "2f7474c0-6de2-451a-b868-ca59c822d382",
+                "stateId": 46,
+                "x": 1320,
+                "y": 398,
+                "transitions": {},
+                "input_parameters": {}
+            }
+        ]
     }
 }
