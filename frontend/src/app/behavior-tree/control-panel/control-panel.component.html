@@ -10,5 +10,7 @@
 
     <!-- Add more state nodes as needed -->
   </div>
-  <button class="collapse-button" id="collapseButton" (click)="switchActivationState()"><</button>
+  <button class="collapse-button" id="collapseButton" (click)="switchActivationState()">
+    {{ activated ? '<' : '>' }}
+  </button>
 </div>

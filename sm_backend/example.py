@@ -66,8 +66,8 @@ class SpinState(State):
 # Define the StateMachines here
 def main():
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    config_dir = os.path.join(script_dir, 'SMConfigs')      # where to save the behavior tree files
-    config_dir2 = os.path.join(script_dir, 'SMConfigs2')    # where to save the behavior tree files
+    config_dir = os.path.join(script_dir, 'sm_backend/SMConfigs')      # where to save the behavior tree files
+    config_dir2 = os.path.join(script_dir, 'sm_backend/SMConfigs2')    # where to save the behavior tree files
 
     # Define two different StateMachines name, unique_id, list of available stats, where to save the behavior tree files
     sm1 = StateMachine('WZL1', 0, [IdleState(), MoveBaseToGoalState(), SpinState()], config_dir)

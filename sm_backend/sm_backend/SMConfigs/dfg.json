@@ -1,0 +1,10 @@
+{
+    "state_machine_config": {
+        "name": "dfg",
+        "lastModified": "2024-04-11T17:36:09.358626",
+        "creationDate": "2024-04-11T17:36:09.358632",
+        "description": "fg",
+        "startStateNode": "",
+        "stateNodes": []
+    }
+}
