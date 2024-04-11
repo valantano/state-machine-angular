@@ -64,7 +64,7 @@ export class StateNodeComponent {
 
   onNodeDrag(event: MouseEvent) {
     if (event.button === 0){
-      console.log('StateNode -> TreeCanvas: Node dragged + id');
+      console.log('StateNode -> TreeCanvas: Node dragged', this.nodeId);
       this.nodeDrag.emit({mouseEvent: event, nodeId: this.nodeId});
     }
   }

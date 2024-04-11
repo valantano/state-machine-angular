@@ -27,7 +27,7 @@ class StateMachine:
         
         current_node_id = config['startStateNode']
 
-        while True:
+        while current_node_id in nodes:
             current_node = nodes[current_node_id]
             input_parameters = current_node['input_parameters']
 
