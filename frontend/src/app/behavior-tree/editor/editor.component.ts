@@ -98,6 +98,9 @@ export class EditorComponent {
       this.description = data.state_machine_config.description;
       this.startStateNodeId = data.state_machine_config.startStateNode;
       for (let node of data.state_machine_config.stateNodes) {
+        if (node.input_parameters === undefined) {
+          node.input_parameters = {};
+        }
         this.createNode(node.title, node.x, node.y, this.node_interfaces[node.stateId], node.input_parameters, node.nodeId);
         for (let transition in node.transitions) {
           this.addEdge(node.nodeId, node.transitions[transition], transition);

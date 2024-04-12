@@ -29,6 +29,19 @@ class IdleState(State):
         # implement state here
         time.sleep(1)
         return "Fail"
+    
+class IdleState2(State):
+
+    def __init__(self) -> None:
+        super().__init__("Idle", 45)
+        self.input_par_interface = {}
+        self.output_interface = ["Success", "Fail", "What?"]
+        self.infoText = "This is an Info Text and also especially long. So I mean very very very long. But not that long either"
+
+    def _state_code(self, input_parameters, global_vars):
+        # implement state here
+        time.sleep(1)
+        return "Fail"
 
 
 class MoveBaseToGoalState(State):
@@ -70,7 +83,7 @@ def main():
     config_dir2 = os.path.join(script_dir, 'sm_backend/SMConfigs2')    # where to save the behavior tree files
 
     # Define two different StateMachines name, unique_id, list of available stats, where to save the behavior tree files
-    sm1 = StateMachine('WZL1', 0, [IdleState(), MoveBaseToGoalState(), SpinState()], config_dir)
+    sm1 = StateMachine('WZL1', 0, [IdleState(), MoveBaseToGoalState(), SpinState(), IdleState2()], config_dir)
     sm2 = StateMachine('WZL_other_SM_with_long_name', 1, [IdleState(), MoveBaseToGoalState()], config_dir2)
 
     sms = [sm1, sm2]

@@ -40,7 +40,7 @@ export class StateNodeComponent {
   //       </div>
   //   </div>
 
-  @Input() inputParameters!: {[key: string]: any};
+  @Input() inputParameters: {[key: string]: any} = {};
 
   @Input() title: string = "";
   @Input() nodeId: string = "";
