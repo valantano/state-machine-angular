@@ -1,0 +1,10 @@
+<div class="terminal" [class.minimized]="isMinimized">
+    <div class="header" (click)="toggleMinimize()">
+      Terminal
+      <button class="minimize-button">{{ minimizeButtonContent() }}</button>
+    </div>
+
+<div class="terminal">
+    <div *ngFor="let message of message_buffer" class="message">> {{ message }}</div>
+  </div>
+  

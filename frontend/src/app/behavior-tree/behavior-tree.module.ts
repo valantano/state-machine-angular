@@ -18,6 +18,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { MatMenuModule } from '@angular/material/menu';
 import { StartNodeComponent } from './start-node/start-node.component';
 import { DrawingEdgeComponent } from './drawing-edge/drawing-edge.component';
+import { InfoTerminalComponent } from './info-terminal/info-terminal.component';
 
 
 
@@ -36,6 +37,7 @@ import { DrawingEdgeComponent } from './drawing-edge/drawing-edge.component';
     ConfirmDialogComponent,
     StartNodeComponent,
     DrawingEdgeComponent,
+    InfoTerminalComponent,
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,32 @@
+.terminal {
+    font-family: monospace;
+    background-color: black;
+    color: white;
+    padding: 10px;
+    height: 300px;
+    overflow-y: scroll;
+    position: relative;
+    transition: height 0.5s;
+  }
+  
+  .header {
+    background-color: #333;
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .minimize-button {
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 0;
+    margin-left: auto;
+    cursor: pointer;
+  }
+  
+  .minimized {
+    height: 30px;
+    overflow: hidden;
+  }
+  

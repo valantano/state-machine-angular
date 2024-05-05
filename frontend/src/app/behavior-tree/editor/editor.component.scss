@@ -18,6 +18,18 @@
     height: 50px;
     // background-color: grey;
   }
+
+  app-info-terminal {
+    /* Style as needed */
+    // width: 30%;
+    width: 900px;
+    position: fixed;
+    z-index: 2;
+    bottom: 0px;
+    right: 0px;
+    opacity: 0.8;
+    // background-color: grey;
+  }
   
   app-control-panel {
     width: auto;

@@ -19,13 +19,18 @@ class StateMachine:
 
         self.global_vars = {}        # global variables
 
+
+        self.log_msgs = []
+        self.running_config = None
+
     def start(self, config):
         print(f"########\nStarting StateMachine {self.name}")
         nodes = {}  # each node in the graph corresponds to one of the states in the state machine with different input parameters transitions etc.
-        for node in config['stateNodes']:
+        self.running_config = config
+        for node in self.running_config['stateNodes']:
             nodes[node['nodeId']] = node
         
-        current_node_id = config['startStateNode']
+        current_node_id = self.running_config['startStateNode']
 
         while current_node_id in nodes:
             current_node = nodes[current_node_id]
@@ -39,6 +44,17 @@ class StateMachine:
                 break
         print('State machine finished.\n########')
         return True
+    
+    def log(self, log_message: str, frontend_vis: bool = False):
+        print(log_message)
+        if frontend_vis:
+            # send log message to frontend
+            self.log_msgs.append(log_message)
+
+    def get_running_status(self):
+        
+
+    
 
 
     def to_json_interface(self) -> dict:

@@ -61,6 +61,11 @@ export class BehaviorTreeService {
     return this.http.post<any>(address + 'api/start_state_machine', {smId: smId, config: config_data});
   }
 
+  
+
+  recvTerminalMessage(): Observable<string> {
+    return this.http.get<string>(address + 'api/recv_terminal_message');
+  }
 
 
 
