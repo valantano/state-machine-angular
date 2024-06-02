@@ -49,4 +49,14 @@ export class StartNodeComponent {
     console.log('StartNode --sharedService--> Editor: Start clicked');
     this.sharedService.startEvent.emit();
   }
+
+  onStop() {
+    console.log('StartNode --sharedService--> Editor: Stop clicked');
+    this.sharedService.stopEvent.emit();
+  }
+
+  onReset() {
+    console.log('StartNode --sharedService--> Editor: Reset clicked');
+    this.sharedService.resetEvent.emit();
+  }
 }

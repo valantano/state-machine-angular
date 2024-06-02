@@ -45,6 +45,9 @@ export class EditorComponent {
   edgeDeleteSub: Subscription;
   setStartNodeSub: Subscription;
   startEventSub: Subscription;
+  stopEventSub: Subscription;
+  resetEventSub: Subscription;
+
   statusUpdateSub!: Subscription;
   
   constructor(private router: Router, private behaviorTreeService: BehaviorTreeService, private sharedService: SharedServiceService) {
@@ -72,6 +75,12 @@ export class EditorComponent {
     });
     this.startEventSub = this.sharedService.startEvent.subscribe(() => {
       this.handleStartClick();
+    });
+    this.stopEventSub = this.sharedService.stopEvent.subscribe(() => {
+      this.handleStopClick();
+    });
+    this.resetEventSub = this.sharedService.resetEvent.subscribe(() => {
+      this.handleResetClick();
     });
 
     this.loadComponent();
@@ -234,6 +243,15 @@ export class EditorComponent {
     }
   }
 
+  handleStopClick(): void {
+    console.log('Editor <--sharedService-- StartNode: Stop button clicked');
+  }
+
+  handleResetClick(): void {
+    this.resetNodeStatus(ExecutionStatus.Unknown);
+    this.updateInfoTerminal([""]);
+  }
+
   handleStartClick(): void {
     console.log('Editor <--sharedService-- StartNode: Start button clicked');
     const configData = this.convertToConfigData();
@@ -270,10 +288,7 @@ export class EditorComponent {
   }
 
   updateInfoTerminal(logMsgs: any): void {
-    console.log(logMsgs)
-    for (const msg in logMsgs) {
-      this.infoTerminalMsgs = logMsgs;
-    }
+    this.infoTerminalMsgs = logMsgs;
   }
 
   updateNodeStatus(nodeStatusData: any): void {

@@ -24,6 +24,8 @@ export class SharedServiceService {
 
   // start-node -> editor
   public startEvent: EventEmitter<void> = new EventEmitter<void>();
+  public resetEvent: EventEmitter<void> = new EventEmitter<void>();
+  public stopEvent: EventEmitter<void> = new EventEmitter<void>();
 
 
   constructor() {
