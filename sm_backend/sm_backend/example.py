@@ -20,7 +20,7 @@ import os
 class IdleState(State):
 
     def __init__(self) -> None:
-        super().__init__("Idle", 45)
+        super().__init__("Idle", 44)
         self.input_par_interface = {}
         self.output_interface = ["Success", "Fail", "What?"]
         self.infoText = "This is an Info Text and also especially long. So I mean very very very long. But not that long either"
@@ -80,7 +80,9 @@ class SpinState(State):
 
     def _state_code(self, input_parameters, global_vars):
         # implement state here
+        self.log("We're doing some spinning, spinning, spinning...")
         time.sleep(3)
+        self.log("Oh no outcome is Fail!!!!")
         return "Fail"
 
 # Define the StateMachines here

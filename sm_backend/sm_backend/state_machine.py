@@ -52,11 +52,11 @@ class StateMachine:
             if outcome in current_node['transitions']:
                 current_node_id = current_node['transitions'][outcome]
             else:
-                self.update_node_status(current_node_id, 'Failed')
                 break
         self.log('State machine finished.\n########')
         return True
     
+    ############ Status Update Code ############
     def update_node_status(self, node_id: str, status: str):
         with self.status_update_lock:
             self.status_update_buffer['node_status'][node_id] = status
@@ -75,7 +75,7 @@ class StateMachine:
     def get_status_update(self):
         with self.status_update_lock:
             return self.status_update_buffer
-
+    ############ Status Update Code ############
 
     def to_json_interface(self) -> dict:
         states = [state.to_json() for state in self.states.values()]
