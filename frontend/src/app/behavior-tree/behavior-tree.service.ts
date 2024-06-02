@@ -140,9 +140,6 @@ export class BehaviorTreeService {
 
   
 
-  recvTerminalMessage(): Observable<string> {
-    return this.http.get<string>(address + 'api/recv_terminal_message');
-  }
 
 
 

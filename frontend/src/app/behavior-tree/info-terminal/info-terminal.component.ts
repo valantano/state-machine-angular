@@ -14,9 +14,7 @@ export class InfoTerminalComponent implements OnInit {
   constructor(private behaviorTreeService: BehaviorTreeService) { }
 
   ngOnInit(): void {
-    this.behaviorTreeService.recvTerminalMessage().subscribe((message: string) => {
-      this.message_buffer.push(message);
-    });
+    
   }
   toggleMinimize(): void {
     this.isMinimized = !this.isMinimized;

@@ -34,7 +34,7 @@ export class EditorComponent {
   edges: { [id: string]: TransitionEdge } = {};
   freshlyCreatedNodeId: string = "";
 
-  infoTerminalMsgs: string[] = [""];
+  infoTerminalMsgs: string[] = [];
 
   unsavedChanges: boolean = false;
   executing: boolean = false;
@@ -249,7 +249,7 @@ export class EditorComponent {
 
   handleResetClick(): void {
     this.resetNodeStatus(ExecutionStatus.Unknown);
-    this.updateInfoTerminal([""]);
+    this.updateInfoTerminal([]);
   }
 
   handleStartClick(): void {

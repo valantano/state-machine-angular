@@ -1,10 +1,15 @@
 <div class="terminal" [class.minimized]="isMinimized">
-    <div class="header" (click)="toggleMinimize()">
-      Terminal
-      <button class="minimize-button">{{ minimizeButtonContent() }}</button>
+  <div class="header" (click)="toggleMinimize()">
+    Terminal
+    <button class="minimize-button">{{ minimizeButtonContent() }}</button>
+  </div>
+
+  <div class="text-terminal">
+    <div *ngIf="message_buffer.length > 0">
+      <div *ngFor="let message of message_buffer" class="message">> {{ message }}</div>
     </div>
 
-<div class="terminal">
-    <div *ngFor="let message of message_buffer" class="message">> {{ message }}</div>
+    <div *ngIf="message_buffer.length == 0">
+      <div class="defaultmessage">> As soon as you start the statemachine logging information sent from backend will be visualized here... </div>
+    </div>
   </div>
-  

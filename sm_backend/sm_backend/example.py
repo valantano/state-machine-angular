@@ -80,7 +80,8 @@ class SpinState(State):
 
     def _state_code(self, input_parameters, global_vars):
         # implement state here
-        self.log("We're doing some spinning, spinning, spinning...")
+        for i in range(30):
+            self.log("We're doing some spinning, spinning, spinning...")
         time.sleep(3)
         self.log("Oh no outcome is Fail!!!!")
         return "Fail"
