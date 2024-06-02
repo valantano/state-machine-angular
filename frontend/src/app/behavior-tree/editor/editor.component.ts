@@ -1,11 +1,11 @@
 import { Component, EventEmitter, HostListener, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorTreeService } from '../behavior-tree.service';
-import { TransitionEdge, StateNode, StateNodeInterface } from './data_model';
+import { TransitionEdge, StateNode, StateNodeInterface, ExecutionStatus, TransitionStatus } from './data_model';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { SharedServiceService } from './shared-service.service';
-import { Subscription } from 'rxjs';
+import { Subscription, interval, switchMap } from 'rxjs';
 
 
 
@@ -34,6 +34,8 @@ export class EditorComponent {
   edges: { [id: string]: TransitionEdge } = {};
   freshlyCreatedNodeId: string = "";
 
+  infoTerminalMsgs: string[] = [""];
+
   unsavedChanges: boolean = false;
   executing: boolean = false;
 
@@ -43,6 +45,7 @@ export class EditorComponent {
   edgeDeleteSub: Subscription;
   setStartNodeSub: Subscription;
   startEventSub: Subscription;
+  statusUpdateSub!: Subscription;
   
   constructor(private router: Router, private behaviorTreeService: BehaviorTreeService, private sharedService: SharedServiceService) {
     const navigation = this.router.getCurrentNavigation();
@@ -133,7 +136,8 @@ export class EditorComponent {
       y: y,
       title: title,
       state_interface: state_interface,
-      input_parameters: input_parameters
+      input_parameters: input_parameters,
+      executionStatus: ExecutionStatus.Unknown
     }
     this.nodes[newNode.nodeId] = newNode;
     return newNode.nodeId;
@@ -208,7 +212,8 @@ export class EditorComponent {
       id: existingEdgeId !== null ? existingEdgeId : uuidv4(),
       sourceNodeId: sourceNodeId,
       sourceNodeOutputGate: sourceNodeOutputGate,
-      targetNodeId: targetNodeId
+      targetNodeId: targetNodeId,
+      transitionStatus: TransitionStatus.Unknown
     }
 
     console.log('Editor: addEdge', newEdge);
@@ -233,11 +238,59 @@ export class EditorComponent {
     console.log('Editor <--sharedService-- StartNode: Start button clicked');
     const configData = this.convertToConfigData();
     this.executing = true;
+    this.resetNodeStatus(ExecutionStatus.NotExecuted);
+    this.startAskingForStatusUpdates();
     this.behaviorTreeService.startStateMachine(this.stateMachineId, configData).subscribe((data: any) => {
       console.log('Editor -> backend: startStateMachine', data);
       this.executing = false;
-    });
+      this.stopAskingForStatusUpdates();
+      this.behaviorTreeService.getStatusUpdate(this.stateMachineId).subscribe((data: any) => this.handleStatusUpdate(data))}); // receive final status update
   }
+  
+////////////////////////////// Status Update Code //////////////////////////////
+  startAskingForStatusUpdates(): void {
+    this.statusUpdateSub = interval(500)
+      .pipe(
+        switchMap(() => this.behaviorTreeService.getStatusUpdate(this.stateMachineId))
+      )
+      .subscribe((data: any) => {
+        this.handleStatusUpdate(data);
+      });
+  }
+  stopAskingForStatusUpdates(): void {
+    if (this.statusUpdateSub) {
+      this.statusUpdateSub.unsubscribe();
+    }
+  }
+
+  handleStatusUpdate(statusUpdate: any): void {
+    console.log('Data from backend:', statusUpdate);
+    this.updateNodeStatus(statusUpdate['node_status'])
+    this.updateInfoTerminal(statusUpdate['log_msgs'])
+  }
+
+  updateInfoTerminal(logMsgs: any): void {
+    console.log(logMsgs)
+    for (const msg in logMsgs) {
+      this.infoTerminalMsgs = logMsgs;
+    }
+  }
+
+  updateNodeStatus(nodeStatusData: any): void {
+    // nodeStatusData is a dict with stateId as key and the status as value
+    for (const nodeId in nodeStatusData) {
+      this.nodes[nodeId].executionStatus = nodeStatusData[nodeId]
+    }
+  }
+
+  resetNodeStatus(status: ExecutionStatus): void {
+    for (const nodeId in this.nodes) {
+      this.nodes[nodeId].executionStatus = status
+    }
+  }
+////////////////////////////// Status Update Code //////////////////////////////
+
+  
 
   handleSaveClick(): void {
     console.log('Editor <- MenuBar: Save button clicked');

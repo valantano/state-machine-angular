@@ -17,6 +17,69 @@ const configs = [
   { 'name': 'File 4', 'id': 3, 'description': 'Description 4', 'creationDate': new Date(), 'lastModified': new Date() }
 ]
 
+const status_update = {
+
+}
+
+const run1 = {
+    "state_machine_config": {
+        "name": "asdf",
+        "executionDate": "2024-04-12T11:16:31.846695",
+        "description": "asdf1",
+        "startStateNode": "45b7e446-4bf1-438f-b370-7ef75048db87",
+        "stateNodes": [
+            {
+                "title": "State Node",
+                "nodeId": "0ae9c748-425f-4186-a840-e09f86bc59cd",
+                "stateId": 45,
+                "x": 1269,
+                "y": 384,
+                "transitions": {
+                    "Fail": "0ae9c748-425f-4186-a840-e09f86bc59cd",
+                    "Success": "45b7e446-4bf1-438f-b370-7ef75048db87",
+                    "What?": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1"
+                },
+                "input_parameters": {}
+            },
+            {
+                "title": "State Node",
+                "nodeId": "45b7e446-4bf1-438f-b370-7ef75048db87",
+                "stateId": 46,
+                "x": 652,
+                "y": 531,
+                "transitions": {},
+                "input_parameters": {}
+            },
+            {
+                "title": "State Node",
+                "nodeId": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1",
+                "stateId": 47,
+                "x": 1601,
+                "y": 611,
+                "transitions": {},
+                "input_parameters": {}
+            }
+        ]
+    }
+}
+
+const statusUpdate = {
+  "stateNodes": [
+    {
+        "nodeId": "0ae9c748-425f-4186-a840-e09f86bc59cd",
+        "status": "Executed"
+    },
+    {
+        "nodeId": "45b7e446-4bf1-438f-b370-7ef75048db87",
+        "status": "NotExecuted"
+    },
+    {
+        "nodeId": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1",
+        "status": "Running"
+    }
+]
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -61,25 +124,25 @@ export class BehaviorTreeService {
     return this.http.post<any>(address + 'api/start_state_machine', {smId: smId, config: config_data});
   }
 
+  getStatusUpdate(smId: number): Observable<any>{
+// { "log_msgs": [
+//     "########\nStarting StateMachine WZL1"
+//   ],
+//   "node_status": {
+//     "0ae9c748-425f-4186-a840-e09f86bc59cd": "Unknown",
+//     "45b7e446-4bf1-438f-b370-7ef75048db87": "Running",
+//     "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1": "Unknown"
+//   },
+//   "state_machine_status": "Running"
+// }
+    return this.http.post<any>(address + 'api/get_status_update', {smId: smId})
+  }
+
   
 
   recvTerminalMessage(): Observable<string> {
     return this.http.get<string>(address + 'api/recv_terminal_message');
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -104,7 +167,7 @@ export class BehaviorTreeService {
   //   return this.mockAvailableConfigs;
   // }
 
-
+  private mockStatusUpdate: Observable<any> = of(statusUpdate);
 
   private mockAvailableStateMachines: Observable<any> = of({
     'state_machines': [ {'name': 'WZL1', 'id': 0, 'states': states}, {'name': 'WZL2', 'id': 1, 'states': states}]

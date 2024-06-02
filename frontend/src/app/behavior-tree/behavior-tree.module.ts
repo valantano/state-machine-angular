@@ -22,7 +22,6 @@ import { InfoTerminalComponent } from './info-terminal/info-terminal.component';
 
 
 
-
 @NgModule({
   declarations: [
     StateNodeComponent,

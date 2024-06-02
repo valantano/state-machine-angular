@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { BehaviorTreeService } from '../behavior-tree.service';
 
@@ -9,7 +9,7 @@ import { BehaviorTreeService } from '../behavior-tree.service';
 })
 export class InfoTerminalComponent implements OnInit {
 
-  message_buffer: string[] = ["Hey", "Help", "lnonodnflasjflsdajflsdjaflsjflsjadfl;jsadfl;sdnvoewnvoiweosdjfoewnfodskfmofjoiewnfodsfldskfe jfosdnfkldsfoejfoskdnfklaskldfjlsdflsdjfl;sdjflaskjf;sdfk"];
+  @Input() message_buffer: string[] = [];
   isMinimized = false;
   constructor(private behaviorTreeService: BehaviorTreeService) { }
 

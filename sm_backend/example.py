@@ -20,14 +20,16 @@ import os
 class IdleState(State):
 
     def __init__(self) -> None:
-        super().__init__("Idle", 45)
+        super().__init__("Idle", 44)
         self.input_par_interface = {}
         self.output_interface = ["Success", "Fail", "What?"]
         self.infoText = "This is an Info Text and also especially long. So I mean very very very long. But not that long either"
 
     def _state_code(self, input_parameters, global_vars):
         # implement state here
+        self.log("We are doing some idle stuff here.")
         time.sleep(1)
+        self.log("Oh no outcome is Fail")
         return "Fail"
     
 class IdleState2(State):
@@ -40,7 +42,9 @@ class IdleState2(State):
 
     def _state_code(self, input_parameters, global_vars):
         # implement state here
+        self.log("Oh sweet another idle state.")
         time.sleep(1)
+        self.log("Oh no outcome is Fail")
         return "Fail"
 
 
@@ -57,9 +61,12 @@ class MoveBaseToGoalState(State):
 
     def _state_code(self, input_parameters, global_vars):
         # implement state here
-        print(input_parameters)
-        print(global_vars)
-        time.sleep(5)
+        self.log("Oh damn thats a real state with input parameters and so on.")
+        time.sleep(3)
+        self.log(f"Here are the input parameters: {input_parameters}")
+        self.log(f"And here are the global vars: {global_vars}")
+        time.sleep(2)
+        self.log("Oh no outcome is Fail!!!!")
         return "Fail"   # Return item from output_interface
 
 
@@ -73,7 +80,9 @@ class SpinState(State):
 
     def _state_code(self, input_parameters, global_vars):
         # implement state here
+        self.log("We're doing some spinning, spinning, spinning...")
         time.sleep(3)
+        self.log("Oh no outcome is Fail!!!!")
         return "Fail"
 
 # Define the StateMachines here

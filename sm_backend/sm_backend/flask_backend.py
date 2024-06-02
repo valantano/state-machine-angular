@@ -27,6 +27,7 @@ class FlaskBackend:
         self.add_endpoint('/api/delete_config_file', 'delete_config_file', self.delete_config_file, methods=['POST'])
 
         self.add_endpoint('/api/start_state_machine', 'start_state_machine', self.start_state_machine, methods=['POST'])
+        self.add_endpoint('/api/get_status_update', 'get_status_update', self.get_status_update, methods=['POST'])
 
         # self.add_endpoint('/api/check_connection', 'check_connection', self.check_connection, methods=['GET'])
         # self.add_endpoint('/api/get_states', 'get_states', self.send_states, methods=['GET'])
@@ -34,6 +35,11 @@ class FlaskBackend:
         # # self.add_endpoint('/api/start_state_machine', 'start_state_machine', self.start_state_machine, methods=['POST'])
         # self.add_endpoint('/api/simulate_solely_state', 'simulate_state', self.simulate_state, methods=['POST'])
 
+    def get_status_update(self):
+        data = request.get_json()
+        sm_id = int(data['smId'])
+        status_update = self.state_machines[sm_id].get_status_update()
+        return jsonify(status_update)
 
 
     def start(self, **kwargs):
@@ -56,15 +62,17 @@ class FlaskBackend:
         pass
 
     def send_config_data(self):
+        """Loads requested config file, identified by sm_id and filename, and sends it to the frontend."""
         data = request.get_json()
         sm_id = int(data['smId'])
         filename = str(data['filename'])
-        print(f'Loading config file {filename} for state machine {sm_id}')
+        self.log(f'Loading config file {filename} for state machine {sm_id}')
 
         config = self.state_machines[sm_id].load_config_file(filename)
         return jsonify(config)
     
     def send_interface_data(self):
+        """Sends the state machine interface data (structure of available states) to the frontend."""
         data = request.get_json()
         sm_id = int(data['smId'])
 
@@ -75,7 +83,7 @@ class FlaskBackend:
         sm_id = int(data['smId'])
         filename = str(data['filename'])
         config = data['config']
-        print(f'Saving config file {filename} for state machine {sm_id}')
+        self.log(f'Saving config file {filename} for state machine {sm_id}')
         success = self.state_machines[sm_id].save_config_file(filename, config)
         return jsonify({'success': success})
     
@@ -84,7 +92,7 @@ class FlaskBackend:
         sm_id = int(data['smId'])
         name = str(data['name'])
         description = str(data['description'])
-        print(f'Creating new config file {name} for state machine {sm_id}')
+        self.log(f'Creating new config file {name} for state machine {sm_id}')
         success = self.state_machines[sm_id].create_new_config_file(name, description)
         return jsonify({'success': success})
     
@@ -92,7 +100,7 @@ class FlaskBackend:
         data = request.get_json()
         sm_id = int(data['smId'])
         filename = str(data['filename'])
-        print(f'Deleting config file {filename} for state machine {sm_id}')
+        self.log(f'Deleting config file {filename} for state machine {sm_id}')
         success = self.state_machines[sm_id].delete_config_file(filename)
         return jsonify({'success': success})
     
@@ -100,15 +108,17 @@ class FlaskBackend:
         data = request.get_json()
         sm_id = int(data['smId'])
         config = data['config']
-        print(f'Received state machine {sm_id} with config {config}')
+        self.log(f'Received state machine {sm_id} with config {config}')
         success = self.state_machines[sm_id].start(config['state_machine_config'])
         return jsonify({'success': success})
 
 
-    
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=['GET'], *args, **kwargs):
         self.app.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
+
+    def log(self, msg):
+        print(f'[Flask Backend]: {msg}')
 
 
 

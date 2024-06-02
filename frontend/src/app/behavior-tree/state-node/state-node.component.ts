@@ -1,5 +1,5 @@
 import { Component, Input, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ElementRef, EventEmitter, Output, HostListener, ViewChildren, Query, QueryList} from '@angular/core';
-import { StateNodeInterface } from '../editor/data_model';
+import { ExecutionStatus, StateNodeInterface } from '../editor/data_model';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { SharedServiceService } from '../editor/shared-service.service';
 
@@ -45,6 +45,8 @@ export class StateNodeComponent {
   @Input() title: string = "";
   @Input() nodeId: string = "";
   @Input() state_interface!: StateNodeInterface;
+  @Input() executionStatus: ExecutionStatus = ExecutionStatus.Unknown;
+  ExecutionStatus = ExecutionStatus;
 
   @Output() circleDrag: EventEmitter<{nodeId: string, outputGate: string, circlepos: {x: number, y: number}}> = new EventEmitter<{nodeId: string, outputGate: string, circlepos: {x: number, y: number}}>();
   @Output() nodeDrag: EventEmitter<{mouseEvent: MouseEvent, nodeId: string}> = new EventEmitter<{mouseEvent: MouseEvent, nodeId: string}>();

@@ -1,6 +1,7 @@
 import os
 import json
 from datetime import datetime
+from threading import Lock
 
 
 from .state import State
@@ -15,46 +16,65 @@ class StateMachine:
 
         self.states: dict = {}
         for state in state_interface:
-            self.states[state.id] = state
+            state.set_logging_callback(self.log)
+            self.states[state.id] = state       # state that can be executed
 
-        self.global_vars = {}        # global variables
+        self.global_vars = {}        # global variables, can be changed by states and used by other states (for side effects)
 
 
-        self.log_msgs = []
-        self.running_config = None
+        self.status_update_buffer = {}      # store status of state machine and logs to be sent to the frontend
+        self.status_update_lock = Lock()
 
-    def start(self, config):
-        print(f"########\nStarting StateMachine {self.name}")
-        nodes = {}  # each node in the graph corresponds to one of the states in the state machine with different input parameters transitions etc.
-        self.running_config = config
-        for node in self.running_config['stateNodes']:
-            nodes[node['nodeId']] = node
+    def start(self, run_config):
         
-        current_node_id = self.running_config['startStateNode']
+        nodes = {}  # each node in the graph corresponds to one of the states in the state machine with different input parameters transitions etc.
+        for node in run_config['stateNodes']:
+            nodes[node['nodeId']] = node
+
+        self.init_status_update_buffer(nodes.keys())
+
+        self.log(f"########\nStarting StateMachine {self.name}")
+
+        current_node_id = run_config['startStateNode']
 
         while current_node_id in nodes:
             current_node = nodes[current_node_id]
+            state_id = current_node['stateId']
             input_parameters = current_node['input_parameters']
 
-            outcome: str = self.states[current_node['stateId']].execute(input_parameters, global_vars=self.global_vars)
+            self.update_node_status(current_node_id, 'Running')
+            try:
+                outcome: str = self.states[state_id].execute(input_parameters, global_vars=self.global_vars)
+                self.update_node_status(current_node_id, 'Executed')
+            except:
+                self.update_node_status(current_node_id, 'Failed')
 
             if outcome in current_node['transitions']:
                 current_node_id = current_node['transitions'][outcome]
             else:
+                self.update_node_status(current_node_id, 'Failed')
                 break
-        print('State machine finished.\n########')
+        self.log('State machine finished.\n########')
         return True
     
-    def log(self, log_message: str, frontend_vis: bool = False):
-        print(log_message)
-        if frontend_vis:
-            # send log message to frontend
-            self.log_msgs.append(log_message)
+    def update_node_status(self, node_id: str, status: str):
+        with self.status_update_lock:
+            self.status_update_buffer['node_status'][node_id] = status
 
-    def get_running_status(self):
-        
-
+    def init_status_update_buffer(self, node_ids: list[str]):
+        self.status_update_buffer = {'node_status': {node_id: 'NotExecuted' for node_id in node_ids}}
+        self.status_update_buffer['state_machine_status'] = 'Running'
+        self.status_update_buffer['log_msgs'] = []
     
+    def log(self, log_message: str, to_frontend: bool = True):
+        print(f'[SM {self.name}] {log_message}')
+        if to_frontend:
+            with self.status_update_lock:
+                self.status_update_buffer['log_msgs'].append(f'[SM: {self.name}] {log_message}')
+
+    def get_status_update(self):
+        with self.status_update_lock:
+            return self.status_update_buffer
 
 
     def to_json_interface(self) -> dict:
@@ -67,7 +87,6 @@ class StateMachine:
     def _scan_config_folder(self):
         """Scans the config folder for all json files and returns a dictionary with the filenames as keys and the full path as values."""
         files = {}
-
         for filename in os.listdir(self.config_folder):
             if filename.endswith('.json'):
                 full_path = os.path.join(self.config_folder, filename)
@@ -81,8 +100,7 @@ class StateMachine:
             with open(os.path.join(self.config_folder, name), 'r') as f:
                 return json.load(f)
         except:
-            print(
-                f'Error: File {name} not found in config folder or could not be opened.')
+            self.log(f'Error: File {name} not found in config folder or could not be opened.', to_frontend=False)
             return {}
 
     def save_config_file(self, name: str, config: dict):
@@ -93,7 +111,7 @@ class StateMachine:
                 json.dump(config, f, indent=4)
             return True
         else:
-            print(f'Error: File {name} is not a valid config file.')
+            self.log(f'Error: File {name} is not a valid config file.', to_frontend=False)
             return False
 
     def create_new_config_file(self, name: str, description: str):
@@ -120,7 +138,7 @@ class StateMachine:
             os.remove(os.path.join(self.config_folder, filename))
             return True
         except:
-            print(f'Error: File {filename} not found in config folder or could not be deleted.')
+            self.log(f'Error: File {filename} not found in config folder or could not be deleted.', to_frontend=False)
             return False
 
     def _get_valid_filename(self, filename: str):
@@ -128,7 +146,7 @@ class StateMachine:
         org_filename = filename
         i = 0
         path = os.path.join(self.config_folder, filename + '.json')
-        print(path, os.path.isfile(path))
+        self.log(path, os.path.isfile(path), to_frontend=False)
         while os.path.isfile(os.path.join(self.config_folder, filename + '.json')):
             i += 1
             filename = org_filename + str(i)
@@ -150,7 +168,7 @@ class StateMachine:
                         'creationDate': file_contents['creationDate'], 'lastModified': file_contents['lastModified']}
                 config_infos.append(info)
             except Exception as e:
-                print(f'Error in SM {self.id}: File {filename} is not a valid config file. Please remove it.')
+                self.log(f'Error in SM {self.id}: File {filename} is not a valid config file. Please remove it.', to_frontend=False)
                 continue
 
         return config_infos

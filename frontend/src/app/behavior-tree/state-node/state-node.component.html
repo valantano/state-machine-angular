@@ -1,38 +1,51 @@
-<div class="rectangle" (mousedown)="onNodeDrag($event)" (contextmenu)="onRightClick($event)">
-    <div class="title">{{ getDisplayTitle() }}</div>
-    <hr> <!-- Horizontal Divider -->
-    <div class="information">
-        {{state_interface.infoText}}
+<div class="container" [ngClass]="{
+    'executed': executionStatus === ExecutionStatus.Executed,
+    'running': executionStatus === ExecutionStatus.Running,
+    'not-executed': executionStatus === ExecutionStatus.NotExecuted,
+    'unknown': executionStatus === ExecutionStatus.Unknown,
+    'failed': executionStatus === ExecutionStatus.Failed
+}">
+
+    <div class="top-circle-container">
+    <div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)"
+        (mouseleave)="onTopCircleLeave($event)"></div>
     </div>
+    <div class="rectangle" (mousedown)="onNodeDrag($event)" (contextmenu)="onRightClick($event)">
+        <div class="title">{{ getDisplayTitle() }}</div>
+        <hr> <!-- Horizontal Divider -->
+        <div class="information">
+            {{state_interface.infoText}}
+        </div>
 
-    
+        <div class="input-parameters-container" *ngIf="parInterfaceNotEmpty()">
+            <div *ngFor="let item of state_interface.input_par_interface | keyvalue" class="input-parameters">
+                <label class="input-par-label">{{ item.key }}</label>
 
-    <div class="input-parameters-container" *ngIf="parInterfaceNotEmpty()">
-        <div *ngFor="let item of state_interface.input_par_interface | keyvalue" class="input-parameters">
-            <label class="input-par-label">{{ item.key }}</label>
-    
-            <select [(ngModel)]="inputParameters[item.key]" class="input-par-set" *ngIf="item.value['type']=='enum'">
-                <option *ngFor="let value of item.value['values']">{{ value }}</option>
-            </select>
-    
-            <input type="number" [(ngModel)]="inputParameters[item.key]" class="input-par-set" *ngIf="item.value['type']=='number'">
-    
-            <input type="text" [(ngModel)]="inputParameters[item.key]" class="input-par-set" *ngIf="item.value['type']=='string'">
-    
-            <select [(ngModel)]="inputParameters[item.key]" class="input-par-set" *ngIf="item.value['type']=='boolean'">
-                <option> False </option>
-                <option> True </option>
-            </select>
+                <select [(ngModel)]="inputParameters[item.key]" class="input-par-set"
+                    *ngIf="item.value['type']=='enum'">
+                    <option *ngFor="let value of item.value['values']">{{ value }}</option>
+                </select>
+
+                <input type="number" [(ngModel)]="inputParameters[item.key]" class="input-par-set"
+                    *ngIf="item.value['type']=='number'">
+
+                <input type="text" [(ngModel)]="inputParameters[item.key]" class="input-par-set"
+                    *ngIf="item.value['type']=='string'">
+
+                <select [(ngModel)]="inputParameters[item.key]" class="input-par-set"
+                    *ngIf="item.value['type']=='boolean'">
+                    <option> False </option>
+                    <option> True </option>
+                </select>
+            </div>
         </div>
     </div>
+    
+    <div class="bottom-circle-container">
+        <div *ngFor="let outputGate of state_interface.output_interface" #bottomCircle class="circle bottom-circle"
+            (mousedown)="onBotCircleDrag(outputGate)" [attr.data-output-gate]="outputGate" [title]="outputGate"></div>
+    </div>
 </div>
-<div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)"
-    (mouseleave)="onTopCircleLeave($event)"></div>
-<div class="bottom-circle-container">
-    <div *ngFor="let outputGate of state_interface.output_interface" #bottomCircle class="circle bottom-circle"
-        (mousedown)="onBotCircleDrag(outputGate)" [attr.data-output-gate]="outputGate" [title]="outputGate"></div>
-</div>
-
 <mat-menu #contextMenu="matMenu">
     <button mat-menu-item (click)="onDelete()">Delete</button>
 </mat-menu>

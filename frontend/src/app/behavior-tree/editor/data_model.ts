@@ -6,6 +6,7 @@ export interface StateNode {
     title: string;
     state_interface: StateNodeInterface;
     input_parameters: { [key: string ]: any};
+    executionStatus: ExecutionStatus;
 }
 
 export interface TransitionEdge {
@@ -13,10 +14,24 @@ export interface TransitionEdge {
     sourceNodeId: string;
     sourceNodeOutputGate: string;
     targetNodeId: string;
+    transitionStatus: TransitionStatus;
 
     // title: string;
 }
 
+export enum ExecutionStatus {
+    Executed = "Executed",
+    Running = "Running",
+    Failed = "Failed",
+    NotExecuted = "NotExecuted",
+    Unknown = "Unknown",
+}
+
+export enum TransitionStatus {
+    Taken = "Taken",
+    NotTaken = "NotTaken",
+    Unknown = "Unknown"
+}
 
 // states: [
 //     { name: "Idle", stateId: 45, infoText: "This is an Info Text", input_par_interface: {}, output_interface: ["Fail", "Success", "What?"] },

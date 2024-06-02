@@ -1,20 +1,20 @@
 {
     "state_machine_config": {
         "name": "asdf",
-        "lastModified": "2024-04-12T11:16:31.846695",
+        "lastModified": "2024-06-02T20:12:00.452686",
         "creationDate": "2024-03-20T13:38:00.269986",
         "description": "asdf1",
-        "startStateNode": "45b7e446-4bf1-438f-b370-7ef75048db87",
+        "startStateNode": "0ae9c748-425f-4186-a840-e09f86bc59cd",
         "stateNodes": [
             {
                 "title": "State Node",
                 "nodeId": "0ae9c748-425f-4186-a840-e09f86bc59cd",
                 "stateId": 45,
-                "x": 1269,
-                "y": 384,
+                "x": 973,
+                "y": 364,
                 "transitions": {
-                    "Fail": "0ae9c748-425f-4186-a840-e09f86bc59cd",
-                    "Success": "45b7e446-4bf1-438f-b370-7ef75048db87",
+                    "Fail": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1",
+                    "Success": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1",
                     "What?": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1"
                 },
                 "input_parameters": {}
@@ -23,8 +23,8 @@
                 "title": "State Node",
                 "nodeId": "45b7e446-4bf1-438f-b370-7ef75048db87",
                 "stateId": 46,
-                "x": 652,
-                "y": 531,
+                "x": 715,
+                "y": 789,
                 "transitions": {},
                 "input_parameters": {}
             },
@@ -32,9 +32,12 @@
                 "title": "State Node",
                 "nodeId": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1",
                 "stateId": 47,
-                "x": 1601,
-                "y": 611,
-                "transitions": {},
+                "x": 1332,
+                "y": 665,
+                "transitions": {
+                    "Success": "45b7e446-4bf1-438f-b370-7ef75048db87",
+                    "Fail": "45b7e446-4bf1-438f-b370-7ef75048db87"
+                },
                 "input_parameters": {}
             }
         ]

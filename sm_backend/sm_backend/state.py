@@ -17,10 +17,22 @@ class State:
 
         self.infoText = "This is an Info Text"
 
+        self.callback_logger = None
+
+    def set_logging_callback(self, log_func_of_state_machine):
+        self.callback_logger = log_func_of_state_machine
+
 
     def _state_code(self, input_parameters, global_vars):
         # implement state here
         return "Fail"
+    
+        
+    def log(self, log_message: str, to_frontend: bool = True):
+        if self.callback_logger:
+            self.callback_logger(f'[State: {self.name}] {log_message}', to_frontend=to_frontend)
+        else:
+            print(f'[State: {self.name}] {log_message}')
 
 
     def execute(self, input_parameters, global_vars=None):
@@ -47,6 +59,8 @@ class State:
         # { name: "Idle", stateId: 45, infoText: "This is an Info Text and also especially long. So I mean very very very long. But not that long either", input_par_interface: {}, output_interface: ["Fail", "Success", "What?"] },
 
 
+
+# Example
 class IdleState(State):
 
     def __init__(self) -> None:
@@ -56,6 +70,7 @@ class IdleState(State):
 
     def _state_code(self, input_parameters, global_vars=None):
         # implement state here
+        self.log("Simple logging which can also be sent to frontend", to_frontend=True)
         return "Fail"
 
 

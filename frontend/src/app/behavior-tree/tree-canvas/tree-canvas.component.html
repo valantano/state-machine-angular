@@ -5,6 +5,7 @@
 
   <app-state-node *ngFor="let node of nodes | keyvalue" class="state-node" [style.left.px]="node.value.x" [style.top.px]="node.value.y"
     [nodeId]="node.value.nodeId" [title]="node.value.title" [state_interface]="node.value.state_interface" [inputParameters]="node.value.input_parameters"
+    [executionStatus]="node.value.executionStatus"
     (circleDrag)="handleCircleDrag($event)" (nodeDrag)="handleNodeDrag($event)"
     (topCircleEnter)="handleTopCircleEnter($event)" (topCircleLeave)="handleTopCircleLeave()">
   </app-state-node>
