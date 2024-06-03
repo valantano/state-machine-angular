@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { io, Socket } from 'socket.io-client';
 
 const address = 'http://localhost:8323/';
 
@@ -84,8 +85,20 @@ const statusUpdate = {
   providedIn: 'root'
 })
 export class BehaviorTreeService {
+  private socket: Socket;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.socket = io(address);
+  
+  }
+  
+  recvStatusUpdates(): Observable<any> {
+    return new Observable((observer) => {
+      this.socket.on('status_update', (data) => {
+        observer.next(data);
+      });
+    });
+  }
 
 
   // getAvailableConfigs(id: number): Observable<any> {
@@ -123,20 +136,26 @@ export class BehaviorTreeService {
   startStateMachine(smId: number, config_data: any): Observable<any> {
     return this.http.post<any>(address + 'api/start_state_machine', {smId: smId, config: config_data});
   }
-
-  getStatusUpdate(smId: number): Observable<any>{
-// { "log_msgs": [
-//     "########\nStarting StateMachine WZL1"
-//   ],
-//   "node_status": {
-//     "0ae9c748-425f-4186-a840-e09f86bc59cd": "Unknown",
-//     "45b7e446-4bf1-438f-b370-7ef75048db87": "Running",
-//     "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1": "Unknown"
-//   },
-//   "state_machine_status": "Running"
-// }
-    return this.http.post<any>(address + 'api/get_status_update', {smId: smId})
+  stopStateMachine(smId: number): Observable<any> {
+    return this.http.post<any>(address + 'api/stop_state_machine', {smId: smId});
   }
+
+  
+
+
+//   getStatusUpdate(smId: number): Observable<any>{
+// // { "log_msgs": [
+// //     "########\nStarting StateMachine WZL1"
+// //   ],
+// //   "node_status": {
+// //     "0ae9c748-425f-4186-a840-e09f86bc59cd": "Unknown",
+// //     "45b7e446-4bf1-438f-b370-7ef75048db87": "Running",
+// //     "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1": "Unknown"
+// //   },
+// //   "state_machine_status": "Running"
+// // }
+//     // return this.http.post<any>(address + 'api/get_status_update', {smId: smId})
+//   }
 
   
 

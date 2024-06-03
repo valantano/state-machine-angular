@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-from threading import Lock
+from multiprocessing import Lock
 
 
 from .state import State
@@ -21,12 +21,16 @@ class StateMachine:
 
         self.global_vars = {}        # global variables, can be changed by states and used by other states (for side effects)
 
-
         self.status_update_buffer = {}      # store status of state machine and logs to be sent to the frontend
-        self.status_update_lock = Lock()
+        self.parent_connection = None
 
-    def start(self, run_config):
-        
+
+    def start(self, run_config, parent_connection):
+        """
+        Starts the state machine with the given run_config.
+        parent_connection is the connection to the parent process, used to send status updates to the frontend.
+        """
+        self.parent_connection = parent_connection
         nodes = {}  # each node in the graph corresponds to one of the states in the state machine with different input parameters transitions etc.
         for node in run_config['stateNodes']:
             nodes[node['nodeId']] = node
@@ -54,27 +58,31 @@ class StateMachine:
             else:
                 break
         self.log('State machine finished.\n########')
+        self.update_sm_status('Finished')
         return True
     
     ############ Status Update Code ############
     def update_node_status(self, node_id: str, status: str):
-        with self.status_update_lock:
-            self.status_update_buffer['node_status'][node_id] = status
+        self.status_update_buffer['node_status'][node_id] = status
+        self.send_status_update()
 
     def init_status_update_buffer(self, node_ids: list[str]):
         self.status_update_buffer = {'node_status': {node_id: 'NotExecuted' for node_id in node_ids}}
         self.status_update_buffer['state_machine_status'] = 'Running'
         self.status_update_buffer['log_msgs'] = []
+
+    def update_sm_status(self, status: str):
+        self.status_update_buffer['state_machine_status'] = status
+        self.send_status_update()
     
     def log(self, log_message: str, to_frontend: bool = True):
         print(f'[SM {self.name}] {log_message}')
         if to_frontend:
-            with self.status_update_lock:
-                self.status_update_buffer['log_msgs'].append(f'[SM: {self.name}] {log_message}')
+            self.status_update_buffer['log_msgs'].append(f'[SM: {self.name}] {log_message}')
+            self.send_status_update()
 
-    def get_status_update(self):
-        with self.status_update_lock:
-            return self.status_update_buffer
+    def send_status_update(self):
+        self.parent_connection.send(self.status_update_buffer)
     ############ Status Update Code ############
 
     def to_json_interface(self) -> dict:

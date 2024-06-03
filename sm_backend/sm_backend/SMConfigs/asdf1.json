@@ -1,7 +1,7 @@
 {
     "state_machine_config": {
         "name": "asdf",
-        "lastModified": "2024-06-02T20:12:00.452686",
+        "lastModified": "2024-06-03T16:57:51.748555",
         "creationDate": "2024-03-20T13:38:00.269986",
         "description": "asdf1",
         "startStateNode": "0ae9c748-425f-4186-a840-e09f86bc59cd",
@@ -10,8 +10,8 @@
                 "title": "State Node",
                 "nodeId": "0ae9c748-425f-4186-a840-e09f86bc59cd",
                 "stateId": 45,
-                "x": 973,
-                "y": 364,
+                "x": 813,
+                "y": 387,
                 "transitions": {
                     "Fail": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1",
                     "Success": "eb7b6650-f38a-4c8a-b508-c70a6fd60fb1",
@@ -23,8 +23,8 @@
                 "title": "State Node",
                 "nodeId": "45b7e446-4bf1-438f-b370-7ef75048db87",
                 "stateId": 46,
-                "x": 715,
-                "y": 789,
+                "x": 667,
+                "y": 860,
                 "transitions": {},
                 "input_parameters": {}
             },
@@ -35,8 +35,8 @@
                 "x": 1332,
                 "y": 665,
                 "transitions": {
-                    "Success": "45b7e446-4bf1-438f-b370-7ef75048db87",
-                    "Fail": "45b7e446-4bf1-438f-b370-7ef75048db87"
+                    "Fail": "45b7e446-4bf1-438f-b370-7ef75048db87",
+                    "Success": "45b7e446-4bf1-438f-b370-7ef75048db87"
                 },
                 "input_parameters": {}
             }

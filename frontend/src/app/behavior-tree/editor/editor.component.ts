@@ -48,6 +48,7 @@ export class EditorComponent {
   stopEventSub: Subscription;
   resetEventSub: Subscription;
 
+  recvStatusUpdateSub!: Subscription;
   statusUpdateSub!: Subscription;
   
   constructor(private router: Router, private behaviorTreeService: BehaviorTreeService, private sharedService: SharedServiceService) {
@@ -245,39 +246,59 @@ export class EditorComponent {
 
   handleStopClick(): void {
     console.log('Editor <--sharedService-- StartNode: Stop button clicked');
+    this.behaviorTreeService.stopStateMachine(this.stateMachineId).subscribe((data: any) => {
+      console.log('Editor ', data)
+      if (data.success) {
+        this.executing = false;
+        this.stopAskingForStatusUpdates();
+        this.infoTerminalMsgs.push('<<<<<<<<<< Execution stopped by user. >>>>>>>>>>>');
+      } else {
+        this.infoTerminalMsgs.push('State Machine not running -> Cannot be stopped.');
+      }
+    });
   }
 
   handleResetClick(): void {
-    this.resetNodeStatus(ExecutionStatus.Unknown);
-    this.updateInfoTerminal([]);
+    console.log('Editor <--sharedService-- StartNode: Reset button clicked');
+    if (this.executing) {
+      console.log('Editor: Resetting while executing not possible');
+    } else {
+      this.resetNodeStatus(ExecutionStatus.Unknown);
+      this.updateInfoTerminal([]);
+    }
   }
 
   handleStartClick(): void {
     console.log('Editor <--sharedService-- StartNode: Start button clicked');
+    console.log('Editor -> backend: startStateMachine');
     const configData = this.convertToConfigData();
     this.executing = true;
     this.resetNodeStatus(ExecutionStatus.NotExecuted);
     this.startAskingForStatusUpdates();
     this.behaviorTreeService.startStateMachine(this.stateMachineId, configData).subscribe((data: any) => {
-      console.log('Editor -> backend: startStateMachine', data);
       this.executing = false;
-      this.stopAskingForStatusUpdates();
-      this.behaviorTreeService.getStatusUpdate(this.stateMachineId).subscribe((data: any) => this.handleStatusUpdate(data))}); // receive final status update
+      // this.behaviorTreeService.getStatusUpdate(this.stateMachineId).subscribe((data: any) => this.handleStatusUpdate(data))
+    }); // receive final status update
   }
   
 ////////////////////////////// Status Update Code //////////////////////////////
   startAskingForStatusUpdates(): void {
-    this.statusUpdateSub = interval(500)
-      .pipe(
-        switchMap(() => this.behaviorTreeService.getStatusUpdate(this.stateMachineId))
-      )
-      .subscribe((data: any) => {
+    // Uses iosocket to receive status updates from the backend - does not request it but listens for it
+    this.recvStatusUpdateSub = this.behaviorTreeService.recvStatusUpdates().subscribe((data: any) => {
+      if (data['state_machine_status'] == 'Running') {
         this.handleStatusUpdate(data);
-      });
+      } else {  // In the last status update before the sm is finished the status is not 'Running' but 'Finished' -> stop asking for status updates after last update
+        this.stopAskingForStatusUpdates();
+      }
+    })
   }
   stopAskingForStatusUpdates(): void {
-    if (this.statusUpdateSub) {
-      this.statusUpdateSub.unsubscribe();
+    // if (this.statusUpdateSub) {
+    //   this.statusUpdateSub.unsubscribe();
+  // }
+    console.log('Editor: stopAskingForStatusUpdates')
+    if (this.recvStatusUpdateSub) {
+      this.recvStatusUpdateSub.unsubscribe();
     }
   }
 
