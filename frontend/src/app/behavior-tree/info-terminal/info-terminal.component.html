@@ -4,7 +4,7 @@
     <button class="minimize-button">{{ minimizeButtonContent() }}</button>
   </div>
 
-  <div class="text-terminal">
+  <div class="text-terminal" #textterminal>
     <div *ngIf="message_buffer.length > 0">
       <div *ngFor="let message of message_buffer" class="message">> {{ message }}</div>
     </div>

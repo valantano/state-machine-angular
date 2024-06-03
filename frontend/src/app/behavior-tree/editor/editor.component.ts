@@ -50,7 +50,7 @@ export class EditorComponent {
 
   recvStatusUpdateSub!: Subscription;
   statusUpdateSub!: Subscription;
-  
+
   constructor(private router: Router, private behaviorTreeService: BehaviorTreeService, private sharedService: SharedServiceService) {
     const navigation = this.router.getCurrentNavigation();
     if (!navigation) {
@@ -97,7 +97,8 @@ export class EditorComponent {
           name: state.name,
           infoText: state.infoText,
           input_par_interface: state.input_par_interface,
-          output_interface: state.output_interface }
+          output_interface: state.output_interface
+        }
         this.node_interfaces[state.stateId] = node_interface;
         this.node_interfaces_list.push(node_interface);
       }
@@ -132,7 +133,7 @@ export class EditorComponent {
     const stateId = eventWithStateId.stateId;
     this.freshlyCreatedNodeId = this.createNode('State Node', mouse.clientX, mouse.clientY, this.node_interfaces[stateId], {});
     console.log('Editor -> TreeCanvas: Node created', stateId);
-    this.sharedService.nodeCreatedEvent.emit({mouseEvent: mouse, nodeId: this.freshlyCreatedNodeId});
+    this.sharedService.nodeCreatedEvent.emit({ mouseEvent: mouse, nodeId: this.freshlyCreatedNodeId });
   }
 
   createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, input_parameters: {}, nodeId?: string): string {
@@ -182,7 +183,7 @@ export class EditorComponent {
     }
   }
   findEdge(sourceNodeId: string, sourceNodeOutputGate: string): any {
-    return Object.values(this.edges).find(edge => 
+    return Object.values(this.edges).find(edge =>
       edge.sourceNodeId === sourceNodeId && edge.sourceNodeOutputGate === sourceNodeOutputGate
     );
   }
@@ -246,16 +247,21 @@ export class EditorComponent {
 
   handleStopClick(): void {
     console.log('Editor <--sharedService-- StartNode: Stop button clicked');
-    this.behaviorTreeService.stopStateMachine(this.stateMachineId).subscribe((data: any) => {
-      console.log('Editor ', data)
-      if (data.success) {
-        this.executing = false;
-        this.stopAskingForStatusUpdates();
-        this.infoTerminalMsgs.push('<<<<<<<<<< Execution stopped by user. >>>>>>>>>>>');
-      } else {
-        this.infoTerminalMsgs.push('State Machine not running -> Cannot be stopped.');
-      }
-    });
+    console.log('Editor -> backend: stopStateMachine');
+    if (this.executing) {
+      this.behaviorTreeService.stopStateMachine(this.stateMachineId).subscribe((data: any) => {
+        console.log('Editor ', data)
+        if (data.success && this.executing) {
+          this.executing = false;
+          this.stopAskingForStatusUpdates();
+          this.infoTerminalMsgs.push('<<<<<<<<<< Execution stopped by user. >>>>>>>>>>>');
+        } else {
+          this.infoTerminalMsgs.push('Backend could not interrupt state machine... What :C???? -> This should not happen.');
+        }
+      });
+    } else {
+      this.infoTerminalMsgs.push('State Machine not running -> Cannot be stopped.');
+    }
   }
 
   handleResetClick(): void {
@@ -270,18 +276,19 @@ export class EditorComponent {
 
   handleStartClick(): void {
     console.log('Editor <--sharedService-- StartNode: Start button clicked');
-    console.log('Editor -> backend: startStateMachine');
     const configData = this.convertToConfigData();
     this.executing = true;
     this.resetNodeStatus(ExecutionStatus.NotExecuted);
     this.startAskingForStatusUpdates();
+    console.log('Editor -> backend: startStateMachine');
     this.behaviorTreeService.startStateMachine(this.stateMachineId, configData).subscribe((data: any) => {
+      console.log('Editor <- backend: state machine exection funished', data);
       this.executing = false;
       // this.behaviorTreeService.getStatusUpdate(this.stateMachineId).subscribe((data: any) => this.handleStatusUpdate(data))
     }); // receive final status update
   }
-  
-////////////////////////////// Status Update Code //////////////////////////////
+
+  ////////////////////////////// Status Update Code //////////////////////////////
   startAskingForStatusUpdates(): void {
     // Uses iosocket to receive status updates from the backend - does not request it but listens for it
     this.recvStatusUpdateSub = this.behaviorTreeService.recvStatusUpdates().subscribe((data: any) => {
@@ -293,9 +300,6 @@ export class EditorComponent {
     })
   }
   stopAskingForStatusUpdates(): void {
-    // if (this.statusUpdateSub) {
-    //   this.statusUpdateSub.unsubscribe();
-  // }
     console.log('Editor: stopAskingForStatusUpdates')
     if (this.recvStatusUpdateSub) {
       this.recvStatusUpdateSub.unsubscribe();
@@ -303,7 +307,7 @@ export class EditorComponent {
   }
 
   handleStatusUpdate(statusUpdate: any): void {
-    console.log('Data from backend:', statusUpdate);
+    console.log('Backend -> Editor: Status Update:', statusUpdate);
     this.updateNodeStatus(statusUpdate['node_status'])
     this.updateInfoTerminal(statusUpdate['log_msgs'])
   }
@@ -324,9 +328,9 @@ export class EditorComponent {
       this.nodes[nodeId].executionStatus = status
     }
   }
-////////////////////////////// Status Update Code //////////////////////////////
+  ////////////////////////////// Status Update Code //////////////////////////////
 
-  
+
 
   handleSaveClick(): void {
     console.log('Editor <- MenuBar: Save button clicked');
@@ -348,7 +352,7 @@ export class EditorComponent {
 
   // Convert the data to the format that the backend expects
   convertToConfigData() {
-    let transitions: { [soureNodeId: string]: { [outputGate: string]: string } } = {};  
+    let transitions: { [soureNodeId: string]: { [outputGate: string]: string } } = {};
     for (const edge of Object.values(this.edges)) { // for each node store the transitions
       if (!transitions[edge.sourceNodeId]) {
         transitions[edge.sourceNodeId] = {};

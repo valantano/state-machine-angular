@@ -123,6 +123,10 @@ class FlaskBackend:
         sm_id = int(data['smId'])
         config = data['config']
         self.log(f'Received state machine {sm_id} with config {config}')
+        if self.running_sms[sm_id] is not None:
+            self.log(f'State machine {sm_id} is already running. Multiple Instances not implemented for now.')
+            return jsonify({'success': False})
+            
 
         parent_conn, child_conn = multiprocessing.Pipe()
         process = multiprocessing.Process(target=self.state_machines[sm_id].start, args=[config['state_machine_config'], child_conn])
@@ -146,7 +150,10 @@ class FlaskBackend:
         success = True
         
         process.join()  # Ensure that the process is terminated before returning
+        
         listener_thread.join() # Ensure that the listener thread is terminated before returning
+        self.running_sms[sm_id] = None
+        
 
         return jsonify({'success': success})
     
@@ -160,7 +167,7 @@ class FlaskBackend:
             success = True
         else:
             success = False
-        self.running_sms[sm_id] = None
+        self.running_sms[sm_id] = None      # Set it to None such that the listener thread knows that the process is not running anymore
         return jsonify({'success': success})
 
 
