@@ -41,6 +41,7 @@ import { BehaviorTreeModule } from './behavior-tree/behavior-tree.module';
     MatCheckboxModule,
     FormsModule,
     BehaviorTreeModule,
+    
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   providers: [

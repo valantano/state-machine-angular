@@ -19,6 +19,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { StartNodeComponent } from './start-node/start-node.component';
 import { DrawingEdgeComponent } from './drawing-edge/drawing-edge.component';
 import { InfoTerminalComponent } from './info-terminal/info-terminal.component';
+import { DragulaModule } from 'ng2-dragula';
+
 
 
 
@@ -46,6 +48,7 @@ import { InfoTerminalComponent } from './info-terminal/info-terminal.component';
     MatCheckboxModule,
     FormsModule,
     MatMenuModule,
+    // DragulaModule.forRoot(),
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
