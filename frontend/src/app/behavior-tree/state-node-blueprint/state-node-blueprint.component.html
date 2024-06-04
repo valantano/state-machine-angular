@@ -1,24 +1,33 @@
 <!-- <div class="container"> -->
-    <div class="rectangle">
-        <div class="title">{{ getDisplayTitle() }}</div>
-        <hr> <!-- Horizontal Divider -->
-        <div class="information">
-            {{state_interface.infoText}}
+<div class="rectangle">
+    <div class="title">{{ getDisplayTitle() }}</div>
+    <hr> <!-- Horizontal Divider -->
+    <div class="information">
+        {{state_interface.infoText}}
+    </div>
+
+    <div class="input-parameters-container" *ngIf="parInterfaceNotEmpty()">
+        <div *ngFor="let item of state_interface.input_par_interface | keyvalue" class="input-parameters">
+            <label class="input-par-label">{{ item.key }}</label>
+            <select disabled class="input-par-set" *ngIf="item.value['type']=='enum'">
+                <option *ngFor="let value of item.value['values']">{{ value }}</option>
+            </select>
+            <input disabled type="number" class="input-par-set" *ngIf="item.value['type']=='number'">
+            <input disabled type="text" class="input-par-set" *ngIf="item.value['type']=='string'">
+            <select disabled class="input-par-set" *ngIf="item.value['type']=='boolean'">
+                <option> False </option>
+                <option> True </option>
+            </select>
         </div>
-    
-        <div class="input-parameters-container" *ngIf="parInterfaceNotEmpty()">
-            <div *ngFor="let item of state_interface.input_par_interface | keyvalue" class="input-parameters">
-                <label class="input-par-label">{{ item.key }}</label>
-                <select disabled class="input-par-set" *ngIf="item.value['type']=='enum'">
-                    <option *ngFor="let value of item.value['values']">{{ value }}</option>
-                </select>
-                <input disabled type="number" class="input-par-set" *ngIf="item.value['type']=='number'">
-                <input disabled type="text" class="input-par-set" *ngIf="item.value['type']=='string'">
-                <select disabled class="input-par-set" *ngIf="item.value['type']=='boolean'">
-                    <option> False </option>
-                    <option> True </option>
-                </select>
-            </div>
+    </div>
+    <hr *ngIf="state_interface.global_vars_interface.requires.length > 0 || state_interface.global_vars_interface.sets.length > 0"> <!-- Horizontal Divider -->
+    <div class="global-vars-container" *ngIf="state_interface.global_vars_interface.requires.length > 0 || state_interface.global_vars_interface.sets.length > 0">
+         
+        <div *ngFor="let req_var of state_interface.global_vars_interface.requires" class="req-set-container">
+            <div class="req-set-item">req: {{ req_var }}</div>
+        </div>
+        <div *ngFor="let set_var of state_interface.global_vars_interface.sets" class="req-set-container">
+            <div class="input-par-label">set: {{ set_var }}</div>
         </div>
     </div>
     <!-- <div #topCircle class="circle top-circle"></div>

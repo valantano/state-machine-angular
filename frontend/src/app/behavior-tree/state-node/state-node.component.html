@@ -7,8 +7,8 @@
 }">
 
     <div class="top-circle-container">
-    <div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)"
-        (mouseleave)="onTopCircleLeave($event)"></div>
+        <div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)"
+            (mouseleave)="onTopCircleLeave($event)"></div>
     </div>
     <div class="rectangle" (mousedown)="onNodeDrag($event)" (contextmenu)="onRightClick($event)">
         <div class="title">{{ getDisplayTitle() }}</div>
@@ -39,8 +39,23 @@
                 </select>
             </div>
         </div>
+        <hr
+            *ngIf="state_interface.global_vars_interface.requires.length > 0 || state_interface.global_vars_interface.sets.length > 0">
+        <!-- Horizontal Divider -->
+        <div class="global-vars-container"
+            *ngIf="state_interface.global_vars_interface.requires.length > 0 || state_interface.global_vars_interface.sets.length > 0">
+
+            <div *ngFor="let req_var of state_interface.global_vars_interface.requires" class="req-set-container">
+                <div class="req-set-item">req: {{ req_var }}</div>
+            </div>
+            <div *ngFor="let set_var of state_interface.global_vars_interface.sets" class="req-set-container">
+                <div class="input-par-label">set: {{ set_var }}</div>
+            </div>
+        </div>
     </div>
-    
+
+
+
     <div class="bottom-circle-container">
         <div *ngFor="let outputGate of state_interface.output_interface" #bottomCircle class="circle bottom-circle"
             (mousedown)="onBotCircleDrag(outputGate)" [attr.data-output-gate]="outputGate" [title]="outputGate"></div>

@@ -13,6 +13,7 @@
     // --text-color: #c7e3e7;
     // --darker-background-color: #455a64;
   }
+
   &.not-executed {
     // --background-color: #607d8b;
     // --border-color: #b0bec5;
@@ -20,12 +21,14 @@
     // --darker-background-color: #455a64;
     opacity: 0.5;
   }
+
   &.failed {
     --background-color: #8b6060;
     --border-color: #b0bec5;
     --text-color: #c7e3e7;
     --darker-background-color: #455a64;
   }
+
   &.running {
     .rectangle {
       &::after {
@@ -33,7 +36,7 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        margin-top: -20px;  // 40/2px depending on width and height
+        margin-top: -20px; // 40/2px depending on width and height
         margin-left: -20px;
         width: 40px;
         height: 40px;
@@ -43,10 +46,12 @@
         animation: spin 1.5s ease-in-out infinite;
       }
     }
+
     @keyframes spin {
       0% {
         transform: rotate(0deg);
       }
+
       100% {
         transform: rotate(360deg);
       }
@@ -79,7 +84,8 @@
 
     .information {
       padding: 10px;
-      white-space: pre-wrap; /* Allow line breaks */
+      white-space: pre-wrap;
+      /* Allow line breaks */
       color: var(--text-color);
       user-select: none;
     }
@@ -92,7 +98,8 @@
 
     .input-parameters {
       padding: 5px;
-      white-space: pre-wrap; /* Allow line breaks */
+      white-space: pre-wrap;
+      /* Allow line breaks */
       color: var(--text-color);
       user-select: none;
       display: flex;
@@ -112,7 +119,34 @@
       border-color: var(--border-color);
       // border-radius: 15px;
     }
-  } // End of rectangle
+
+
+    .global-vars-container {
+      user-select: none;
+      border: 2px solid #455A64;
+      border-radius: 20px;
+
+      .req-set-container {
+        padding: 2px;
+        white-space: pre-wrap;
+        /* Allow line breaks */
+        color: #c7e3e7;
+        user-select: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .req-set-item {
+          text-align: left;
+          padding: 0px;
+        }
+      }
+    }
+  }
+
+  // End of rectangle
+
+
 
   .circle {
     left: 50%;
@@ -121,13 +155,16 @@
     border-radius: 50%;
     background-color: var(--background-color);
     border: 3px solid var(--border-color);
-    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    /* Smooth transition */
     user-select: none;
   }
 
   .top-circle-container {
-    display: flex; /* This will place the circles beside each other */
-    justify-content: space-around; /* Optional: This will add space between the circles */
+    display: flex;
+    /* This will place the circles beside each other */
+    justify-content: space-around;
+    /* Optional: This will add space between the circles */
     align-items: center;
     // flex-wrap: wrap; /* Allow the items to wrap onto multiple lines */
     width: 70%;
@@ -136,8 +173,10 @@
   }
 
   .bottom-circle-container {
-    display: flex; /* This will place the circles beside each other */
-    justify-content: space-around; /* Optional: This will add space between the circles */
+    display: flex;
+    /* This will place the circles beside each other */
+    justify-content: space-around;
+    /* Optional: This will add space between the circles */
     align-items: center;
     width: 70%;
     margin-top: -4%;

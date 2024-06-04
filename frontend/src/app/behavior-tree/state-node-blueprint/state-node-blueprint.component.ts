@@ -27,4 +27,8 @@ export class StateNodeBlueprintComponent {
     return Object.keys(this.state_interface.input_par_interface).length > 0;
   }
 
+  getRequiredGlobalVars(): string[] {
+    return this.state_interface.global_vars_interface.requires;
+  }
+
 }

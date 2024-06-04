@@ -32,7 +32,8 @@ hr {
 
 .information {
   padding: 10px;
-  white-space: pre-wrap; /* Allow line breaks */
+  white-space: pre-wrap;
+  /* Allow line breaks */
   color: #c7e3e7;
   user-select: none;
 }
@@ -45,68 +46,93 @@ hr {
 
 .input-parameters {
   padding: 5px;
-  white-space: pre-wrap; /* Allow line breaks */
+  white-space: pre-wrap;
+  /* Allow line breaks */
   color: #c7e3e7;
   user-select: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .input-par-label {
+    text-align: left;
+  }
+
+  .input-par-set {
+    text-align: right;
+    width: 35%;
+    color: #c7e3e7;
+    background-color: #455A64;
+    border-color: #B0BEC5;
+    // border-radius: 15px;
+  }
 }
 
-.input-par-label {
-  text-align: left;
-}
-
-.input-par-set {
-  text-align: right;
-  width: 35%;
-  color: #c7e3e7;
-  background-color: #455A64;
-  border-color: #B0BEC5;
-  // border-radius: 15px;
-}
 
 
-.circle {
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: #607D8B;
-  border: 3px solid #B0BEC5;
-  // position: absolute;
-  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+.global-vars-container {
   user-select: none;
+  border: 2px solid #455A64;
+  border-radius: 20px;
+
+  .req-set-container {
+    padding: 2px;
+    white-space: pre-wrap;
+    /* Allow line breaks */
+    color: #c7e3e7;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .req-set-item {
+      text-align: left;
+      padding: 0px;
+    }
+  }
 }
 
-.top-circle {
-  top: -10px;
-  margin-left: -10px; /* Adjust margin to position the circle */
-  position: inherit;
-}
 
-.bottom-circle-container {
-  display: flex; /* This will place the circles beside each other */
-  justify-content: space-around; /* Optional: This will add space between the circles */
-  align-items: center;
-  // flex-wrap: wrap; /* Allow the items to wrap onto multiple lines */
-  width: 70%;
-  margin-top: -10px;
-  margin-left: 15%;
-  // height: 40px;
-}
 
-.bottom-circle {
-  // bottom: -10px; /* Adjust bottom position */
-  // margin-left: -10px; /* Adjust margin to position the circle */
-  // position: inherit;
-}
+// .circle {
+//   left: 50%;
+//   width: 20px;
+//   height: 20px;
+//   border-radius: 50%;
+//   background-color: #607D8B;
+//   border: 3px solid #B0BEC5;
+//   // position: absolute;
+//   transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition */
+//   user-select: none;
+// }
 
-/* Highlight circles on hover */
-.circle:hover {
-  // background-color: grey;
-  transform: scale(1.2); /* Scale up the circle on hover */
-  border: 3px solid #455A64;
-  user-select: none;
-}
+// .top-circle {
+//   top: -10px;
+//   margin-left: -10px; /* Adjust margin to position the circle */
+//   position: inherit;
+// }
 
+// .bottom-circle-container {
+//   display: flex; /* This will place the circles beside each other */
+//   justify-content: space-around; /* Optional: This will add space between the circles */
+//   align-items: center;
+//   // flex-wrap: wrap; /* Allow the items to wrap onto multiple lines */
+//   width: 70%;
+//   margin-top: -10px;
+//   margin-left: 15%;
+//   // height: 40px;
+// }
+
+// .bottom-circle {
+//   // bottom: -10px; /* Adjust bottom position */
+//   // margin-left: -10px; /* Adjust margin to position the circle */
+//   // position: inherit;
+// }
+
+// /* Highlight circles on hover */
+// .circle:hover {
+//   // background-color: grey;
+//   transform: scale(1.2); /* Scale up the circle on hover */
+//   border: 3px solid #455A64;
+//   user-select: none;
+// }

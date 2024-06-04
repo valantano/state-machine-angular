@@ -45,4 +45,8 @@ export interface StateNodeInterface {
     infoText: string;
     input_par_interface: {};
     output_interface: string[];
+    global_vars_interface: {
+        requires: string[];
+        sets: string[];
+    };
 }
