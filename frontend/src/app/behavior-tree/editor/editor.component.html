@@ -3,7 +3,7 @@
     (saveClick)="handleSaveClick()" (configNameChange)="renameConfig($event)"
     ></app-menu-bar>
     <div class="toolbox">
-        <app-control-panel [node_interfaces]="node_interfaces_list" (nodeCreate)="handleNodeCreate($event)"></app-control-panel>
+        <app-control-panel [node_interfaces]="node_interfaces" (nodeCreate)="handleNodeCreate($event)"></app-control-panel>
         <div class="canvas-area">
             <app-tree-canvas [nodes]="nodes" [node_interfaces]="node_interfaces" [edges]="edges" [freshlyCreatedNodeId]="freshlyCreatedNodeId" [startNodeId]="startStateNodeId"
                 (addEdgeEvent)="handleAddEdgeEvent($event)"

@@ -1,16 +1,11 @@
 <div [ngClass]="{'control-panel-act': activated, 'control-panel-deact': !activated}" id="controlPanel">
   <div *ngIf="activated" class="state-nodes">
-    <!-- State nodes go here -->
 
-
-    <app-state-node-blueprint *ngFor="let node of node_interfaces" class="state-node-blueprint" [title]="node.name"
-      [state_interface]="node" (mousedown)="onMouseDown($event, node.stateId)">
+    <app-state-node-blueprint *ngFor="let item of node_interfaces | keyvalue" class="state-node-blueprint"
+      [state_interface]="item.value" (mousedown)="onMouseDown($event, item.value.stateId)">
     </app-state-node-blueprint>
 
-
-    <!-- Add more state nodes as needed -->
   </div>
   <button class="collapse-button" id="collapseButton" (click)="switchActivationState()">
-    {{ activated ? '<' : '>' }}
-  </button>
+    {{ activated ? '<' : '>' }} </button>
 </div>

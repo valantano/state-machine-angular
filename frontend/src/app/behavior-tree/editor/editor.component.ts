@@ -30,7 +30,6 @@ export class EditorComponent {
   // Data structures passed to the tree-canvas component
   nodes: { [id: string]: StateNode } = {};
   node_interfaces: { [id: number]: StateNodeInterface } = {};
-  node_interfaces_list: StateNodeInterface[] = [];
   edges: { [id: string]: TransitionEdge } = {};
   freshlyCreatedNodeId: string = "";
 
@@ -100,7 +99,6 @@ export class EditorComponent {
           output_interface: state.output_interface
         }
         this.node_interfaces[state.stateId] = node_interface;
-        this.node_interfaces_list.push(node_interface);
       }
     });
 

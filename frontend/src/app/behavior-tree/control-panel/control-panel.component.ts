@@ -10,7 +10,9 @@ export class ControlPanelComponent {
 
   activated: boolean = true;
 
-  @Input() node_interfaces: StateNodeInterface[] = [];
+  // @Input() node_interfaces: StateNodeInterface[] = [];
+  @Input() node_interfaces: { [id: number]: StateNodeInterface } = {};
+
 
   @Output() nodeCreate: EventEmitter<{mouseEvent: MouseEvent, stateId: string}> = new EventEmitter<{mouseEvent: MouseEvent, stateId: string}>();
 
