@@ -50,13 +50,15 @@ class StateMachine:
             try:
                 outcome: str = self.states[state_id].execute(input_parameters, global_vars=self.global_vars)
                 self.update_node_status(current_node_id, 'Executed')
-            except:
+                if outcome in current_node['transitions']:
+                    current_node_id = current_node['transitions'][outcome]
+                else:
+                    break
+            except Exception as e:
                 self.update_node_status(current_node_id, 'Failed')
-
-            if outcome in current_node['transitions']:
-                current_node_id = current_node['transitions'][outcome]
-            else:
+                self.log(f'Error in State {self.states[state_id].name}: {e}. -> Execution Failed')
                 break
+
         self.log('State machine finished.\n########')
         self.update_sm_status('Finished')
         return True
