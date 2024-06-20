@@ -61,6 +61,7 @@ class MoveBaseToGoalState(State):
                                     'String-Enter': {'type': 'string'},
                                     'Boolean-Select': {'type': 'boolean'}}
         self.output_interface = ["Success", "Fail", "What?"]
+        self.global_vars_interface = {'requires': ['goal_pose_end', 'goal_pose_start'], 'sets': []}
         self.infoText = "This is an Info Text"
 
     def _state_code(self, input_parameters, global_vars):

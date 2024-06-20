@@ -67,8 +67,8 @@ export class LoaderComponent {
     this.router.navigate(['/editor'], navigationExtras);
   }
 
-  onRename(file: File) {
-    console.log('LoaderComponent: Rename file', file);
+  onEdit(file: File) {
+    console.log('LoaderComponent: Edit file', file);
   }
   onDelete(file: File) {
     console.log('LoaderComponent: Delete file', file);

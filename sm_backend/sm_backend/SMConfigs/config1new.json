@@ -1,7 +1,7 @@
 {
     "state_machine_config": {
         "name": "WZLStateMachine",
-        "lastModified": "2024-06-04T23:13:23.666031",
+        "lastModified": "2024-06-07T11:05:33.134518",
         "creationDate": "2019-07-01T00:00:00Z",
         "description": "This is a state machine",
         "startStateNode": "22048495-fa82-4347-a78c-e6daa705ad1c",
@@ -10,8 +10,8 @@
                 "title": "State 1",
                 "nodeId": "22048495-fa82-4347-a78c-e6daa705ad1c",
                 "stateId": 45,
-                "x": 835,
-                "y": 459,
+                "x": 938,
+                "y": 450,
                 "transitions": {
                     "Fail": "22048495-fa82-4347-a78c-e6daa705ad1e",
                     "Success": "22048495-fa82-4347-a78c-e6daa705ad1d"
