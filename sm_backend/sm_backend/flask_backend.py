@@ -13,7 +13,7 @@ from .state_machine import StateMachine
 class FlaskBackend:
 
     def start(self, **kwargs):
-        self.socketio.run(self.app, port=8323, **kwargs)
+        self.socketio.run(self.app, port=8323, allow_unsafe_werkzeug=True, **kwargs)
 
     def __init__(self, state_machines: list[StateMachine]):
         self.app = Flask(__name__)

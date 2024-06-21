@@ -2,6 +2,8 @@ import os
 import json
 from datetime import datetime
 from multiprocessing import Lock
+import rclpy
+
 
 
 from .state import State
@@ -13,6 +15,9 @@ class StateMachine:
         self.name: str = name
         self.id: int = id
         self.config_folder: os.path = os.path.normpath(config_folder_path)
+        # create path if it does not exist
+        if not os.path.exists(self.config_folder):
+            os.makedirs(self.config_folder)
 
         self.states: dict = {}
         for state in state_interface:
@@ -84,7 +89,8 @@ class StateMachine:
             self.send_status_update()
 
     def send_status_update(self):
-        self.parent_connection.send(self.status_update_buffer)
+        if self.parent_connection:
+            self.parent_connection.send(self.status_update_buffer)
     ############ Status Update Code ############
 
     def to_json_interface(self) -> dict:
@@ -156,7 +162,7 @@ class StateMachine:
         org_filename = filename
         i = 0
         path = os.path.join(self.config_folder, filename + '.json')
-        self.log(path, os.path.isfile(path), to_frontend=False)
+        self.log(f"{path}, {os.path.isfile(path)}", to_frontend=False)
         while os.path.isfile(os.path.join(self.config_folder, filename + '.json')):
             i += 1
             filename = org_filename + str(i)
