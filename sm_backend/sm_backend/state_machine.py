@@ -14,6 +14,7 @@ class StateMachine:
     def __init__(self, name: str, id: int, state_interface: list[State], config_folder_path: str) -> None:
         self.name: str = name
         self.id: int = id
+
         self.config_folder: os.path = os.path.normpath(config_folder_path)
         # create path if it does not exist
         if not os.path.exists(self.config_folder):

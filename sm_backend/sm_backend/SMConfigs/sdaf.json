@@ -1,0 +1,20 @@
+{
+    "state_machine_config": {
+        "name": "",
+        "lastModified": "2024-06-21T09:42:29.935776",
+        "creationDate": "",
+        "description": "",
+        "startStateNode": "",
+        "stateNodes": [
+            {
+                "title": "State Node",
+                "nodeId": "78b99ed7-e17b-468d-954b-c93edaec94e3",
+                "stateId": 48,
+                "x": 1040,
+                "y": 533,
+                "transitions": {},
+                "input_parameters": {}
+            }
+        ]
+    }
+}
