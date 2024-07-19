@@ -6,13 +6,18 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_socketio import SocketIO
 
+from state_machine.kairos_simple_mover_group_controller.ArmServiceNodeController import ArmServiceNodeController
+from state_machine.spin_robot import SpinRobot
 
-from .state_machine import StateMachine
+
+from state_machine_test import StateMachine
 
 
 class FlaskBackend:
 
     def start(self, **kwargs):
+        multiprocessing.set_start_method('spawn')
+
         self.socketio.run(self.app, port=8323, allow_unsafe_werkzeug=True, **kwargs)
 
     def __init__(self, state_machines: list[StateMachine]):
@@ -114,11 +119,14 @@ class FlaskBackend:
     # Running the state machine in a way such that it can be stopped even if it ran into a deadlock was 
     # quite hard. The following solution is a bit of a hack, but it works.
     def start_state_machine(self):
+        import rclpy
+
         """We use a separate process (not thread, since threads cannot be terminated smoothly when running in a deadlock) to run the state machine. 
         This way we can stop it even if it ran into a deadlock. But since it is a separate process and we want to get status updates from 
         the state machine and send them to te frontend, we need to pipe the status updates from the state machine process to the main process. 
         Then in the main process we can use socketio to send the status updates to the frontend without the frontend needing it to actively
         request the status update."""
+        print("Test start_state_machine")
         data = request.get_json()
         sm_id = int(data['smId'])
         config = data['config']
@@ -126,8 +134,8 @@ class FlaskBackend:
         if self.running_sms[sm_id] is not None:
             self.log(f'State machine {sm_id} is already running. Multiple Instances not implemented for now.')
             return jsonify({'success': False})
-            
 
+        # self.state_machines[sm_id].start(config['state_machine_config'], None)
         parent_conn, child_conn = multiprocessing.Pipe()
         process = multiprocessing.Process(target=self.state_machines[sm_id].start, args=[config['state_machine_config'], child_conn])
         self.running_sms[sm_id] = process
@@ -153,6 +161,7 @@ class FlaskBackend:
         
         listener_thread.join() # Ensure that the listener thread is terminated before returning
         self.running_sms[sm_id] = None
+        # success = True
         
 
         return jsonify({'success': success})

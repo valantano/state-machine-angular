@@ -55,12 +55,13 @@ class State:
         # check if input is valid if no input then ask frontend for it
         # check if global_vars are valid
         # send state is now executing message to frontend
-        print(f"Executing {self.name}")
+        self.log(f"Entering State +++++++++++++++")
         return None
     
     def _after_execute(self, outcome: str):
         # check if outcome is valid
         # send state is now finished message to frontend
+        self.log(f"Exit State with outcome: {outcome} XXXXXXXXXXXXXXXXXXX")
         return outcome
     
     def to_json(self):
