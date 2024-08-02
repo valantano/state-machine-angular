@@ -6,7 +6,7 @@ import rclpy
 
 
 
-from .state import State
+from state import State
 
 
 class StateMachine:
@@ -157,6 +157,17 @@ class StateMachine:
         except:
             self.log(f'Error: File {filename} not found in config folder or could not be deleted.', to_frontend=False)
             return False
+        
+    def edit_config_file(self, filename: str, new_name: str, new_description: str):
+        config = self.load_config_file(filename)
+        if config == {}:
+            return False
+        config['state_machine_config']['name'] = new_name
+        config['state_machine_config']['description'] = new_description
+        success = self.save_config_file(filename, config)
+        return success
+                
+
         
     def duplicate_config_file(self, filename: str):
         """Duplicates a config file in the config folder."""

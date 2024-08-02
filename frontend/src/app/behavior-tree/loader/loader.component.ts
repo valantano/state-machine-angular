@@ -32,7 +32,7 @@ export interface StateMachine {
 })
 export class LoaderComponent {
   state_machines: StateMachineList = {};
-  selectedOption: any = "";
+  selectedStateMachineInterface: any = "";
 
   // 'state_machines': [ {'name': 'WZL1', 'id': 0, 'states': states}, {'name': 'WZL2', 'id': 1, 'states': states}]
   constructor(private router: Router, private service: BehaviorTreeService, private dialog: MatDialog) {
@@ -49,8 +49,8 @@ export class LoaderComponent {
 
         this.state_machines[sm.id] = sm;
       }
-      if (Object.keys(this.state_machines).length > 0 && this.selectedOption === "") {
-        this.selectedOption = Object.keys(this.state_machines)[0];
+      if (Object.keys(this.state_machines).length > 0 && this.selectedStateMachineInterface === "") {
+        this.selectedStateMachineInterface = Object.keys(this.state_machines)[0];
       }
 
       console.log(this.state_machines)
@@ -62,7 +62,7 @@ export class LoaderComponent {
     const navigationExtras: NavigationExtras = {
       state: {
         filename: file.filename,
-        smId: this.selectedOption
+        smId: this.selectedStateMachineInterface
       }
     };
     this.router.navigate(['/editor'], navigationExtras);
@@ -70,7 +70,7 @@ export class LoaderComponent {
 
   onDuplicate(file: File) {
     console.log('LoaderComponent: Duplicate file', file);
-    this.service.duplicateConfig(this.selectedOption, file.filename).subscribe((data: any) => {
+    this.service.duplicateConfig(this.selectedStateMachineInterface, file.filename).subscribe((data: any) => {
       console.log('LoaderComponent: duplicateConfig', data);
       this.loadComponent();
     });
@@ -78,6 +78,25 @@ export class LoaderComponent {
 
   onEdit(file: File) {
     console.log('LoaderComponent: Edit file', file);
+
+    console.log('LoaderComponent: Open Create Config Dialog');
+    const dialogRef = this.dialog.open(CreateConfigDialogComponent, {
+      width: '450px',
+      // height: '400px',
+      data: { config_name: file.name, description: file.description, create: false },
+      // panelClass: 'create-config-dialog'
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('LoaderComponent: Create Config Dialog was closed with: ', result);
+      if (result) {
+        this.service.editConfig(this.selectedStateMachineInterface, file.filename, result.config_name, result.description).subscribe((data: any) => {
+          console.log('LoaderComponent: createNewConfig', data);
+          this.loadComponent();
+        });
+      }
+      // You can use the result here
+    });
   }
   onDelete(file: File) {
     console.log('LoaderComponent: Delete file', file);
@@ -91,12 +110,16 @@ export class LoaderComponent {
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.service.deleteConfig(this.selectedOption, file.filename).subscribe((data: any) => {
+        this.service.deleteConfig(this.selectedStateMachineInterface, file.filename).subscribe((data: any) => {
           console.log('LoaderComponent: deleteConfig', data);
           this.loadComponent();
         });
       }
     });
+    
+  }
+  
+  onFix(file: File) {
     
   }
 
@@ -112,7 +135,7 @@ export class LoaderComponent {
     dialogRef.afterClosed().subscribe(result => {
       console.log('LoaderComponent: Create Config Dialog was closed with: ', result);
       if (result) {
-        this.service.createNewConfig(this.selectedOption, result.config_name, result.description).subscribe((data: any) => {
+        this.service.createNewConfig(this.selectedStateMachineInterface, result.config_name, result.description).subscribe((data: any) => {
           console.log('LoaderComponent: createNewConfig', data);
           this.loadComponent();
         });

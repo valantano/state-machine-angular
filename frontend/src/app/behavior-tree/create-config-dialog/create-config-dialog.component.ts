@@ -34,9 +34,12 @@ export class CreateConfigDialogComponent {
     if (data) {
       this.config_name = data.config_name || '';
       this.description = data.description || '';
-      this.create = data.create || true;
+      this.create = data.create !== undefined ? data.create : true;
+      console.log(this.create);
       if (!this.create) {
         this.dialog_type = 'Edit';
+      } else {
+        this.dialog_type = 'Create';
       }
     }
   }
