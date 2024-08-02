@@ -157,6 +157,19 @@ class StateMachine:
         except:
             self.log(f'Error: File {filename} not found in config folder or could not be deleted.', to_frontend=False)
             return False
+        
+    def duplicate_config_file(self, filename: str):
+        """Duplicates a config file in the config folder."""
+        try:
+            with open(os.path.join(self.config_folder, filename), 'r') as f:
+                config = json.load(f)
+            new_filename = self._get_valid_filename(filename.split('.')[0] + '_copy') + '.json'
+            with open(os.path.join(self.config_folder, new_filename), 'w') as f:
+                json.dump(config, f, indent=4)
+            return True
+        except:
+            self.log(f'Error: File {filename} not found in config folder or could not be duplicated.', to_frontend=False)
+            return
 
     def _get_valid_filename(self, filename: str):
         """Returns a valid filename for a new config file."""

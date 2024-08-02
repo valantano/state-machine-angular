@@ -65,8 +65,7 @@ td { /* Modify existing style for table cells */
 }
 
 
-.del-but,
-.rename-but {
+.edit-but {
   margin-left: 5px;
   padding: 5px 10px;
   background-color: #333;
@@ -75,8 +74,7 @@ td { /* Modify existing style for table cells */
   border-radius: 5px;
   cursor: pointer;
 }
-.del-but:hover,
-.rename-but:hover {
+.edit-but:hover {
   background-color: #555;
 }
 

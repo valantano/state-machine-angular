@@ -1,7 +1,7 @@
 
 
 from sm_backend.flask_backend import FlaskBackend
-from sm_backend.state_machine import StateMachine
+from sm_backend.state_machine_base import StateMachine
 from sm_backend.state import State
 import time
 import os
@@ -109,7 +109,7 @@ class Wippi(State):
 
     def __init__(self) -> None:
         super().__init__("Wippi", 48)
-        self.input_par_interface = {'GoalPoseSelectionWithWay TooLongTextAndSoOnLUL': {'type': 'enum', 'values': ['GoalPose1', 'GoalPose2']},
+        self.input_par_interface = {'GoalPoseSelectionWithWay TooLongTextAndSoOnLUL TooLongTextAndSoOnLUL TooLongTextAndSoOnLUL': {'type': 'enum', 'values': ['GoalPose1', 'GoalPose2']},
                                     'Number-Select': {'type': 'number'},
                                     'String-Enter': {'type': 'string'},
                                     'Boolean-Select': {'type': 'boolean'}}

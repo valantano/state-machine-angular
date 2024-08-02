@@ -26,8 +26,9 @@
                         <div>{{file['creationDate'] | date:'short'}}</div>
                         <div>{{file['lastModified'] | date:'short'}}</div>
                         <div>
-                            <button class="del-but" (click)="onDelete(file); $event.stopPropagation()">Delete</button>  <!-- Prevent onFileClick event -->
-                            <button class="rename-but" (click)="onEdit(file); $event.stopPropagation()">Edit</button> <!-- Prevent onFileClick event -->
+                            <button class="edit-but" (click)="onDuplicate(file); $event.stopPropagation()">Duplicate</button> <!-- Prevent onFileClick event -->
+                            <button class="edit-but" (click)="onDelete(file); $event.stopPropagation()">Delete</button>  <!-- Prevent onFileClick event -->
+                            <button class="edit-but" (click)="onEdit(file); $event.stopPropagation()">Edit</button> <!-- Prevent onFileClick event -->
                         </div>
                     </div>
                 </td>
