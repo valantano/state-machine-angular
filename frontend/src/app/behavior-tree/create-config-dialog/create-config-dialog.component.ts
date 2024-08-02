@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-your-dialog',
   template: `
-    <h1 mat-dialog-title>Create new State Machine Config</h1>
+    <h1 mat-dialog-title>{{dialog_type}} State Machine Config</h1>
     <div mat-dialog-content>
       <mat-form-field>
         <input matInput placeholder="Config Name (not filename)" [(ngModel)]="config_name" required>
@@ -15,7 +15,7 @@ import { MatDialogRef } from '@angular/material/dialog';
     </div>
     <div mat-dialog-actions>
       <button mat-button (click)="onCancel()">Cancel</button>
-      <button mat-button [disabled]="!config_name" (click)="onCreate()">Create</button>
+      <button mat-button [disabled]="!config_name" (click)="onCreate()">{{dialog_type}}</button>
     </div>
   `,
   styleUrl: './create-config-dialog.component.scss'
@@ -23,8 +23,23 @@ import { MatDialogRef } from '@angular/material/dialog';
 export class CreateConfigDialogComponent {
   config_name = '';
   description = '';
+  create = true;
+  dialog_type = 'Create';
 
-  constructor(public dialogRef: MatDialogRef<CreateConfigDialogComponent>) {}
+  constructor(
+    public dialogRef: MatDialogRef<CreateConfigDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any // Injecting data
+  ) {
+    // Initialize form fields with injected data if available
+    if (data) {
+      this.config_name = data.config_name || '';
+      this.description = data.description || '';
+      this.create = data.create || true;
+      if (!this.create) {
+        this.dialog_type = 'Edit';
+      }
+    }
+  }
 
   onCancel(): void {
     this.dialogRef.close();

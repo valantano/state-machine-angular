@@ -4,6 +4,7 @@ import { BehaviorTreeService } from '../behavior-tree.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateConfigDialogComponent } from '../create-config-dialog/create-config-dialog.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { create } from 'lodash';
 
 
 interface StateMachineList {
@@ -67,6 +68,14 @@ export class LoaderComponent {
     this.router.navigate(['/editor'], navigationExtras);
   }
 
+  onDuplicate(file: File) {
+    console.log('LoaderComponent: Duplicate file', file);
+    this.service.duplicateConfig(this.selectedOption, file.filename).subscribe((data: any) => {
+      console.log('LoaderComponent: duplicateConfig', data);
+      this.loadComponent();
+    });
+  }
+
   onEdit(file: File) {
     console.log('LoaderComponent: Edit file', file);
   }
@@ -96,7 +105,7 @@ export class LoaderComponent {
     const dialogRef = this.dialog.open(CreateConfigDialogComponent, {
       width: '450px',
       // height: '400px',
-      data: {},
+      data: { config_name: '', description: '', create: true },
       // panelClass: 'create-config-dialog'
     });
   
