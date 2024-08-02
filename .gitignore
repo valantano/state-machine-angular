@@ -5,6 +5,8 @@
 /frontend/tmp
 /frontend/out-tsc
 /frontend/bazel-out
+/frontend/package-lock.json
+
 
 # Node
 /frontend/node_modules
