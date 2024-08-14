@@ -26,13 +26,10 @@ export class EditorComponent {
   lastModified: string = "";
   creationDate: string = "";
   description: string = "";
-  // startStateNodeId: string = "";
 
   // Data structures passed to the tree-canvas component
   graph: Graph;
-  // nodes: { [id: string]: StateNode } = {};
   node_interfaces: { [id: number]: StateNodeInterface } = {};
-  // edges: { [id: string]: TransitionEdge } = {};
   freshlyCreatedNodeId: string = "";
 
   infoTerminalMsgs: string[] = [];
