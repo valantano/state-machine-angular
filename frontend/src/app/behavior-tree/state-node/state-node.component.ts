@@ -12,7 +12,6 @@ export class StateNodeComponent {
 
   @ViewChildren('bottomCircle') bottomCircles!: QueryList<ElementRef>;
   @ViewChild('topCircle', { static: false }) topCircle!: ElementRef;
-
   @ViewChild(MatMenuTrigger) contextMenuTrigger!: MatMenuTrigger;
 
 
@@ -20,25 +19,8 @@ export class StateNodeComponent {
     if (this.state_interface === null) {
       throw new Error('StateNode: state_interface is null');
     }
-    
    }
 
-  //  <div class="input-parameters-container" *ngIf="parInterfaceNotEmpty()">
-  //       <div *ngFor="let item of state_interface.input_par_interface | keyvalue" class="input-parameters">
-  //           <label class="input-par-label">{{ item.key }}</label>
-
-  //           <select class="input-par-set" *ngIf="item.value['type']=='enum'">
-  //               <option *ngFor="let value of item.value['values']">{{ value }}</option>
-  //           </select>
-  //           <input type="number" class="input-par-set" *ngIf="item.value['type']=='number'">
-
-  //           <input type="text" class="input-par-set" *ngIf="item.value['type']=='string'">
-  //           <select class="input-par-set" *ngIf="item.value['type']=='boolean'">
-  //               <option> False </option>
-  //               <option> True </option>
-  //           </select>
-  //       </div>
-  //   </div>
 
   @Input() inputParameters: {[key: string]: any} = {};
 
