@@ -95,6 +95,12 @@ td { /* Modify existing style for table cells */
   z-index: 4; /* Make sure it's above other elements */
 }
 
+button.edit-but:disabled {
+  background-color: #ccc; /* Light grey background */
+  color: #666; /* Dark grey text */
+  cursor: not-allowed; /* Change cursor to indicate disabled state */
+}
+
 .add-but:hover {
   background-color: #555;
 }

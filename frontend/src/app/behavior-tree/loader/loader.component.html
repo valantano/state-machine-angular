@@ -7,15 +7,15 @@
         <div class="select-container">
             <mat-form-field class="wide-form-field">
                 <mat-label>Select an Option</mat-label>
-                <mat-select [(ngModel)]="selectedOption">
+                <mat-select [(ngModel)]="selectedStateMachineInterface">
                     <mat-option *ngFor="let item of state_machines | keyvalue" [value]="item.key">{{ item.value.name }}</mat-option>
                 </mat-select>
             </mat-form-field>
 
         </div>
 
-        <table *ngIf="selectedOption">
-            <tr *ngFor="let file of state_machines[selectedOption].configs" class="file" (click)="onFileClick(file)">
+        <table *ngIf="selectedStateMachineInterface">
+            <tr *ngFor="let file of state_machines[selectedStateMachineInterface].configs" class="file" (click)="onFileClick(file)">
                 <td>
                     <div class="file-content">
                         <div class="file-icon">
@@ -29,6 +29,7 @@
                             <button class="edit-but" (click)="onDuplicate(file); $event.stopPropagation()">Duplicate</button> <!-- Prevent onFileClick event -->
                             <button class="edit-but" (click)="onDelete(file); $event.stopPropagation()">Delete</button>  <!-- Prevent onFileClick event -->
                             <button class="edit-but" (click)="onEdit(file); $event.stopPropagation()">Edit</button> <!-- Prevent onFileClick event -->
+                            <button class="edit-but" (click)="onFix(file); $event.stopPropagation()" disabled>Fix</button>
                         </div>
                     </div>
                 </td>
@@ -36,7 +37,7 @@
         </table>
 
     </div>
-    <div>{{selectedOption}}</div>
+    <div>{{selectedStateMachineInterface}}</div>
 
     <button class="add-but" (click)="onAdd()">+</button>
 

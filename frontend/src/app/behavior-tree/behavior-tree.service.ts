@@ -135,6 +135,9 @@ export class BehaviorTreeService {
   duplicateConfig(smId: number, filename: string): Observable<any> {
     return this.http.post<any>(address + 'api/duplicate_config_file', {smId: smId, filename: filename});
   }
+  editConfig(smId: number, filename: string, new_name: string, new_description: string): Observable<any> {
+    return this.http.post<any>(address + 'api/edit_config_file', {smId: smId, filename: filename, new_name: new_name, new_description: new_description});
+  }
 
   startStateMachine(smId: number, config_data: any): Observable<any> {
     return this.http.post<any>(address + 'api/start_state_machine', {smId: smId, config: config_data});

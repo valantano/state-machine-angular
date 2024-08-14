@@ -10,7 +10,7 @@ from state_machine.kairos_simple_mover_group_controller.ArmServiceNodeController
 from state_machine.spin_robot import SpinRobot
 
 
-from .state_machine_base import StateMachine
+from state_machine_base import StateMachine
 
 
 class FlaskBackend:
@@ -46,6 +46,7 @@ class FlaskBackend:
         self.add_endpoint('/api/create_new_config_file', 'create_new_config_file', self.create_new_config_file, methods=['POST'])
         self.add_endpoint('/api/delete_config_file', 'delete_config_file', self.delete_config_file, methods=['POST'])
         self.add_endpoint('/api/duplicate_config_file', 'duplicate_config_file', self.duplicate_config_file, methods=['POST'])
+        self.add_endpoint('/api/edit_config_file', 'edit_config_file', self.edit_config_file, methods=['POST'])
 
         self.add_endpoint('/api/start_state_machine', 'start_state_machine', self.start_state_machine, methods=['POST'])
         self.add_endpoint('/api/stop_state_machine', 'stop_state_machine', self.stop_state_machine, methods=['POST'])
@@ -115,6 +116,16 @@ class FlaskBackend:
         filename = str(data['filename'])
         self.log(f'Deleting config file {filename} for state machine {sm_id}')
         success = self.state_machines[sm_id].delete_config_file(filename)
+        return jsonify({'success': success})
+    
+    def edit_config_file(self):
+        data = request.get_json()
+        sm_id = int(data['smId'])
+        filename = str(data['filename'])
+        new_name = str(data['new_name'])
+        new_description = str(data['new_description'])
+        self.log(f'Editing config file {filename} for state machine {sm_id}')
+        success = self.state_machines[sm_id].edit_config_file(filename, new_name, new_description)
         return jsonify({'success': success})
     
     def duplicate_config_file(self):
