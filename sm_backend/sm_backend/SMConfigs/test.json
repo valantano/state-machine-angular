@@ -1,0 +1,10 @@
+{
+    "state_machine_config": {
+        "name": "test",
+        "lastModified": "2024-08-14T14:50:56.771651",
+        "creationDate": "2024-08-14T14:50:56.771658",
+        "description": "test",
+        "startStateNode": "",
+        "stateNodes": []
+    }
+}
