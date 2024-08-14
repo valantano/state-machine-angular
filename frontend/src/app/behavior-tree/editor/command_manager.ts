@@ -45,6 +45,34 @@ export abstract class Command {
   public abstract undo(): void;
 }
 
+export class DeleteSelectionCommand extends Command {
+  private graph: Graph;
+  private selectedNodes: StateNode[] = [];
+  private deleteCommands: Command[] = [];
+
+  constructor(graph: Graph) {
+    super();
+    this.graph = graph;
+    this.selectedNodes = this.graph.getSelectedNodes();
+  }
+
+  execute(): void {
+    this.selectedNodes.forEach(node => {
+      this.deleteCommands.push(new DeleteNodeCommand(node, this.graph));
+    });
+    this.deleteCommands.forEach(command => {
+      command.execute();
+    });
+    console.log("Selection", this.graph.startNode);
+  }
+
+  undo(): void {
+    for (let i = this.deleteCommands.length -1; i>=0; i--) {
+      this.deleteCommands[i].undo()
+    }
+  }
+}
+
 export class SetStartNodeCommand extends Command {
   private graph: Graph;
   private nodeId: string;

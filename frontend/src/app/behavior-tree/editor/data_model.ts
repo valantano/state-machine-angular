@@ -74,6 +74,9 @@ export class Graph {
     addNode(node: StateNode): void {
         this.nodes[node.nodeId] = node;
     }
+
+    // Deletes Node corresponding to nodeId but also all edges connected with this node
+    // If the node was the start node, then set startNode to empty string.
     deleteNode(nodeId: string): [TransitionEdge[], boolean] {
         console.log('Graph: deleteNode', nodeId);
         delete this.nodes[nodeId];
@@ -87,7 +90,11 @@ export class Graph {
                 console.log(removedEdges);
             }
         }
-        return [removedEdges, this.startNode === nodeId];
+        const isStartNode = this.startNode === nodeId;
+        if (isStartNode) {
+            this.setStartNode("");
+        }
+        return [removedEdges, isStartNode];
     }
 
     setStartNode(nodeId: string): void {
@@ -99,12 +106,6 @@ export class Graph {
         delete this.edges[edgeId];
         return edge;
     }
-    findEdgeBySourceAndOutputGate(sourceNodeId: string, outputGate: string): TransitionEdge {
-        const edge = this.findEdge(sourceNodeId, outputGate);
-        return edge;
-    }
-        
-    
     findEdge(sourceNodeId: string, sourceNodeOutputGate: string): any {
         return Object.values(this.edges).find(edge =>
           edge.sourceNodeId === sourceNodeId && edge.sourceNodeOutputGate === sourceNodeOutputGate
@@ -113,13 +114,10 @@ export class Graph {
 
     addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): string {
         let existingEdgeId: string | null = null;
-    
-        for (let edgeId in this.edges) {        // search if edge already exists if yes then don't create new edge but use existing one
-          let edge = this.edges[edgeId];
-          if (edge.sourceNodeId === sourceNodeId && edge.sourceNodeOutputGate === sourceNodeOutputGate) {
-            existingEdgeId = edge.id;
-            break;
-          }
+
+        const edge = this.findEdge(sourceNodeId, sourceNodeOutputGate); // search if edge already exists if yes then don't create new edge but use existing one
+        if (edge) {
+            existingEdgeId = edge.id
         }
     
         const newEdge: TransitionEdge = {
@@ -130,7 +128,7 @@ export class Graph {
           transitionStatus: TransitionStatus.Unknown
         }
     
-        console.log('Editor: addEdge', newEdge);
+        console.log('Graph: addEdge', newEdge);
         this.edges[newEdge.id] = newEdge;
         return newEdge.id;
       }
@@ -158,6 +156,16 @@ export class Graph {
         for (let nodeId in this.nodes) {
             this.nodes[nodeId].selected = false;
         }
+    }
+
+    getSelectedNodes(): StateNode[] {
+        let selectedNodes: StateNode[] = [];
+        for (let nodeId in this.nodes) {
+            if (this.nodes[nodeId].selected) {
+                selectedNodes.push(this.nodes[nodeId]);
+            }
+        }
+        return selectedNodes;
     }
 }
 

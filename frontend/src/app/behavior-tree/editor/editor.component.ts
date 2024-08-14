@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { SharedServiceService } from './shared-service.service';
 import { Subscription, interval, switchMap } from 'rxjs';
-import { AddEdgeCommand, AddNodeCommand, CommandManager, DeleteEdgeCommand, DeleteNodeCommand, SetStartNodeCommand } from './command_manager';
+import { AddEdgeCommand, AddNodeCommand, CommandManager, DeleteEdgeCommand, DeleteNodeCommand, DeleteSelectionCommand, SetStartNodeCommand } from './command_manager';
 
 
 
@@ -39,11 +39,13 @@ export class EditorComponent {
   executing: boolean = false;
 
   addNodeSub: Subscription;
-  nodeDeleteSub: Subscription;
+  deleteNodeSub: Subscription;
   addEdgeSub: Subscription;
-  edgeDeleteSubWorkaround: Subscription;
-  edgeDeleteSub: Subscription;
+  deleteEdgeSubWorkaround: Subscription;
+  deleteEdgeSub: Subscription;
   setStartNodeSub: Subscription;
+  deleteSelectionSub: Subscription;
+
   startEventSub: Subscription;
   stopEventSub: Subscription;
   resetEventSub: Subscription;
@@ -66,17 +68,20 @@ export class EditorComponent {
     this.addNodeSub = this.sharedService.createNode.subscribe((event) => {
       this.handleNodeCreate(event);
     });
-    this.nodeDeleteSub = this.sharedService.nodeDeleteEvent.subscribe((event) => {
+    this.deleteNodeSub = this.sharedService.nodeDeleteEvent.subscribe((event) => {
       this.deleteNode(event.nodeId);
     });
     this.addEdgeSub = this.sharedService.addEdgeEvent.subscribe((event) => {
       this.addEdge(event.srcNodeId, event.targetNodeId, event.outputGate);
     });
-    this.edgeDeleteSubWorkaround = this.sharedService.edgeDeleteEventWorkaround.subscribe((event) => {
+    this.deleteEdgeSubWorkaround = this.sharedService.edgeDeleteEventWorkaround.subscribe((event) => {
       this.deleteEdgeWorkaround(event.srcNodeId, event.targetNodeId, event.outputGate);
     });
-    this.edgeDeleteSub = this.sharedService.edgeDeleteEvent.subscribe((event) => {
+    this.deleteEdgeSub = this.sharedService.edgeDeleteEvent.subscribe((event) => {
       this.deleteEdge(event.edgeId);
+    });
+    this.deleteSelectionSub = this.sharedService.deleteSelectionEvent.subscribe(() => {
+      this.deleteSelection()
     });
     this.setStartNodeSub = this.sharedService.setStartNodeEvent.subscribe((event) => {
       this.setStartNode(event.targetNodeId);
@@ -170,7 +175,7 @@ export class EditorComponent {
     if (sourceNodeId === "start-node") {
       this.setStartNode("");
     } else {
-      this.commandManager.execute(new DeleteEdgeCommand(this.graph.findEdgeBySourceAndOutputGate(sourceNodeId, outputGate).id, this.graph));
+      this.commandManager.execute(new DeleteEdgeCommand(this.graph.findEdge(sourceNodeId, outputGate).id, this.graph));
     }
   }
   
@@ -178,6 +183,12 @@ export class EditorComponent {
     console.log('Editor: deleteEdge', edgeId);
     this.unsavedChanges = true;
     this.commandManager.execute(new DeleteEdgeCommand(edgeId, this.graph));
+  }
+
+  deleteSelection(): void {
+    console.log('Editor <--sharedService-- TreeCanvas: deleteSelection');
+    this.unsavedChanges = true;
+    this.commandManager.execute(new DeleteSelectionCommand(this.graph));
   }
 
   handleNodeDragEvent(): void {

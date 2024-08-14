@@ -67,7 +67,6 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     if (event.key === 'Delete') {
       console.log('TreeCanvas: Delete key pressed');
       this.sharedService.deleteSelectionEvent.emit();
-      this.sharedService.edgeDeleteEvent.emit({ edgeId: this.selectedEdgeId });
     }
   }
 
@@ -281,15 +280,14 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     }
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   // On Edge Right Click and Edge Hover
   @ViewChild(MatMenuTrigger) contextMenuTrigger!: MatMenuTrigger;
   private selectedEdgeId: string = "";
   onRightClick(event: MouseEvent, edgeId: string) {
-    console.log('TreeCanvas: Right click', event);
+    console.log('TreeCanvas: Right click', event.clientX);
     event.preventDefault();
     this.selectedEdgeId = edgeId;
-    // this.contextMenuTrigger.menuPositionX = 
+
     this.contextMenuTrigger.openMenu();
   }
   onDelete() {
