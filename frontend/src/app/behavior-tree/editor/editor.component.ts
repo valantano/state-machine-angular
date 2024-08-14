@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { SharedServiceService } from './shared-service.service';
 import { Subscription, interval, switchMap } from 'rxjs';
+import { AddEdgeCommand, AddNodeCommand, CommandManager, DeleteEdgeCommand, DeleteNodeCommand, SetStartNodeCommand } from './command_manager';
 
 
 
@@ -25,7 +26,7 @@ export class EditorComponent {
   lastModified: string = "";
   creationDate: string = "";
   description: string = "";
-  startStateNodeId: string = "";
+  // startStateNodeId: string = "";
 
   // Data structures passed to the tree-canvas component
   graph: Graph;
@@ -35,12 +36,14 @@ export class EditorComponent {
   freshlyCreatedNodeId: string = "";
 
   infoTerminalMsgs: string[] = [];
+  commandManager: CommandManager = new CommandManager(); 
 
   unsavedChanges: boolean = false;
   executing: boolean = false;
 
-
+  addNodeSub: Subscription;
   nodeDeleteSub: Subscription;
+  addEdgeSub: Subscription;
   edgeDeleteSubWorkaround: Subscription;
   edgeDeleteSub: Subscription;
   setStartNodeSub: Subscription;
@@ -63,11 +66,17 @@ export class EditorComponent {
     this.filename = state.filename;
     console.log('Editor: Opened File', state.filename, "with StateMachineId", state.smId);
 
+    this.addNodeSub = this.sharedService.createNode.subscribe((event) => {
+      this.handleNodeCreate(event);
+    });
     this.nodeDeleteSub = this.sharedService.nodeDeleteEvent.subscribe((event) => {
       this.deleteNode(event.nodeId);
     });
+    this.addEdgeSub = this.sharedService.addEdgeEvent.subscribe((event) => {
+      this.addEdge(event.srcNodeId, event.targetNodeId, event.outputGate);
+    });
     this.edgeDeleteSubWorkaround = this.sharedService.edgeDeleteEventWorkaround.subscribe((event) => {
-      this.deleteEdgeWorkaround(event.sourceNodeId, event.targetNodeId, event.outputGate);
+      this.deleteEdgeWorkaround(event.srcNodeId, event.targetNodeId, event.outputGate);
     });
     this.edgeDeleteSub = this.sharedService.edgeDeleteEvent.subscribe((event) => {
       this.deleteEdge(event.edgeId);
@@ -86,7 +95,6 @@ export class EditorComponent {
     });
 
     this.loadComponent();
-
   }
 
   loadComponent() {   // TODO: ensure InterfaceData is received first before getConfigData is called.
@@ -112,13 +120,14 @@ export class EditorComponent {
       this.lastModified = data.state_machine_config.lastModified;
       this.creationDate = data.state_machine_config.creationDate;
       this.description = data.state_machine_config.description;
-      this.startStateNodeId = data.state_machine_config.startStateNode;
+      this.graph.setStartNode(data.state_machine_config.startStateNode);
       for (let node of data.state_machine_config.stateNodes) {
         if (node.input_parameters === undefined) {
           node.input_parameters = {};
         }
         this.createNode(node.title, node.x, node.y, this.node_interfaces[node.stateId], node.input_parameters, node.nodeId);
         for (let transition in node.transitions) {
+          
           this.graph.addEdge(node.nodeId, node.transitions[transition], transition);
         }
       }
@@ -126,6 +135,8 @@ export class EditorComponent {
       if (!_.isEqual(converted_data, data)) {
         throw new Error('Editor: Data conversion failed - convertToConfigData() function does not work correctly!!!');
       }
+
+      this.commandManager.reset();
     });
   }
 
@@ -144,17 +155,15 @@ export class EditorComponent {
       throw new Error(`Editor: Node with id ${nodeId} already exists`);
     }
     const newNode: StateNode = new StateNode(nodeId, x, y, title, state_interface, input_parameters, ExecutionStatus.Unknown);
-    this.graph.addNode(newNode);
+    this.commandManager.execute(new AddNodeCommand(newNode, this.graph));
+    // this.graph.addNode(newNode);
     return newNode.nodeId;
   }
 
   deleteNode(nodeId: string): void {
     console.log('Editor <--sharedService-- StateNode: deleteNode', nodeId);
     this.unsavedChanges = true;
-    this.graph.deleteNode(nodeId);
-    if (this.startStateNodeId === nodeId) {
-      this.startStateNodeId = "";
-    }
+    this.commandManager.execute(new DeleteNodeCommand(this.graph.getNode(nodeId), this.graph));
   }
 
   // Workaround on how to delete edges.
@@ -162,16 +171,16 @@ export class EditorComponent {
     console.log('Editor: deleteEdge', sourceNodeId, targetNodeId, outputGate);
     this.unsavedChanges = true;
     if (sourceNodeId === "start-node") {
-      this.startStateNodeId = "";
+      this.setStartNode("");
     } else {
-      this.graph.deleteEdgeWorkaround(sourceNodeId, outputGate);
+      this.commandManager.execute(new DeleteEdgeCommand(this.graph.findEdgeBySourceAndOutputGate(sourceNodeId, outputGate).id, this.graph));
     }
   }
   
   deleteEdge(edgeId: string): void {
     console.log('Editor: deleteEdge', edgeId);
     this.unsavedChanges = true;
-    this.graph.deleteEdge(edgeId);
+    this.commandManager.execute(new DeleteEdgeCommand(edgeId, this.graph));
   }
 
   handleNodeDragEvent(): void {
@@ -179,20 +188,15 @@ export class EditorComponent {
     this.unsavedChanges = true;
   }
 
-  handleAddEdgeEvent(event: any): void {
-    // sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string
+  addEdge(sourceNodeId: string, targetNodeId: string, outputGate: string): void {
     console.log("Editor <- TreeCanvas: Add Edge")
-    const sourceNodeId = event.sourceNodeId;
-    const targetNodeId = event.targetNodeId;
-    const sourceNodeOutputGate = event.sourceNodeOutputGate;
-    this.graph.addEdge(sourceNodeId, targetNodeId, sourceNodeOutputGate);
+    this.commandManager.execute(new AddEdgeCommand(sourceNodeId, targetNodeId, outputGate, this.graph));
     this.unsavedChanges = true;
   }
 
-  
   setStartNode(nodeId: string): void {
     this.unsavedChanges = true;
-    this.startStateNodeId = nodeId;
+    this.commandManager.execute(new SetStartNodeCommand(nodeId, this.graph));
   }
 
   // Warn user if they try to leave the page with unsaved changes
@@ -289,7 +293,12 @@ export class EditorComponent {
     }
   }
   ////////////////////////////// Status Update Code //////////////////////////////
-
+  handleUndoClick(): void {
+    this.commandManager.undo();
+  }
+  handleRedoClick(): void {
+    this.commandManager.redo();
+  }
 
 
   handleSaveClick(): void {
@@ -340,7 +349,7 @@ export class EditorComponent {
         "lastModified": this.lastModified,
         "creationDate": this.creationDate,
         "description": this.description,
-        "startStateNode": this.startStateNodeId, // Assuming the first node is the start node
+        "startStateNode": this.graph.startNode, // Assuming the first node is the start node
         "stateNodes": stateNodes
       }
     };

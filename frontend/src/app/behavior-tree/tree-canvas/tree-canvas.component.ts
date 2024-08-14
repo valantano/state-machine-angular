@@ -55,7 +55,22 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    document.addEventListener('keydown', this.onKeyDown.bind(this));
+  }
+
+  ngOnDestroy() {
+    document.removeEventListener('keydown', this.onKeyDown.bind(this));
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Delete') {
+      console.log('TreeCanvas: Delete key pressed');
+      this.sharedService.deleteSelectionEvent.emit();
+      this.sharedService.edgeDeleteEvent.emit({ edgeId: this.selectedEdgeId });
+    }
+  }
+
   ngAfterViewInit(): void {}
 
   // Scaling Not workin at the moment /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
@@ -148,11 +163,11 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
 
   addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
     console.log('TreeCanvas -> Editor: addEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
-    this.addEdgeEvent.emit({ sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, sourceNodeOutputGate: sourceNodeOutputGate });
+    this.sharedService.addEdgeEvent.emit({ srcNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate });
   }
   deleteEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
     console.log('TreeCanvas -> Editor: deleteEdge Workaround', sourceNodeId, targetNodeId, sourceNodeOutputGate);
-    this.sharedService.edgeDeleteEventWorkaround.emit({ sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate });
+    this.sharedService.edgeDeleteEventWorkaround.emit({ srcNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate });
   }
   setStartNode(targetNodeId: string): void {
     console.log('TreeCanvas -> Editor: setStartNode', targetNodeId);

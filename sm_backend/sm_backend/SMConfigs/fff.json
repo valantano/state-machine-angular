@@ -1,18 +1,29 @@
 {
     "state_machine_config": {
         "name": "fff",
-        "lastModified": "2024-08-14T18:01:21.728138",
+        "lastModified": "2024-08-14T23:59:52.864780",
         "creationDate": "2024-08-14T15:15:46.689431",
         "description": "fff",
-        "startStateNode": "f264c434-4b59-4581-be48-46f16231ef3b",
+        "startStateNode": "f6fc1ce9-f845-4119-ade9-387cb5feac31",
         "stateNodes": [
             {
                 "title": "State Node",
-                "nodeId": "f264c434-4b59-4581-be48-46f16231ef3b",
+                "nodeId": "91dcbb55-2021-43c6-b065-cc0bcff3be33",
                 "stateId": 46,
-                "x": 1145,
-                "y": 413,
+                "x": 1395,
+                "y": 799,
                 "transitions": {},
+                "input_parameters": {}
+            },
+            {
+                "title": "State Node",
+                "nodeId": "f6fc1ce9-f845-4119-ade9-387cb5feac31",
+                "stateId": 46,
+                "x": 866,
+                "y": 408,
+                "transitions": {
+                    "Fail": "91dcbb55-2021-43c6-b065-cc0bcff3be33"
+                },
                 "input_parameters": {}
             }
         ]

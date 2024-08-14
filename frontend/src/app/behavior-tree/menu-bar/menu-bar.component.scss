@@ -32,6 +32,11 @@
   .menu-bar li a:hover {
     background-color: #111;
   }
+
+  .menu-bar li a.disabled {
+    cursor: not-allowed;
+    color: rgb(156, 152, 152);
+  }
   
   .menu-bar li ul {
     display: none;

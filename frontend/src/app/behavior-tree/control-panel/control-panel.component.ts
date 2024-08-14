@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { StateNodeInterface } from '../editor/data_model';
+import { SharedServiceService } from '../editor/shared-service.service';
 
 @Component({
   selector: 'app-control-panel',
@@ -10,12 +11,10 @@ export class ControlPanelComponent {
 
   activated: boolean = true;
 
-  // @Input() node_interfaces: StateNodeInterface[] = [];
+  constructor(private sharedService: SharedServiceService) {
+  }
+
   @Input() node_interfaces: { [id: number]: StateNodeInterface } = {};
-
-
-  @Output() nodeCreate: EventEmitter<{mouseEvent: MouseEvent, stateId: string}> = new EventEmitter<{mouseEvent: MouseEvent, stateId: string}>();
-
 
   switchActivationState(): void {
     this.activated = !this.activated;
@@ -23,7 +22,7 @@ export class ControlPanelComponent {
 
   onMouseDown(event: MouseEvent, stateId: number): void {
     console.log('ControlPanel: Mouse down', stateId);
-    this.nodeCreate.emit({mouseEvent: event, stateId: stateId.toString()});
+    this.sharedService.createNode.emit({mouseEvent: event, stateId: stateId.toString()});
   }
 
 }

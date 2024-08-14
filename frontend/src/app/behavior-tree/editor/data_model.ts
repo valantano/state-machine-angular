@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 
 export class StateNode {
     nodeId: string;
@@ -72,33 +74,44 @@ export class Graph {
     addNode(node: StateNode): void {
         this.nodes[node.nodeId] = node;
     }
-    deleteNode(nodeId: string): void {
+    deleteNode(nodeId: string): [TransitionEdge[], boolean] {
+        console.log('Graph: deleteNode', nodeId);
         delete this.nodes[nodeId];
+        let removedEdges = []
         for (let edgeId in this.edges) {
             const edge = this.edges[edgeId];
             if (edge.sourceNodeId === nodeId || edge.targetNodeId === nodeId) {
-              this.deleteEdge(edgeId);
+                removedEdges.push(edge);
+                console.log(removedEdges);
+                this.deleteEdge(edgeId);
+                console.log(removedEdges);
             }
         }
+        return [removedEdges, this.startNode === nodeId];
     }
 
+    setStartNode(nodeId: string): void {
+        this.startNode = nodeId;
+    }
 
-    deleteEdge(edgeId: string): void {
+    deleteEdge(edgeId: string): TransitionEdge {
+        const edge =  this.edges[edgeId];
         delete this.edges[edgeId];
+        return edge;
     }
-    deleteEdgeWorkaround(sourceNodeId: string, outputGate: string) {
+    findEdgeBySourceAndOutputGate(sourceNodeId: string, outputGate: string): TransitionEdge {
         const edge = this.findEdge(sourceNodeId, outputGate);
-        if (edge) {
-            this.deleteEdge(edge.id);
-        }
+        return edge;
     }
+        
+    
     findEdge(sourceNodeId: string, sourceNodeOutputGate: string): any {
         return Object.values(this.edges).find(edge =>
           edge.sourceNodeId === sourceNodeId && edge.sourceNodeOutputGate === sourceNodeOutputGate
         );
     }
 
-    addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
+    addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): string {
         let existingEdgeId: string | null = null;
     
         for (let edgeId in this.edges) {        // search if edge already exists if yes then don't create new edge but use existing one
@@ -119,6 +132,7 @@ export class Graph {
     
         console.log('Editor: addEdge', newEdge);
         this.edges[newEdge.id] = newEdge;
+        return newEdge.id;
       }
 
     getNode(nodeId: string): StateNode {
@@ -163,8 +177,4 @@ export interface StateNodeInterface {
         requires: string[];
         sets: string[];
     };
-}
-
-function uuidv4(): string {
-    throw new Error("Function not implemented.");
 }

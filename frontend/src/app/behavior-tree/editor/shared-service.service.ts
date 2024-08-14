@@ -6,6 +6,10 @@ import { StateNodeComponent } from '../state-node/state-node.component';
 })
 export class SharedServiceService {
   
+
+  // control-panel -> editor
+  public createNode: EventEmitter<{mouseEvent: MouseEvent, stateId: string}> = new EventEmitter<{mouseEvent: MouseEvent, stateId: string}>();
+
   // editor -> tree-canvas
   public nodeCreatedEvent: EventEmitter<{mouseEvent: MouseEvent, nodeId: string}> = new EventEmitter<{mouseEvent: MouseEvent, nodeId: string}>();
   
@@ -13,13 +17,18 @@ export class SharedServiceService {
   public nodeDeleteEvent: EventEmitter<{nodeId: string}> = new EventEmitter<{nodeId: string}>();
   
   // tree-canvas -> editor
-  public edgeDeleteEventWorkaround: EventEmitter<{sourceNodeId: string, targetNodeId: string, outputGate: string}> = new EventEmitter<{sourceNodeId: string, targetNodeId: string, outputGate: string}>();
+  public addEdgeEvent: EventEmitter<{srcNodeId: string, targetNodeId: string, outputGate: string}> = new EventEmitter<{srcNodeId: string, targetNodeId: string, outputGate: string}>();
+  // tree-canvas -> editor
+  public edgeDeleteEventWorkaround: EventEmitter<{srcNodeId: string, targetNodeId: string, outputGate: string}> = new EventEmitter<{srcNodeId: string, targetNodeId: string, outputGate: string}>();
   
   // tree-canvas -> editor
   public edgeDeleteEvent: EventEmitter<{edgeId: string}> = new EventEmitter<{edgeId: string}>();
   
   // tree-canvas -> editor
   public setStartNodeEvent: EventEmitter<{targetNodeId: string}> = new EventEmitter<{targetNodeId: string}>();
+
+  // tree-canvas -> editor
+  public deleteSelectionEvent: EventEmitter<void> = new EventEmitter<void>();
 
 
   // start-node -> editor

@@ -17,6 +17,8 @@ export class MenuBarComponent {
 
   @Input() executionRunning: boolean = true;
   @Input() not_saved: boolean = false;
+  @Input() canUndo: boolean = false;
+  @Input() canRedo: boolean = false;
 
   @Input() configName: string = '';
   configNameTmp: string = '';
@@ -43,8 +45,9 @@ export class MenuBarComponent {
     console.log('MenuBar: Undo button clicked');
     this.undoClick.emit();
   }
-  onClickRedo(): void {
+  onClickRedo(event: any): void {
     console.log('MenuBar: Redo button clicked');
+    // event.stopPropagation();
     this.redoClick.emit();
   }
 

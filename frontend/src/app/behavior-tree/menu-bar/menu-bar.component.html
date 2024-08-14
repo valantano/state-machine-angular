@@ -17,8 +17,8 @@
       <li>
         <a href="#">Edit</a>
         <ul>
-          <li><a (click)="onClickUndo()">Undo</a></li>
-          <li><a (click)="onClickRedo()">Redo</a></li>
+          <li><a (click)="onClickUndo()" [class.disabled]="!canUndo">Undo</a></li>
+          <li><a (click)="onClickRedo($event)" [class.disabled]="!canRedo">Redo</a></li>
           <!-- Add more edit options here -->
         </ul>
       </li>
