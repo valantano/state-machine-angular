@@ -5,7 +5,7 @@
     <div class="toolbox">
         <app-control-panel [node_interfaces]="node_interfaces" (nodeCreate)="handleNodeCreate($event)"></app-control-panel>
         <div class="canvas-area">
-            <app-tree-canvas [nodes]="nodes" [node_interfaces]="node_interfaces" [edges]="edges" [freshlyCreatedNodeId]="freshlyCreatedNodeId" [startNodeId]="startStateNodeId"
+            <app-tree-canvas [graph]="graph" [node_interfaces]="node_interfaces" [freshlyCreatedNodeId]="freshlyCreatedNodeId" [startNodeId]="startStateNodeId"
                 (addEdgeEvent)="handleAddEdgeEvent($event)"
                 (nodeDragEvent)="handleNodeDragEvent()"></app-tree-canvas>
             <app-overlay></app-overlay>

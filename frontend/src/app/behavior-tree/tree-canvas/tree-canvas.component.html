@@ -1,19 +1,20 @@
-<div class="outer">
+<div class="outer" (click)="anythingClickedHandler()">
 <div class="graph" (mouseup)="onMouseUp()">
 
   <app-start-node class="start-node" [style.left.px]="800" [style.top.px]="100" (circleDrag)="handleCircleDrag($event)"></app-start-node>
 
-  <app-state-node *ngFor="let node of nodes | keyvalue" class="state-node" [style.left.px]="node.value.x" [style.top.px]="node.value.y"
+  <app-state-node *ngFor="let node of graph.nodes | keyvalue" class="state-node" [style.left.px]="node.value.getGraphX()" [style.top.px]="node.value.getGraphY()"
     [nodeId]="node.value.nodeId" [title]="node.value.title" [state_interface]="node.value.state_interface" [inputParameters]="node.value.input_parameters"
-    [executionStatus]="node.value.executionStatus"
+    [executionStatus]="node.value.executionStatus" [selected]="node.value.selected"
     (circleDrag)="handleCircleDrag($event)" (nodeDrag)="handleNodeDrag($event)"
-    (topCircleEnter)="handleTopCircleEnter($event)" (topCircleLeave)="handleTopCircleLeave()">
+    (topCircleEnter)="handleTopCircleEnter($event)" (topCircleLeave)="handleTopCircleLeave()" (click)="$event.stopPropagation()">
+    
   </app-state-node>
   
     <svg *ngIf="stateNodes">
       <path  *ngIf="startNodeId != ''" class="pathclass" [attr.d]="getPath('start-node', startNodeId, 'Start')" stroke="black" fill="transparent" stroke-linejoin="round"
           stroke-linecap="round" stroke-width="1"pointer-events="all"/>
-      <path  *ngFor = "let edge of edges | keyvalue" class="pathclass" [attr.d]="getPath(edge.value.sourceNodeId, edge.value.targetNodeId, edge.value.sourceNodeOutputGate)" stroke="black" fill="transparent" stroke-linejoin="round"
+      <path  *ngFor = "let edge of graph.edges | keyvalue" class="pathclass" [attr.d]="getPath(edge.value.sourceNodeId, edge.value.targetNodeId, edge.value.sourceNodeOutputGate)" stroke="black" fill="transparent" stroke-linejoin="round"
           stroke-linecap="round" stroke-width="1" (contextmenu)="onRightClick($event, edge.value.id)" (mouseover)="onMouseOver($event, edge.value.id)" pointer-events="all"/>
     </svg>
 

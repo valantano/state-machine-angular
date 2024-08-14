@@ -1,7 +1,7 @@
 import { Component, EventEmitter, HostListener, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorTreeService } from '../behavior-tree.service';
-import { TransitionEdge, StateNode, StateNodeInterface, ExecutionStatus, TransitionStatus } from './data_model';
+import { TransitionEdge, StateNode, StateNodeInterface, ExecutionStatus, TransitionStatus, Graph } from './data_model';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { SharedServiceService } from './shared-service.service';
@@ -28,9 +28,10 @@ export class EditorComponent {
   startStateNodeId: string = "";
 
   // Data structures passed to the tree-canvas component
-  nodes: { [id: string]: StateNode } = {};
+  graph: Graph;
+  // nodes: { [id: string]: StateNode } = {};
   node_interfaces: { [id: number]: StateNodeInterface } = {};
-  edges: { [id: string]: TransitionEdge } = {};
+  // edges: { [id: string]: TransitionEdge } = {};
   freshlyCreatedNodeId: string = "";
 
   infoTerminalMsgs: string[] = [];
@@ -55,6 +56,7 @@ export class EditorComponent {
     if (!navigation) {
       throw new Error('Navigation is null');
     }
+    this.graph = new Graph();
 
     const state = navigation.extras.state as { filename: string, smId: number };
     this.stateMachineId = state.smId;
@@ -117,7 +119,7 @@ export class EditorComponent {
         }
         this.createNode(node.title, node.x, node.y, this.node_interfaces[node.stateId], node.input_parameters, node.nodeId);
         for (let transition in node.transitions) {
-          this.addEdge(node.nodeId, node.transitions[transition], transition);
+          this.graph.addEdge(node.nodeId, node.transitions[transition], transition);
         }
       }
       const converted_data = this.convertToConfigData();
@@ -138,32 +140,18 @@ export class EditorComponent {
 
   createNode(title: string, x: number, y: number, state_interface: StateNodeInterface, input_parameters: {}, nodeId?: string): string {
     nodeId = nodeId ? nodeId : uuidv4();
-    if (this.nodes[nodeId]) {
+    if (this.graph.getNode(nodeId)) {
       throw new Error(`Editor: Node with id ${nodeId} already exists`);
     }
-    const newNode: StateNode = {
-      nodeId: nodeId,
-      x: x,
-      y: y,
-      title: title,
-      state_interface: state_interface,
-      input_parameters: input_parameters,
-      executionStatus: ExecutionStatus.Unknown
-    }
-    this.nodes[newNode.nodeId] = newNode;
+    const newNode: StateNode = new StateNode(nodeId, x, y, title, state_interface, input_parameters, ExecutionStatus.Unknown);
+    this.graph.addNode(newNode);
     return newNode.nodeId;
   }
 
   deleteNode(nodeId: string): void {
     console.log('Editor <--sharedService-- StateNode: deleteNode', nodeId);
     this.unsavedChanges = true;
-    delete this.nodes[nodeId];
-    for (let edgeId in this.edges) {
-      let edge = this.edges[edgeId];
-      if (edge.sourceNodeId === nodeId || edge.targetNodeId === nodeId) {
-        delete this.edges[edgeId];
-      }
-    }
+    this.graph.deleteNode(nodeId);
     if (this.startStateNodeId === nodeId) {
       this.startStateNodeId = "";
     }
@@ -176,21 +164,14 @@ export class EditorComponent {
     if (sourceNodeId === "start-node") {
       this.startStateNodeId = "";
     } else {
-      const edge = this.findEdge(sourceNodeId, outputGate);
-      if (edge) {
-        delete this.edges[edge.id];
-      }
+      this.graph.deleteEdgeWorkaround(sourceNodeId, outputGate);
     }
   }
-  findEdge(sourceNodeId: string, sourceNodeOutputGate: string): any {
-    return Object.values(this.edges).find(edge =>
-      edge.sourceNodeId === sourceNodeId && edge.sourceNodeOutputGate === sourceNodeOutputGate
-    );
-  }
+  
   deleteEdge(edgeId: string): void {
     console.log('Editor: deleteEdge', edgeId);
     this.unsavedChanges = true;
-    delete this.edges[edgeId];
+    this.graph.deleteEdge(edgeId);
   }
 
   handleNodeDragEvent(): void {
@@ -204,32 +185,11 @@ export class EditorComponent {
     const sourceNodeId = event.sourceNodeId;
     const targetNodeId = event.targetNodeId;
     const sourceNodeOutputGate = event.sourceNodeOutputGate;
-    this.addEdge(sourceNodeId, targetNodeId, sourceNodeOutputGate);
+    this.graph.addEdge(sourceNodeId, targetNodeId, sourceNodeOutputGate);
     this.unsavedChanges = true;
   }
 
-  addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
-    let existingEdgeId: string | null = null;
-
-    for (let edgeId in this.edges) {
-      let edge = this.edges[edgeId];
-      if (edge.sourceNodeId === sourceNodeId && edge.sourceNodeOutputGate === sourceNodeOutputGate) {
-        existingEdgeId = edge.id;
-        break;
-      }
-    }
-
-    const newEdge: TransitionEdge = {
-      id: existingEdgeId !== null ? existingEdgeId : uuidv4(),
-      sourceNodeId: sourceNodeId,
-      sourceNodeOutputGate: sourceNodeOutputGate,
-      targetNodeId: targetNodeId,
-      transitionStatus: TransitionStatus.Unknown
-    }
-
-    console.log('Editor: addEdge', newEdge);
-    this.edges[newEdge.id] = newEdge;
-  }
+  
   setStartNode(nodeId: string): void {
     this.unsavedChanges = true;
     this.startStateNodeId = nodeId;
@@ -319,13 +279,13 @@ export class EditorComponent {
   updateNodeStatus(nodeStatusData: any): void {
     // nodeStatusData is a dict with stateId as key and the status as value
     for (const nodeId in nodeStatusData) {
-      this.nodes[nodeId].executionStatus = nodeStatusData[nodeId]
+      this.graph.setNodeStatus(nodeId, nodeStatusData[nodeId]);
     }
   }
 
   resetNodeStatus(status: ExecutionStatus): void {
-    for (const nodeId in this.nodes) {
-      this.nodes[nodeId].executionStatus = status
+    for (const nodeId in this.graph.nodes) {
+      this.graph.setNodeStatus(nodeId, status);
     }
   }
   ////////////////////////////// Status Update Code //////////////////////////////
@@ -353,7 +313,7 @@ export class EditorComponent {
   // Convert the data to the format that the backend expects
   convertToConfigData() {
     let transitions: { [soureNodeId: string]: { [outputGate: string]: string } } = {};
-    for (const edge of Object.values(this.edges)) { // for each node store the transitions
+    for (const edge of Object.values(this.graph.edges)) { // for each node store the transitions
       if (!transitions[edge.sourceNodeId]) {
         transitions[edge.sourceNodeId] = {};
       }
@@ -361,7 +321,7 @@ export class EditorComponent {
     }
 
     let stateNodes: {}[] = [];
-    for (let node of Object.values(this.nodes)) {   // convert each node to the format that the backend expects incorporating the transitions from above
+    for (let node of Object.values(this.graph.nodes)) {   // convert each node to the format that the backend expects incorporating the transitions from above
       const nodeTransitions = transitions[node.nodeId] ? transitions[node.nodeId] : {};
       stateNodes.push({
         "title": node.title,

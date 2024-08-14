@@ -26,6 +26,7 @@ export class StateNodeComponent {
 
   @Input() title: string = "";
   @Input() nodeId: string = "";
+  @Input() selected: boolean = false;
   @Input() state_interface!: StateNodeInterface;
   @Input() executionStatus: ExecutionStatus = ExecutionStatus.Unknown;
   ExecutionStatus = ExecutionStatus;

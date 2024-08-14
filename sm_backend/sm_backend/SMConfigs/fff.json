@@ -1,0 +1,20 @@
+{
+    "state_machine_config": {
+        "name": "fff",
+        "lastModified": "2024-08-14T18:01:21.728138",
+        "creationDate": "2024-08-14T15:15:46.689431",
+        "description": "fff",
+        "startStateNode": "f264c434-4b59-4581-be48-46f16231ef3b",
+        "stateNodes": [
+            {
+                "title": "State Node",
+                "nodeId": "f264c434-4b59-4581-be48-46f16231ef3b",
+                "stateId": 46,
+                "x": 1145,
+                "y": 413,
+                "transitions": {},
+                "input_parameters": {}
+            }
+        ]
+    }
+}

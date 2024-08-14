@@ -4,13 +4,13 @@
     'not-executed': executionStatus === ExecutionStatus.NotExecuted,
     'unknown': executionStatus === ExecutionStatus.Unknown,
     'failed': executionStatus === ExecutionStatus.Failed
-}">
+}"> 
 
     <div class="top-circle-container">
         <div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)"
             (mouseleave)="onTopCircleLeave($event)"></div>
     </div>
-    <div class="rectangle" (mousedown)="onNodeDrag($event)" (contextmenu)="onRightClick($event)">
+    <div class="rectangle" (mousedown)="onNodeDrag($event)" (contextmenu)="onRightClick($event)" [class.selected]="selected">
         <div class="title">{{ getDisplayTitle() }}</div>
         <hr> <!-- Horizontal Divider -->
         <div class="information">

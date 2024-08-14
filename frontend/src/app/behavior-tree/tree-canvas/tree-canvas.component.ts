@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, HostListener, QueryList, ViewChildren, ChangeDetectorRef, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { StateNodeComponent } from '../state-node/state-node.component';
-import { StateNode, TransitionEdge, StateNodeInterface } from '../editor/data_model';
+import { StateNode, TransitionEdge, StateNodeInterface, Graph } from '../editor/data_model';
 import { SharedServiceService } from '../editor/shared-service.service';
 import { Subscription } from 'rxjs';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -17,10 +17,11 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   @ViewChildren(StateNodeComponent) stateNodes!: QueryList<StateNodeComponent>;   // if x,y values change the corresponding x,y values in nodes also changes
   @ViewChild(StartNodeComponent) startNode!: StartNodeComponent;
 
-  @Input() nodes: { [id: string]: StateNode } = {};                     // Given by EditorComponent by reference.
+  // @Input() nodes: { [id: string]: StateNode } = {};                     // Given by EditorComponent by reference.
   @Input() node_interfaces: { [id: number]: StateNodeInterface } = {};  // Given by EditorComponent by reference.
-  @Input() edges: { [id: string]: TransitionEdge } = {};                // Given by EditorComponent by reference.
+  // @Input() edges: { [id: string]: TransitionEdge } = {};                // Given by EditorComponent by reference.
   @Input() startNodeId: string = "";
+  @Input() graph: Graph = new Graph();
 
   @Output() addEdgeEvent: EventEmitter<{ sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string }> = new EventEmitter<{ sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string }>();
   @Output() nodeDragEvent: EventEmitter<void> = new EventEmitter<void>();
@@ -28,7 +29,8 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   // Used to drag nodes
   private startXNode: number = 0;
   private startYNode: number = 0;
-  private isDragging = false;
+  private draggingNode = false;
+  private mouseDownOnNode = false;
   private draggedNode: any; // Change the type as per your node structure
 
   // Used to draw current drawing edge
@@ -48,7 +50,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   constructor(private cdRef: ChangeDetectorRef, private sharedService: SharedServiceService) {
     this.nodeCreationSubscription = this.sharedService.nodeCreatedEvent.subscribe((event) => {
       console.log('TreeCanvas <--sharedService-- Editor: Node created', event);
-      const [clientX, clientY] = this.offsetXYCoordsInverse(event.mouseEvent.clientX, event.mouseEvent.clientY);    // Adjust to the graph container position
+      const [clientX, clientY] = this.graphXYToScreenXY(event.mouseEvent.clientX+200, event.mouseEvent.clientY+100);  // handleNodeDrag expects screen coordinates
       this.handleNodeDrag({ mouseEvent: { clientX: clientX, clientY: clientY }, nodeId: event.nodeId });
     });
   }
@@ -90,12 +92,15 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   // or moves the node that was dragged to cursor position
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
+    const [mouseX, mouseY] = this.screenXYToGraphXY(event.clientX, event.clientY);
     if (this.isDrawing) {
-      [this.currentX, this.currentY] = this.offsetXYCoords(event.clientX, event.clientY);
+      [this.currentX, this.currentY] = [mouseX, mouseY];
     }
-    if (this.isDragging && this.draggedNode) {
-      this.draggedNode.x = event.x - this.startXNode;
-      this.draggedNode.y = event.y - this.startYNode;
+    if (this.mouseDownOnNode && this.draggedNode) {
+      console.log('TreeCanvas: Mouse move', mouseX, mouseY);
+      this.draggingNode = true;
+      this.draggedNode.x = mouseX - this.startXNode;
+      this.draggedNode.y = mouseY - this.startYNode;
     }
   }
 
@@ -124,12 +129,23 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
       this.sourceNodeId = "";
       this.targetNodeId = "";
     }
-    if (this.isDragging) {
-      this.isDragging = false;
+    if (this.draggingNode) {
+      this.mouseDownOnNode = false;
+      this.draggingNode = false;
+      this.graph.deselectNode(this.draggedNode.nodeId);
+      // this.graph.deselectAllNodes();
       this.draggedNode = null;
       this.nodeDragEvent.emit();
+    } else if (this.mouseDownOnNode) {
+      this.mouseDownOnNode = false;
     }
   }
+
+  anythingClickedHandler() {
+    console.log('TreeCanvas: Anything clicked');
+    this.graph.deselectAllNodes();
+  }
+
   addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
     console.log('TreeCanvas -> Editor: addEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
     this.addEdgeEvent.emit({ sourceNodeId: sourceNodeId, targetNodeId: targetNodeId, sourceNodeOutputGate: sourceNodeOutputGate });
@@ -155,8 +171,8 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     this.isDrawing = true;
     this.sourceNodeId = eventWithId.nodeId;
 
-    [this.startXCircle, this.startYCircle] = this.offsetXYCoords(circlepos.x, circlepos.y);
-    [this.currentX, this.currentY] = this.offsetXYCoords(circlepos.x, circlepos.y);
+    [this.startXCircle, this.startYCircle] = this.screenXYToGraphXY(circlepos.x, circlepos.y);
+    [this.currentX, this.currentY] = this.screenXYToGraphXY(circlepos.x, circlepos.y);
   }
   handleTopCircleEnter(eventWithId: any) {
     console.log('TreeCanvas <- StateNode: handleTopCircleEnter', eventWithId);
@@ -175,22 +191,25 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   handleNodeDrag(eventWithId: any) {
     console.log('TreeCanvas <- StateNode: handleNodeDrag', eventWithId);
     const event = eventWithId.mouseEvent;
-    this.draggedNode = this.getStateNodeById(eventWithId.nodeId);
+    this.graph.selectNode(eventWithId.nodeId);
+    this.draggedNode = this.graph.getNode(eventWithId.nodeId);
 
-    this.startXNode = event.clientX - this.draggedNode.x;
-    this.startYNode = event.clientY - this.draggedNode.y;
-    this.isDragging = true;
+    const [x,y] = this.screenXYToGraphXY(event.clientX, event.clientY);
+
+    this.startXNode = x - this.draggedNode.x;
+    this.startYNode = y - this.draggedNode.y;
+    this.mouseDownOnNode = true;
   }
   getStateNodeById(id: number): StateNode | undefined {
-    return this.nodes[id];
+    return this.graph.getNode(String(id));
   }
 
-  offsetXYCoords(x: number, y: number): [number, number] {
+  screenXYToGraphXY(x: number, y: number): [number, number] {
     const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
     return [x - graphRect.left, y - graphRect.top];
   }
 
-  offsetXYCoordsInverse(x: number, y: number): [number, number] {
+  graphXYToScreenXY(x: number, y: number): [number, number] {
     const graphRect = (document.querySelector('.graph') as HTMLElement).getBoundingClientRect();  // for offest to get screen position to graph container position
     return [x + graphRect.left, y + graphRect.top];
   }
@@ -230,8 +249,8 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
       const sourceCircle = sourceNode.getBottomCircleScreenPosition(sourceNodeOutputGate);
       const targetCircle = targetNode.getTopCircleMidpointPosition();
 
-      const [startX, startY] = this.offsetXYCoords(sourceCircle.x, sourceCircle.y);
-      const [endX, endY] = this.offsetXYCoords(targetCircle.x, targetCircle.y);
+      const [startX, startY] = this.screenXYToGraphXY(sourceCircle.x, sourceCircle.y);
+      const [endX, endY] = this.screenXYToGraphXY(targetCircle.x, targetCircle.y);
       return [startX, startY, endX, endY];
     } else {
       // console.log('TreeCanvas: getStartEndPos: Could not find source or target node');
