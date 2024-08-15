@@ -56,7 +56,9 @@ export class CommandManager {
 }
 
 export class MoveSelectedNodesCommand extends Command {
-  // Move all selected nodes to the new position.
+  // Move all selected nodes by dx and dy.
+  // When the command is executed for the first time, the nodes stay at their current position, because they were already moved by tree-canvas.
+  // This is a workaround since the user should get visual feedback when dragging nodes. -> tree-canvas needs to move the nodes for visual feedback.
   // Undo: Move the nodes back to the previous position.
 
   private graph: Graph;
@@ -75,7 +77,6 @@ export class MoveSelectedNodesCommand extends Command {
   }
 
   execute(): void {
-    console.log(this.selectedNodes)
     this.selectedNodes.forEach(node => {
       const position = node.getGraphPosition();
       if (this.firstExecution) {
@@ -88,7 +89,6 @@ export class MoveSelectedNodesCommand extends Command {
   }
 
   undo(): void {
-    console.log(this.selectedNodes)
     this.selectedNodes.forEach(node => {
       const position = node.getGraphPosition();
       this.graph.moveNode(node.nodeId, position.x - this.dx, position.y - this.dy);
@@ -98,7 +98,9 @@ export class MoveSelectedNodesCommand extends Command {
 
 
 export class MoveNodeCommand extends Command {
-  // Move the node corresponding to nodeId to the new position.
+  // Move the node corresponding to nodeId by dX and dY.
+  // When the command is executed for the first time, the node stays at its current position, because it was already moved by tree-canvas.
+  // This is a workaround since the user should get visual feedback when dragging nodes. -> tree-canvas needs to move the nodes for visual feedback.
   // Undo: Move the node back to the previous position.
 
   private graph: Graph;
@@ -251,7 +253,6 @@ export class DeleteNodeCommand extends Command {
   }
 
   undo(): void {
-    console.log(this.deletedEdges);
     this.graph.addNode(this.node);
     this.deletedEdges.forEach(edge => {
       this.graph.addEdge(edge.sourceNodeId, edge.targetNodeId, edge.sourceNodeOutputGate);
@@ -283,7 +284,6 @@ export class DeleteSelectedCommand extends Command {
     this.deleteCommands.forEach(command => {
       command.execute();
     });
-    console.log("Selection", this.graph.startNode);
   }
 
   undo(): void {

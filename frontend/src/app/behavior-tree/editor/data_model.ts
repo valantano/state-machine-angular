@@ -85,16 +85,13 @@ export class Graph {
     // Deletes Node corresponding to nodeId but also all edges connected with this node
     // If the node was the start node, then set startNode to empty string.
     deleteNode(nodeId: string): [TransitionEdge[], boolean] {
-        console.log('Graph: deleteNode', nodeId);
         delete this.nodes[nodeId];
         let removedEdges = []
         for (let edgeId in this.edges) {
             const edge = this.edges[edgeId];
             if (edge.sourceNodeId === nodeId || edge.targetNodeId === nodeId) {
                 removedEdges.push(edge);
-                console.log(removedEdges);
                 this.deleteEdge(edgeId);
-                console.log(removedEdges);
             }
         }
         const isStartNode = this.startNode === nodeId;
@@ -134,8 +131,6 @@ export class Graph {
           targetNodeId: targetNodeId,
           transitionStatus: TransitionStatus.Unknown
         }
-    
-        console.log('Graph: addEdge', newEdge);
         this.edges[newEdge.id] = newEdge;
         return newEdge.id;
       }
@@ -220,12 +215,6 @@ export class Graph {
         this.childSelectionMode = enabled;
     }
 }
-
-// states: [
-//     { name: "Idle", stateId: 45, infoText: "This is an Info Text", input_par_interface: {}, output_interface: ["Fail", "Success", "What?"] },
-//     { name: "MoveBaseToGoal", stateId: 46, infoText: "This is an Info Text", input_par_interface: {}, output_interface: ["Fail", "Success", "What?"] },
-//     { name: "Spin", stateId: 47, infoText: "This is an Info Text", input_par_interface: {}, output_interface: ["Fail", "Success", "What?"] },
-//   ]
 
 export interface StateNodeInterface {
     name: string;

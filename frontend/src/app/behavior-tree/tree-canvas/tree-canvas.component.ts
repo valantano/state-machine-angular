@@ -123,17 +123,10 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
 
   // Either draws a line between the clicked bottom circle and the current mouse position
   // or moves the node that was dragged to cursor position
-  // mouseGraphStartX: number = -1;
-  // mouseGraphStartY: number = -1;
   mouseLastGraphX: number = -1;
   mouseLastGraphY: number = -1;
   runningMouseDX: number = 0;
   runningMouseDY: number = 0;
-  // private mouseGraphX: number = -1;
-  // private mouseGraphY: number = -1;
-  // private dragNodeGraphX: number = -1;
-  // private dragNodeGraphY: number = -1;
-
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
     const [mouseX, mouseY] = this.screenXYToGraphXY(event.clientX, event.clientY);
@@ -246,6 +239,8 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
 
     this.mouseLastGraphX = x;
     this.mouseLastGraphY = y;
+    this.runningMouseDX = 0;
+    this.runningMouseDY = 0;
 
     this.mouseDownOnNode = true;
   }
@@ -263,8 +258,6 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     return [x + graphRect.left, y + graphRect.top];
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
   // Drawing Edges ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

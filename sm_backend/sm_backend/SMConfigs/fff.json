@@ -1,49 +1,28 @@
 {
     "state_machine_config": {
         "name": "fff",
-        "lastModified": "2024-08-15T14:53:17.961393",
+        "lastModified": "2024-08-15T15:10:02.182739",
         "creationDate": "2024-08-14T15:15:46.689431",
         "description": "fff",
         "startStateNode": "f6fc1ce9-f845-4119-ade9-387cb5feac31",
         "stateNodes": [
             {
                 "title": "State Node",
-                "nodeId": "91dcbb55-2021-43c6-b065-cc0bcff3be33",
-                "stateId": 46,
-                "x": 1518,
-                "y": 864,
-                "transitions": {
-                    "Fail": "569e7912-a871-4c07-b2a3-025917d07659",
-                    "What?": "16eeb074-68ed-4bbb-8643-c52507e25e71"
-                },
-                "input_parameters": {}
-            },
-            {
-                "title": "State Node",
                 "nodeId": "f6fc1ce9-f845-4119-ade9-387cb5feac31",
                 "stateId": 46,
-                "x": 1012,
-                "y": 359,
-                "transitions": {
-                    "Fail": "91dcbb55-2021-43c6-b065-cc0bcff3be33"
-                },
-                "input_parameters": {}
-            },
-            {
-                "title": "State Node",
-                "nodeId": "569e7912-a871-4c07-b2a3-025917d07659",
-                "stateId": 46,
-                "x": 1413.9500122070312,
-                "y": 1315,
+                "x": 1200,
+                "y": 337,
                 "transitions": {},
-                "input_parameters": {}
+                "input_parameters": {
+                    "Boolean-Select": true
+                }
             },
             {
                 "title": "State Node",
-                "nodeId": "16eeb074-68ed-4bbb-8643-c52507e25e71",
-                "stateId": 46,
-                "x": 1912.9500122070312,
-                "y": 1285,
+                "nodeId": "1b3604d4-5c6c-4c6c-9610-f13372e532ab",
+                "stateId": 45,
+                "x": 1099.9500122070312,
+                "y": 769,
                 "transitions": {},
                 "input_parameters": {}
             }

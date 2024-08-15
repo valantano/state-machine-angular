@@ -99,7 +99,7 @@ export class EditorComponent {
     this.loadComponent();
   }
 
-  loadComponent() {   // TODO: ensure InterfaceData is received first before getConfigData is called.
+  loadComponent() {   // TODO: ensure InterfaceData is received first before getConfigData is called. // TODO: check config Data and Interface Data for consistency
     this.behaviorTreeService.getInterfaceData(this.stateMachineId).subscribe((data: any) => {
       console.log('Editor <- backend: getInterfaceData', data);
       for (let state of data.states) {
@@ -158,7 +158,6 @@ export class EditorComponent {
     }
     const newNode: StateNode = new StateNode(nodeId, x, y, title, state_interface, input_parameters, ExecutionStatus.Unknown);
     this.commandManager.execute(new AddNodeCommand(newNode, this.graph));
-    // this.graph.addNode(newNode);
     return newNode.nodeId;
   }
 

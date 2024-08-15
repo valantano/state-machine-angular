@@ -42,13 +42,17 @@ export class MenuBarComponent {
     this.exportClick.emit();
   }
   onClickUndo(): void {
-    console.log('MenuBar: Undo button clicked');
-    this.undoClick.emit();
+    if (this.canUndo) {
+      console.log('MenuBar: Undo button clicked');
+      this.undoClick.emit();
+    }
   }
   onClickRedo(event: any): void {
-    console.log('MenuBar: Redo button clicked');
     // event.stopPropagation();
-    this.redoClick.emit();
+    if (this.canRedo) {
+      console.log('MenuBar: Redo button clicked');
+      this.redoClick.emit();
+    }
   }
 
   // Send configNameChanged event if the field is changed
