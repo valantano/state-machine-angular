@@ -8,31 +8,44 @@
             <mat-form-field class="wide-form-field">
                 <mat-label>Select an Option</mat-label>
                 <mat-select [(ngModel)]="selectedStateMachineInterface">
-                    <mat-option *ngFor="let item of state_machines | keyvalue" [value]="item.key">{{ item.value.name }}</mat-option>
+                    <mat-option *ngFor="let item of state_machines | keyvalue" [value]="item.key">{{ item.value.name
+                        }}</mat-option>
                 </mat-select>
             </mat-form-field>
 
         </div>
 
         <table *ngIf="selectedStateMachineInterface">
-            <tr *ngFor="let file of state_machines[selectedStateMachineInterface].configs" class="file" (click)="onFileClick(file)">
-                <td>
-                    <div class="file-content">
-                        <div class="file-icon">
-                            <i class="material-icons">insert_drive_file</i>
-                        </div>
-                        <div class="file-name">{{file['name']}} ({{file['filename']}})</div>
-                        <div>{{file['description']}}</div>
-                        <div>{{file['creationDate'] | date:'short'}}</div>
-                        <div>{{file['lastModified'] | date:'short'}}</div>
-                        <div>
-                            <button class="edit-but" (click)="onDuplicate(file); $event.stopPropagation()">Duplicate</button> <!-- Prevent onFileClick event -->
-                            <button class="edit-but" (click)="onDelete(file); $event.stopPropagation()">Delete</button>  <!-- Prevent onFileClick event -->
-                            <button class="edit-but" (click)="onEdit(file); $event.stopPropagation()">Edit</button> <!-- Prevent onFileClick event -->
-                            <button class="edit-but" (click)="onFix(file); $event.stopPropagation()" disabled>Fix</button>
-                        </div>
+            <tr>
+                <div class="file-content">
+                <td class="name-col">File Name</td>
+                <td>Description</td>
+                <td class="date-col">Creation Date</td>
+                <td class="date-col">Last Modified</td>
+                <td class="button-col">Actions</td>
+            </div>
+            </tr>
+            <tr *ngFor="let file of state_machines[selectedStateMachineInterface].configs" class="file"
+                (click)="onFileClick(file)">
+                <div class="file-content">
+                    <div class="file-icon">
+                        <i class="material-icons">insert_drive_file</i>
                     </div>
-                </td>
+                    <td class="file-name" class="name-col">{{file['name']}} ({{file['filename']}})</td>
+                    <td>{{file['description']}}</td>
+                    <td class="date-col">{{file['creationDate'] | date:'short'}}</td>
+                    <td class="date-col">{{file['lastModified'] | date:'short'}}</td>
+                    <td class="button-col">
+                        <button class="edit-but"
+                            (click)="onDuplicate(file); $event.stopPropagation()">Duplicate</button>
+                        <!-- Prevent onFileClick event -->
+                        <button class="edit-but" (click)="onDelete(file); $event.stopPropagation()">Delete</button>
+                        <!-- Prevent onFileClick event -->
+                        <button class="edit-but" (click)="onEdit(file); $event.stopPropagation()">Edit</button>
+                        <!-- Prevent onFileClick event -->
+                        <button class="edit-but" (click)="onFix(file); $event.stopPropagation()" disabled>Fix</button>
+                    </td>
+                </div>
             </tr>
         </table>
 
