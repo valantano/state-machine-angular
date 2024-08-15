@@ -57,6 +57,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     document.addEventListener('keydown', this.onKeyDown.bind(this));
+    document.addEventListener('keyup', this.onKeyUp.bind(this));
   }
 
   ngOnDestroy() {
@@ -66,31 +67,45 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Delete') {
       console.log('TreeCanvas: Delete key pressed');
-      this.sharedService.deleteSelectionEvent.emit();
+      this.sharedService.deleteSelectedEvent.emit();
+    } else if (event.key === 'Escape') {
+      console.log('TreeCanvas: Escape key pressed');
+      this.graph.deselectAllNodes();
+      // this.sharedService.deselectAllEvent.emit();
+    } else if (event.key === 'Control') {
+      console.log('TreeCanvas: Control key pressed');
+      this.graph.setMultipleSelectionMode(true);
+    }
+  }
+
+  onKeyUp(event: KeyboardEvent) {
+    if (event.key === 'Control') {
+      console.log('TreeCanvas: Control key released');
+      this.graph.setMultipleSelectionMode(false);
     }
   }
 
   ngAfterViewInit(): void {}
 
   // Scaling Not workin at the moment /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-  private scale = 1;
-  // @HostListener('wheel', ['$event'])
-  onWheel(event: WheelEvent) {
-    console.log('TreeCanvas: Wheel');
-    // Zoom in or out
-    event.preventDefault();
-    if (event.deltaY < 0) {
-      this.scale *= 1.1;
-    } else {
-      this.scale *= 0.9;
-    }
-    const state_nodes = document.querySelectorAll('.state-node') as NodeListOf<HTMLElement>;
-    // const drawing_edge = document.querySelector('.drawing-edge') as HTMLElement;
-    // const drawn_edges = document.querySelectorAll('.drawn-edge') as NodeListOf<HTMLElement>;
+  // private scale = 1;
+  // // @HostListener('wheel', ['$event'])
+  // onWheel(event: WheelEvent) {
+  //   console.log('TreeCanvas: Wheel');
+  //   // Zoom in or out
+  //   event.preventDefault();
+  //   if (event.deltaY < 0) {
+  //     this.scale *= 1.1;
+  //   } else {
+  //     this.scale *= 0.9;
+  //   }
+  //   const state_nodes = document.querySelectorAll('.state-node') as NodeListOf<HTMLElement>;
+  //   // const drawing_edge = document.querySelector('.drawing-edge') as HTMLElement;
+  //   // const drawn_edges = document.querySelectorAll('.drawn-edge') as NodeListOf<HTMLElement>;
 
-    if (state_nodes) {
-      state_nodes.forEach(node => { node.style.transform = `scale(${this.scale})` });
-    }
+  //   if (state_nodes) {
+  //     state_nodes.forEach(node => { node.style.transform = `scale(${this.scale})` });
+  //   }
     // if (drawing_edge) {
     //   drawing_edge.style.transform = `scale(${this.scale})`;
     // }
@@ -99,7 +114,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     //     const path = edge.querySelector('.pathclass') as HTMLElement;
     //     path.style.setProperty('--stroke-width', `${1 / this.scale}px`) });
     // }
-  }
+  // }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Either draws a line between the clicked bottom circle and the current mouse position
@@ -111,7 +126,6 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
       [this.currentX, this.currentY] = [mouseX, mouseY];
     }
     if (this.mouseDownOnNode && this.draggedNode) {
-      console.log('TreeCanvas: Mouse move', mouseX, mouseY);
       this.draggingNode = true;
       this.draggedNode.x = mouseX - this.startXNode;
       this.draggedNode.y = mouseY - this.startYNode;

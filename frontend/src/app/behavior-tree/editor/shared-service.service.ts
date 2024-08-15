@@ -28,8 +28,7 @@ export class SharedServiceService {
   public setStartNodeEvent: EventEmitter<{targetNodeId: string}> = new EventEmitter<{targetNodeId: string}>();
 
   // tree-canvas -> editor
-  public deleteSelectionEvent: EventEmitter<void> = new EventEmitter<void>();
-
+  public deleteSelectedEvent: EventEmitter<void> = new EventEmitter<void>();
 
   // start-node -> editor
   public startEvent: EventEmitter<void> = new EventEmitter<void>();

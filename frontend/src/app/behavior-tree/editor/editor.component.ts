@@ -80,7 +80,7 @@ export class EditorComponent {
     this.deleteEdgeSub = this.sharedService.edgeDeleteEvent.subscribe((event) => {
       this.deleteEdge(event.edgeId);
     });
-    this.deleteSelectionSub = this.sharedService.deleteSelectionEvent.subscribe(() => {
+    this.deleteSelectionSub = this.sharedService.deleteSelectedEvent.subscribe(() => {
       this.deleteSelection()
     });
     this.setStartNodeSub = this.sharedService.setStartNodeEvent.subscribe((event) => {

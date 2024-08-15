@@ -70,6 +70,7 @@ export class Graph {
     nodes: { [id: string]: StateNode } = {};
     edges: { [id: string]: TransitionEdge } = {};
     startNode: string = "";
+    multipleSelectionMode: boolean = false;
 
     addNode(node: StateNode): void {
         this.nodes[node.nodeId] = node;
@@ -144,17 +145,24 @@ export class Graph {
         this.nodes[nodeId].executionStatus = status;
     }
 
+    // if control is pressed add new node to the selection
+    // if control is pressed and node already selected, deselect the node
+    // if control is not pressed, deselect all nodes and select the new node
     selectNode(nodeId: string): void {
-        this.nodes[nodeId].selected = true;
+        if (!this.multipleSelectionMode) {
+            this.deselectAllNodes();
+            this.nodes[nodeId].selected = true;
+        } else {
+            this.nodes[nodeId].selected = !this.nodes[nodeId].selected;
+        }
+        
     }
     deselectNode(nodeId: string): void {
-        console.log('Graph: deselectNode', nodeId, this.nodes);
         this.nodes[nodeId].selected = false;
     }
     deselectAllNodes(): void {
-        console.log('Graph: deselectAllNodes', this.nodes);
         for (let nodeId in this.nodes) {
-            this.nodes[nodeId].selected = false;
+            this.deselectNode(nodeId);
         }
     }
 
@@ -166,6 +174,10 @@ export class Graph {
             }
         }
         return selectedNodes;
+    }
+
+    setMultipleSelectionMode(enabled: boolean): void {
+        this.multipleSelectionMode = enabled;
     }
 }
 
