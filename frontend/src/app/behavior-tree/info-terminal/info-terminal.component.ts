@@ -11,7 +11,7 @@ export class InfoTerminalComponent implements OnInit, AfterViewChecked {
 
   @Input() message_buffer: string[] = [];
   @ViewChild('textterminal') infoTerminal!: ElementRef;
-  isMinimized = false;
+  isMinimized = true;
   constructor(private behaviorTreeService: BehaviorTreeService) { }
 
   ngOnInit(): void {
