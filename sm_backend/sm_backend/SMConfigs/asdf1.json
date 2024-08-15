@@ -1,9 +1,9 @@
 {
     "state_machine_config": {
         "name": "asdf",
-        "lastModified": "2024-06-03T18:23:01.622816",
+        "lastModified": "2024-08-15T15:41:25.414809",
         "creationDate": "2024-03-20T13:38:00.269986",
-        "description": "asdf1",
+        "description": "To display the file metadata in a table-like format where the rows and columns are aligned properly, you can reformat the HTML using a <table> with <tr> (table rows) and <td> (table data cells) elements to define the structure. This way, each file's metadata will be displayed in a consistent and aligned manner across all entries. Here's how you can modify the Angular HTML code to achieve this:",
         "startStateNode": "0ae9c748-425f-4186-a840-e09f86bc59cd",
         "stateNodes": [
             {

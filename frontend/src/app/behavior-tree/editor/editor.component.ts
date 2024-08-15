@@ -188,7 +188,7 @@ export class EditorComponent {
 
   handleNodeDragEvent(event: any): void {
     console.log('Editor <- TreeCanvas: Node was dragged. Unsaved Changes.');
-    if (this.graph.childSelectionMode) {
+    if (this.graph.childSelectionMode || this.graph.multipleSelectionMode) {
       this.commandManager.execute(new MoveSelectedNodesCommand(event.dX, event.dY, this.graph));
     } else {
       this.commandManager.execute(new MoveNodeCommand(event.nodeId, event.dX, event.dY, this.graph));

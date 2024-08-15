@@ -1,9 +1,9 @@
 {
     "state_machine_config": {
         "name": "WZLStateMachine",
-        "lastModified": "2024-08-15T15:41:13.381181",
+        "lastModified": "2024-08-15T15:39:33.266336",
         "creationDate": "2019-07-01T00:00:00Z",
-        "description": "To display the file metadata in a table-like format where the rows and columns are aligned properly, you can reformat the HTML using a <table> with <tr> (table rows) and <td> (table data cells) elements to define the structure. This way, each file's metadata will be displayed in a consistent and aligned manner across all entries. Here's how you can modify the Angular HTML code to achieve this:",
+        "description": "This is a state machineffff",
         "startStateNode": "22048495-fa82-4347-a78c-e6daa705ad1c",
         "stateNodes": [
             {

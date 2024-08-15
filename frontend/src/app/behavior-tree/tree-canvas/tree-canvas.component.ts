@@ -138,7 +138,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
       const dX = mouseX - this.mouseLastGraphX;
       const dY = mouseY - this.mouseLastGraphY;
 
-      if (this.graph.childSelectionMode) {
+      if (this.graph.childSelectionMode || this.graph.multipleSelectionMode) {
         const selectedNodes = this.graph.getSelectedNodes();
         selectedNodes.forEach(node => {
           node.x += dX;
