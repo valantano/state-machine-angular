@@ -32,7 +32,7 @@ export class StateNodeComponent {
   ExecutionStatus = ExecutionStatus;
 
   @Output() circleDrag: EventEmitter<{nodeId: string, outputGate: string, circlepos: {x: number, y: number}}> = new EventEmitter<{nodeId: string, outputGate: string, circlepos: {x: number, y: number}}>();
-  @Output() nodeDrag: EventEmitter<{mouseEvent: MouseEvent, nodeId: string}> = new EventEmitter<{mouseEvent: MouseEvent, nodeId: string}>();
+  @Output() mouseDownOnNode: EventEmitter<{mouseEvent: MouseEvent, nodeId: string}> = new EventEmitter<{mouseEvent: MouseEvent, nodeId: string}>();
   @Output() topCircleEnter: EventEmitter<{nodeId: string}> = new EventEmitter<{nodeId: string}>();
   @Output() topCircleLeave: EventEmitter<void> = new EventEmitter<void>();
 
@@ -47,10 +47,10 @@ export class StateNodeComponent {
     this.topCircleLeave.emit();
   }
 
-  onNodeDrag(event: MouseEvent) {
+  onMouseDown(event: MouseEvent) {
     if (event.button === 0){
       console.log('StateNode -> TreeCanvas: Node dragged', this.nodeId);
-      this.nodeDrag.emit({mouseEvent: event, nodeId: this.nodeId});
+      this.mouseDownOnNode.emit({mouseEvent: event, nodeId: this.nodeId});
     }
   }
 

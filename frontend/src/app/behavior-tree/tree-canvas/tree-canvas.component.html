@@ -8,7 +8,7 @@
       [style.left.px]="node.value.getGraphX()" [style.top.px]="node.value.getGraphY()" [nodeId]="node.value.nodeId"
       [title]="node.value.title" [state_interface]="node.value.state_interface"
       [inputParameters]="node.value.input_parameters" [executionStatus]="node.value.executionStatus"
-      [selected]="node.value.selected" (circleDrag)="handleCircleDrag($event)" (nodeDrag)="handleNodeDrag($event)"
+      [selected]="node.value.selected" (circleDrag)="handleCircleDrag($event)" (mouseDownOnNode)="handleMouseDownOnNode($event)"
       (topCircleEnter)="handleTopCircleEnter($event)" (topCircleLeave)="handleTopCircleLeave()"
       (click)="$event.stopPropagation()">
     </app-state-node>

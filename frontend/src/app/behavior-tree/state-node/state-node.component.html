@@ -10,7 +10,7 @@
         <div #topCircle class="circle top-circle" (mouseenter)="onTopCircleEnter($event)"
             (mouseleave)="onTopCircleLeave($event)"></div>
     </div>
-    <div class="rectangle" (mousedown)="onNodeDrag($event)" (contextmenu)="onRightClick($event)" [class.selected]="selected">
+    <div class="rectangle" (mousedown)="onMouseDown($event)" (contextmenu)="onRightClick($event)" [class.selected]="selected">
         <div class="title">{{ getDisplayTitle() }}</div>
         <hr> <!-- Horizontal Divider -->
         <div class="information">

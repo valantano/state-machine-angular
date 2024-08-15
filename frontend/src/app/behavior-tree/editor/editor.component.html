@@ -1,12 +1,12 @@
 <div class="editor">
-    <app-menu-bar [configName]="name" [not_saved]="unsavedChanges" [executionRunning]="executing" [canUndo]="commandManager.canUndo()" [canRedo]="commandManager.canRedo()"
+    <app-menu-bar [configName]="name" [not_saved]="commandManager.unsavedChanges" [executionRunning]="executing" [canUndo]="commandManager.canUndo()" [canRedo]="commandManager.canRedo()"
     (saveClick)="handleSaveClick()" (configNameChange)="renameConfig($event)" (redoClick)="handleRedoClick()" (undoClick)="handleUndoClick()"
     ></app-menu-bar>
     <div class="toolbox">
         <app-control-panel [node_interfaces]="node_interfaces" (nodeCreate)="handleNodeCreate($event)"></app-control-panel>
         <div class="canvas-area">
             <app-tree-canvas [graph]="graph" [node_interfaces]="node_interfaces" [freshlyCreatedNodeId]="freshlyCreatedNodeId" [startNodeId]="graph.startNode"
-                (nodeDragEvent)="handleNodeDragEvent()"></app-tree-canvas>
+                (nodeDragEvent)="handleNodeDragEvent($event)"></app-tree-canvas>
             <app-overlay></app-overlay>
         </div>
     </div>

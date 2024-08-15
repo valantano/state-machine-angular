@@ -24,11 +24,9 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   @Input() graph: Graph = new Graph();
 
   @Output() addEdgeEvent: EventEmitter<{ sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string }> = new EventEmitter<{ sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string }>();
-  @Output() nodeDragEvent: EventEmitter<void> = new EventEmitter<void>();
+  @Output() nodeDragEvent: EventEmitter<{ nodeId: string,  dX: number, dY: number }> = new EventEmitter<{ nodeId: string,  dX: number, dY: number }>();
 
   // Used to drag nodes
-  private startXNode: number = 0;
-  private startYNode: number = 0;
   private draggingNode = false;
   private mouseDownOnNode = false;
   private draggedNode: any; // Change the type as per your node structure
@@ -51,7 +49,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     this.nodeCreationSubscription = this.sharedService.nodeCreatedEvent.subscribe((event) => {
       console.log('TreeCanvas <--sharedService-- Editor: Node created', event);
       const [clientX, clientY] = this.graphXYToScreenXY(event.mouseEvent.clientX+200, event.mouseEvent.clientY+100);  // handleNodeDrag expects screen coordinates
-      this.handleNodeDrag({ mouseEvent: { clientX: clientX, clientY: clientY }, nodeId: event.nodeId });
+      this.handleMouseDownOnNode({ mouseEvent: { clientX: clientX, clientY: clientY }, nodeId: event.nodeId });
     });
   }
 
@@ -75,6 +73,9 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     } else if (event.key === 'Control') {
       console.log('TreeCanvas: Control key pressed');
       this.graph.setMultipleSelectionMode(true);
+    } else if (event.key === 'Shift') {
+      console.log('TreeCanvas: Shift key pressed');
+      this.graph.setChildSelectionMode(true);
     }
   }
 
@@ -82,6 +83,9 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     if (event.key === 'Control') {
       console.log('TreeCanvas: Control key released');
       this.graph.setMultipleSelectionMode(false);
+    } else if (event.key === 'Shift') {
+      console.log('TreeCanvas: Shift key released');
+      this.graph.setChildSelectionMode(false);
     }
   }
 
@@ -119,6 +123,17 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
 
   // Either draws a line between the clicked bottom circle and the current mouse position
   // or moves the node that was dragged to cursor position
+  // mouseGraphStartX: number = -1;
+  // mouseGraphStartY: number = -1;
+  mouseLastGraphX: number = -1;
+  mouseLastGraphY: number = -1;
+  runningMouseDX: number = 0;
+  runningMouseDY: number = 0;
+  // private mouseGraphX: number = -1;
+  // private mouseGraphY: number = -1;
+  // private dragNodeGraphX: number = -1;
+  // private dragNodeGraphY: number = -1;
+
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
     const [mouseX, mouseY] = this.screenXYToGraphXY(event.clientX, event.clientY);
@@ -126,9 +141,24 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
       [this.currentX, this.currentY] = [mouseX, mouseY];
     }
     if (this.mouseDownOnNode && this.draggedNode) {
-      this.draggingNode = true;
-      this.draggedNode.x = mouseX - this.startXNode;
-      this.draggedNode.y = mouseY - this.startYNode;
+      this.draggingNode = true;   // now the node is being dragged and not just clicked
+      const dX = mouseX - this.mouseLastGraphX;
+      const dY = mouseY - this.mouseLastGraphY;
+
+      if (this.graph.childSelectionMode) {
+        const selectedNodes = this.graph.getSelectedNodes();
+        selectedNodes.forEach(node => {
+          node.x += dX;
+          node.y += dY;
+        });
+      } else {
+        this.draggedNode.x += dX;
+        this.draggedNode.y += dY;
+      }
+      this.runningMouseDX += dX;
+      this.runningMouseDY += dY;
+      this.mouseLastGraphX = mouseX;
+      this.mouseLastGraphY = mouseY;
     }
   }
 
@@ -158,33 +188,23 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
       this.targetNodeId = "";
     }
     if (this.draggingNode) {
+      this.nodeDragEvent.emit({ nodeId: this.draggedNode.nodeId,  dX: this.runningMouseDX, dY: this.runningMouseDY });
+      this.graph.deselectAllNodes();
+    }
+    if (this.mouseDownOnNode) {   // true if draggingNode=true
       this.mouseDownOnNode = false;
       this.draggingNode = false;
-      this.graph.deselectNode(this.draggedNode.nodeId);
-      // this.graph.deselectAllNodes();
       this.draggedNode = null;
-      this.nodeDragEvent.emit();
-    } else if (this.mouseDownOnNode) {
-      this.mouseDownOnNode = false;
+      this.runningMouseDX = 0;
+      this.runningMouseDY = 0;
+      this.mouseLastGraphX = -1;
+      this.mouseLastGraphY = -1;
     }
   }
 
   anythingClickedHandler() {
     console.log('TreeCanvas: Anything clicked');
     this.graph.deselectAllNodes();
-  }
-
-  addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
-    console.log('TreeCanvas -> Editor: addEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
-    this.sharedService.addEdgeEvent.emit({ srcNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate });
-  }
-  deleteEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
-    console.log('TreeCanvas -> Editor: deleteEdge Workaround', sourceNodeId, targetNodeId, sourceNodeOutputGate);
-    this.sharedService.edgeDeleteEventWorkaround.emit({ srcNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate });
-  }
-  setStartNode(targetNodeId: string): void {
-    console.log('TreeCanvas -> Editor: setStartNode', targetNodeId);
-    this.sharedService.setStartNodeEvent.emit({ targetNodeId: targetNodeId });
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -216,16 +236,17 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   // If app-state-node emits the nodeDrag event it means that the outer rectangle was clicked
   // Then everything is prepared to start dragging the node
   // The actual dragging happens in the onMouseMove event
-  handleNodeDrag(eventWithId: any) {
-    console.log('TreeCanvas <- StateNode: handleNodeDrag', eventWithId);
+  handleMouseDownOnNode(eventWithId: any) {
+    console.log('TreeCanvas <- StateNode: handleMouseDownOnNode', eventWithId);
     const event = eventWithId.mouseEvent;
     this.graph.selectNode(eventWithId.nodeId);
     this.draggedNode = this.graph.getNode(eventWithId.nodeId);
 
     const [x,y] = this.screenXYToGraphXY(event.clientX, event.clientY);
 
-    this.startXNode = x - this.draggedNode.x;
-    this.startYNode = y - this.draggedNode.y;
+    this.mouseLastGraphX = x;
+    this.mouseLastGraphY = y;
+
     this.mouseDownOnNode = true;
   }
   getStateNodeById(id: number): StateNode | undefined {
@@ -313,4 +334,17 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
     // target.parentNode?.appendChild(target);
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  addEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
+    console.log('TreeCanvas -> Editor: addEdge', sourceNodeId, targetNodeId, sourceNodeOutputGate);
+    this.sharedService.addEdgeEvent.emit({ srcNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate });
+  }
+  deleteEdge(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): void {
+    console.log('TreeCanvas -> Editor: deleteEdge Workaround', sourceNodeId, targetNodeId, sourceNodeOutputGate);
+    this.sharedService.edgeDeleteEventWorkaround.emit({ srcNodeId: sourceNodeId, targetNodeId: targetNodeId, outputGate: sourceNodeOutputGate });
+  }
+  setStartNode(targetNodeId: string): void {
+    console.log('TreeCanvas -> Editor: setStartNode', targetNodeId);
+    this.sharedService.setStartNodeEvent.emit({ targetNodeId: targetNodeId });
+  }
+
 }

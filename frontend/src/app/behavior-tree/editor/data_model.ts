@@ -23,6 +23,10 @@ export class StateNode {
         this.executionStatus = executionStatus;
     }
 
+    getGraphPosition(): { x: number, y: number } {
+        return { x: this.getGraphX(), y: this.getGraphY() };
+    }
+
     getGraphX(): number {
         if (this.parentOffsetX === -1) {
             return this.x;
@@ -40,6 +44,7 @@ export class StateNode {
         this.x = newX;
         this.y = newY;
     }
+
 }
 
 export interface TransitionEdge {
@@ -71,6 +76,7 @@ export class Graph {
     edges: { [id: string]: TransitionEdge } = {};
     startNode: string = "";
     multipleSelectionMode: boolean = false;
+    childSelectionMode: boolean = false;
 
     addNode(node: StateNode): void {
         this.nodes[node.nodeId] = node;
@@ -134,6 +140,10 @@ export class Graph {
         return newEdge.id;
       }
 
+    moveNode(nodeId: string, x: number, y: number): void {
+        this.nodes[nodeId].updatePosition(x, y);
+    }
+
     getNode(nodeId: string): StateNode {
         return this.nodes[nodeId];
     }
@@ -145,6 +155,27 @@ export class Graph {
         this.nodes[nodeId].executionStatus = status;
     }
 
+    getAllDescendants(nodeId: string, descendants: string[]): string[] {
+        let childrenIds = this.getAllChildren(nodeId);
+        for (let childId of childrenIds) {
+            if (!descendants.includes(childId)) {
+                descendants.push(childId);
+                descendants = descendants.concat(this.getAllDescendants(childId, descendants));
+            }
+        }
+        return descendants;
+    }
+
+    getAllChildren(nodeId: string): string[] {
+        let children: string[] = [];
+        for (let edgeId in this.edges) {
+            if (this.edges[edgeId].sourceNodeId === nodeId) {
+                children.push(this.nodes[this.edges[edgeId].targetNodeId].nodeId);
+            }
+        }
+        return children;
+    }
+
     // if control is pressed add new node to the selection
     // if control is pressed and node already selected, deselect the node
     // if control is not pressed, deselect all nodes and select the new node
@@ -152,10 +183,15 @@ export class Graph {
         if (!this.multipleSelectionMode) {
             this.deselectAllNodes();
             this.nodes[nodeId].selected = true;
+            if (this.childSelectionMode) {
+                let descendants = this.getAllDescendants(nodeId, []);
+                for (let descendantId of descendants) {
+                    this.nodes[descendantId].selected = true;
+                }
+            }
         } else {
             this.nodes[nodeId].selected = !this.nodes[nodeId].selected;
         }
-        
     }
     deselectNode(nodeId: string): void {
         this.nodes[nodeId].selected = false;
@@ -178,6 +214,10 @@ export class Graph {
 
     setMultipleSelectionMode(enabled: boolean): void {
         this.multipleSelectionMode = enabled;
+    }
+
+    setChildSelectionMode(enabled: boolean): void {
+        this.childSelectionMode = enabled;
     }
 }
 

@@ -1,7 +1,7 @@
 {
     "state_machine_config": {
         "name": "fff",
-        "lastModified": "2024-08-14T23:59:52.864780",
+        "lastModified": "2024-08-15T14:53:17.961393",
         "creationDate": "2024-08-14T15:15:46.689431",
         "description": "fff",
         "startStateNode": "f6fc1ce9-f845-4119-ade9-387cb5feac31",
@@ -10,20 +10,41 @@
                 "title": "State Node",
                 "nodeId": "91dcbb55-2021-43c6-b065-cc0bcff3be33",
                 "stateId": 46,
-                "x": 1395,
-                "y": 799,
-                "transitions": {},
+                "x": 1518,
+                "y": 864,
+                "transitions": {
+                    "Fail": "569e7912-a871-4c07-b2a3-025917d07659",
+                    "What?": "16eeb074-68ed-4bbb-8643-c52507e25e71"
+                },
                 "input_parameters": {}
             },
             {
                 "title": "State Node",
                 "nodeId": "f6fc1ce9-f845-4119-ade9-387cb5feac31",
                 "stateId": 46,
-                "x": 866,
-                "y": 408,
+                "x": 1012,
+                "y": 359,
                 "transitions": {
                     "Fail": "91dcbb55-2021-43c6-b065-cc0bcff3be33"
                 },
+                "input_parameters": {}
+            },
+            {
+                "title": "State Node",
+                "nodeId": "569e7912-a871-4c07-b2a3-025917d07659",
+                "stateId": 46,
+                "x": 1413.9500122070312,
+                "y": 1315,
+                "transitions": {},
+                "input_parameters": {}
+            },
+            {
+                "title": "State Node",
+                "nodeId": "16eeb074-68ed-4bbb-8643-c52507e25e71",
+                "stateId": 46,
+                "x": 1912.9500122070312,
+                "y": 1285,
+                "transitions": {},
                 "input_parameters": {}
             }
         ]

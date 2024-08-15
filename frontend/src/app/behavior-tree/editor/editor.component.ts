@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { SharedServiceService } from './shared-service.service';
 import { Subscription, interval, switchMap } from 'rxjs';
-import { AddEdgeCommand, AddNodeCommand, CommandManager, DeleteEdgeCommand, DeleteNodeCommand, DeleteSelectionCommand, SetStartNodeCommand } from './command_manager';
+import { AddEdgeCommand, AddNodeCommand, CommandManager, DeleteEdgeCommand, DeleteNodeCommand, DeleteSelectedCommand, MoveNodeCommand, MoveSelectedNodesCommand, SetStartNodeCommand } from './command_manager';
 
 
 
@@ -35,7 +35,7 @@ export class EditorComponent {
   infoTerminalMsgs: string[] = [];
   commandManager: CommandManager = new CommandManager(); 
 
-  unsavedChanges: boolean = false;
+  // unsavedChanges: boolean = false;
   executing: boolean = false;
 
   addNodeSub: Subscription;
@@ -164,14 +164,12 @@ export class EditorComponent {
 
   deleteNode(nodeId: string): void {
     console.log('Editor <--sharedService-- StateNode: deleteNode', nodeId);
-    this.unsavedChanges = true;
     this.commandManager.execute(new DeleteNodeCommand(this.graph.getNode(nodeId), this.graph));
   }
 
   // Workaround on how to delete edges.
   deleteEdgeWorkaround(sourceNodeId: string, targetNodeId: string, outputGate: string): void {
     console.log('Editor: deleteEdge', sourceNodeId, targetNodeId, outputGate);
-    this.unsavedChanges = true;
     if (sourceNodeId === "start-node") {
       this.setStartNode("");
     } else {
@@ -181,36 +179,36 @@ export class EditorComponent {
   
   deleteEdge(edgeId: string): void {
     console.log('Editor: deleteEdge', edgeId);
-    this.unsavedChanges = true;
     this.commandManager.execute(new DeleteEdgeCommand(edgeId, this.graph));
   }
 
   deleteSelection(): void {
     console.log('Editor <--sharedService-- TreeCanvas: deleteSelection');
-    this.unsavedChanges = true;
-    this.commandManager.execute(new DeleteSelectionCommand(this.graph));
+    this.commandManager.execute(new DeleteSelectedCommand(this.graph));
   }
 
-  handleNodeDragEvent(): void {
+  handleNodeDragEvent(event: any): void {
     console.log('Editor <- TreeCanvas: Node was dragged. Unsaved Changes.');
-    this.unsavedChanges = true;
+    if (this.graph.childSelectionMode) {
+      this.commandManager.execute(new MoveSelectedNodesCommand(event.dX, event.dY, this.graph));
+    } else {
+      this.commandManager.execute(new MoveNodeCommand(event.nodeId, event.dX, event.dY, this.graph));
+    }
   }
 
   addEdge(sourceNodeId: string, targetNodeId: string, outputGate: string): void {
     console.log("Editor <- TreeCanvas: Add Edge")
     this.commandManager.execute(new AddEdgeCommand(sourceNodeId, targetNodeId, outputGate, this.graph));
-    this.unsavedChanges = true;
   }
 
   setStartNode(nodeId: string): void {
-    this.unsavedChanges = true;
     this.commandManager.execute(new SetStartNodeCommand(nodeId, this.graph));
   }
 
   // Warn user if they try to leave the page with unsaved changes
   @HostListener('window:beforeunload', ['$event'])
   unloadNotification($event: any) {
-    if (this.unsavedChanges) {
+    if (this.commandManager.unsavedChanges) {
       $event.returnValue = true;
     } else {
       $event.returnValue = "";
@@ -318,13 +316,13 @@ export class EditorComponent {
     this.behaviorTreeService.saveConfigData(this.stateMachineId, this.filename, configData).subscribe((data: any) => {
       console.log('Editor -> backend: saveStateMachineConfig', data);
       if (data.success) {
-        this.unsavedChanges = false;
+        this.commandManager.unsavedChanges = false;
       }
     });
   }
   renameConfig(newName: string): void {
     this.name = newName;
-    this.unsavedChanges = true;
+    this.commandManager.unsavedChanges = true;
   }
 
   // Convert the data to the format that the backend expects
