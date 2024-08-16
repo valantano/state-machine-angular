@@ -21,19 +21,19 @@
             <div *ngFor="let item of state_interface.input_par_interface | keyvalue" class="input-parameters">
                 <label class="input-par-label">{{ item.key }}</label>
 
-                <select [(ngModel)]="inputParameters[item.key]" class="input-par-set"
-                    *ngIf="item.value['type']=='enum'">
+                <select [(ngModel)]="inputParameters[item.key]" class="input-par-set" 
+                    *ngIf="item.value['type']=='enum'" [ngInit]="inputParameters[item.key] = item.value['default']">
                     <option *ngFor="let value of item.value['values']">{{ value }}</option>
                 </select>
 
                 <input type="number" [(ngModel)]="inputParameters[item.key]" class="input-par-set"
-                    *ngIf="item.value['type']=='number'">
+                    *ngIf="item.value['type']=='number'" [ngInit]="inputParameters[item.key] = item.value['default']">
 
                 <input type="text" [(ngModel)]="inputParameters[item.key]" class="input-par-set"
-                    *ngIf="item.value['type']=='string'">
+                    *ngIf="item.value['type']=='string'" [ngInit]="inputParameters[item.key] = item.value['default']">
 
                 <input type="checkbox" [(ngModel)]="inputParameters[item.key]" class="input-par-set"
-                    *ngIf="item.value['type']=='boolean'">
+                    *ngIf="item.value['type']=='boolean'" [ngInit]="inputParameters[item.key] = item.value['default']">
             </div>
         </div>
         <hr

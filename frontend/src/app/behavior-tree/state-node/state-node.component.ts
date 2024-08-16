@@ -16,6 +16,11 @@ export class StateNodeComponent {
 
 
   constructor(private sharedService: SharedServiceService) {
+    
+   
+   }
+
+   ngOnInit() {
     if (this.state_interface === null) {
       throw new Error('StateNode: state_interface is null');
     }
@@ -35,6 +40,8 @@ export class StateNodeComponent {
   @Output() mouseDownOnNode: EventEmitter<{mouseEvent: MouseEvent, nodeId: string}> = new EventEmitter<{mouseEvent: MouseEvent, nodeId: string}>();
   @Output() topCircleEnter: EventEmitter<{nodeId: string}> = new EventEmitter<{nodeId: string}>();
   @Output() topCircleLeave: EventEmitter<void> = new EventEmitter<void>();
+
+
 
 
   onTopCircleEnter(event: MouseEvent) {

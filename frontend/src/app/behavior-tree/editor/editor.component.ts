@@ -103,7 +103,6 @@ export class EditorComponent {
     this.behaviorTreeService.getInterfaceData(this.stateMachineId).subscribe((data: any) => {
       console.log('Editor <- backend: getInterfaceData', data);
       for (let state of data.states) {
-        console.log('Editor: State', state.global_vars_interface);
         const node_interface: StateNodeInterface = {
           stateId: state.stateId,
           name: state.name,
