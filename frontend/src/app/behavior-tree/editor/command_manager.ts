@@ -4,8 +4,9 @@ import { Graph, StateNode, TransitionEdge } from "./data_model";
 export abstract class Command {
   // Each operation on the graph is represented by a command.
   // This way each operation can be executed and undone.
-  public abstract execute(): void;
-  public abstract undo(): void;
+  public abstract execute(): void;    // Execute command for the first time
+  public abstract undo(): void;       // Undo the command
+  public abstract redo(): void;       // Redo the command allowing for different behavior than execute
 }
 
 export class CommandManager {
@@ -36,7 +37,7 @@ export class CommandManager {
     this.unsavedChanges = true;
     const command = this.undone.pop();
     if (command) {
-      command.execute();
+      command.redo();
       this.history.push(command);
     }
   }
@@ -50,7 +51,7 @@ export class CommandManager {
   public reset() {
     this.history = [];
     this.undone = [];
-    this.unsavedChanges = false;
+    this.unsavedChanges = false;Command
   }
 
 }
@@ -66,7 +67,6 @@ export class MoveSelectedNodesCommand extends Command {
   private dx: number;
   private dy: number;
 
-  private firstExecution: boolean = true;
 
   constructor(dx: number, dy: number, graph: Graph) {
     super();
@@ -79,19 +79,21 @@ export class MoveSelectedNodesCommand extends Command {
   execute(): void {
     this.selectedNodes.forEach(node => {
       const position = node.getGraphPosition();
-      if (this.firstExecution) {
-        this.graph.moveNode(node.nodeId, position.x, position.y);
-      } else {
-        this.graph.moveNode(node.nodeId, position.x + this.dx, position.y + this.dy);
-      }
+      this.graph.moveNode(node.nodeId, position.x, position.y);
     });
-    this.firstExecution = false;
   }
 
   undo(): void {
     this.selectedNodes.forEach(node => {
       const position = node.getGraphPosition();
       this.graph.moveNode(node.nodeId, position.x - this.dx, position.y - this.dy);
+    });
+  }
+
+  redo(): void {
+    this.selectedNodes.forEach(node => {
+      const position = node.getGraphPosition();
+      this.graph.moveNode(node.nodeId, position.x + this.dx, position.y + this.dy);
     });
   }
 }
@@ -107,7 +109,6 @@ export class MoveNodeCommand extends Command {
   private nodeId: string;
   private dX: number;
   private dY: number;
-  private firstExecution: boolean = true;
 
 
   constructor(nodeId: string, dX: number, dY: number, graph: Graph) {
@@ -120,17 +121,17 @@ export class MoveNodeCommand extends Command {
 
   execute(): void {
     const node = this.graph.getNode(this.nodeId);
-    if (this.firstExecution) {
-      this.graph.moveNode(this.nodeId, node.x, node.y);
-    } else {
-      this.graph.moveNode(this.nodeId, node.x + this.dX, node.y + this.dY);
-    }
-    this.firstExecution = false;
+    this.graph.moveNode(this.nodeId, node.x, node.y);
   }
 
   undo(): void {
     const node = this.graph.getNode(this.nodeId);
     this.graph.moveNode(this.nodeId, node.x - this.dX, node.y - this.dY);
+  }
+
+  redo(): void {
+    const node = this.graph.getNode(this.nodeId);
+    this.graph.moveNode(this.nodeId, node.x + this.dX, node.y + this.dY);
   }
 }
 
@@ -156,6 +157,10 @@ export class SetStartNodeCommand extends Command {
 
   undo(): void {
     this.graph.setStartNode(this.previousStartNode);
+  }
+
+  redo(): void {
+    this.graph.setStartNode(this.nodeId);
   }
 }
 
@@ -184,6 +189,10 @@ export class AddEdgeCommand extends Command {
   undo(): void {
     this.graph.deleteEdge(this.edgeId);
   }
+
+  redo(): void {
+    this.execute();
+  }
 }
 
 export class DeleteEdgeCommand extends Command {
@@ -207,6 +216,10 @@ export class DeleteEdgeCommand extends Command {
   undo(): void {
     this.edgeId = this.graph.addEdge(this.deletedEdge.sourceNodeId, this.deletedEdge.targetNodeId, this.deletedEdge.sourceNodeOutputGate);
   }
+
+  redo(): void {
+    this.execute();
+  }
 }
 
 export class AddNodeCommand extends Command {
@@ -228,6 +241,10 @@ export class AddNodeCommand extends Command {
 
   undo(): void {
     this.graph.deleteNode(this.node.nodeId);
+  }
+
+  redo(): void {
+    this.execute();
   }
 }
 
@@ -261,6 +278,10 @@ export class DeleteNodeCommand extends Command {
       this.graph.setStartNode(this.node.nodeId);
     }
   }
+
+  redo(): void {
+    this.execute();
+  }
 }
 
 export class DeleteSelectedCommand extends Command {
@@ -290,5 +311,11 @@ export class DeleteSelectedCommand extends Command {
     for (let i = this.deleteCommands.length -1; i>=0; i--) {
       this.deleteCommands[i].undo()
     }
+  }
+
+  redo(): void {
+    this.deleteCommands.forEach(command => {
+      command.redo();
+    });
   }
 }

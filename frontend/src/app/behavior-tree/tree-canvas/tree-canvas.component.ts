@@ -23,9 +23,6 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   @Input() startNodeId: string = "";
   @Input() graph: Graph = new Graph();
 
-  @Output() addEdgeEvent: EventEmitter<{ sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string }> = new EventEmitter<{ sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string }>();
-  @Output() nodeDragEvent: EventEmitter<{ nodeId: string,  dX: number, dY: number }> = new EventEmitter<{ nodeId: string,  dX: number, dY: number }>();
-
   // Used to drag nodes
   private draggingNode = false;
   private mouseDownOnNode = false;
@@ -159,7 +156,6 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   // Also update positions such that the edges are drawn correctly.
   @HostListener('document:mouseup', ['$event'])
   onMouseUp() {
-    console.log('TreeCanvas: Mouse up');
     if (this.isDrawing) {
       const sourceId = this.sourceNodeId;   // make sure values are not changed during the drawing
       const targetId = this.targetNodeId;
@@ -181,7 +177,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
       this.targetNodeId = "";
     }
     if (this.draggingNode) {
-      this.nodeDragEvent.emit({ nodeId: this.draggedNode.nodeId,  dX: this.runningMouseDX, dY: this.runningMouseDY });
+      this.sharedService.nodeDragEvent.emit({ nodeId: this.draggedNode.nodeId,  dX: this.runningMouseDX, dY: this.runningMouseDY });
       this.graph.deselectAllNodes();
     }
     if (this.mouseDownOnNode) {   // true if draggingNode=true
