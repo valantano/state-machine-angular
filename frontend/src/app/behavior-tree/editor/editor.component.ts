@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorTreeService } from '../behavior-tree.service';
 import { TransitionEdge, StateNode, StateNodeInterface, ExecutionStatus, TransitionStatus, Graph } from './data_model';
@@ -45,6 +45,9 @@ export class EditorComponent {
   deleteEdgeSub: Subscription;
   setStartNodeSub: Subscription;
   deleteSelectionSub: Subscription;
+  nodeDragSub: Subscription;
+
+  inputParameterChangedSub: Subscription;
 
   startEventSub: Subscription;
   stopEventSub: Subscription;
@@ -83,6 +86,9 @@ export class EditorComponent {
     this.deleteSelectionSub = this.sharedService.deleteSelectedEvent.subscribe(() => {
       this.deleteSelection()
     });
+    this.nodeDragSub = this.sharedService.nodeDragEvent.subscribe((event) => {
+      this.handleNodeDragEvent(event);
+    });
     this.setStartNodeSub = this.sharedService.setStartNodeEvent.subscribe((event) => {
       this.setStartNode(event.targetNodeId);
     });
@@ -95,6 +101,9 @@ export class EditorComponent {
     this.resetEventSub = this.sharedService.resetEvent.subscribe(() => {
       this.handleResetClick();
     });
+    this.inputParameterChangedSub = this.sharedService.inputParameterChangedEvent.subscribe(() => {
+      this.commandManager.unsavedChanges = true;
+    });
 
     this.loadComponent();
   }
@@ -103,7 +112,6 @@ export class EditorComponent {
     this.behaviorTreeService.getInterfaceData(this.stateMachineId).subscribe((data: any) => {
       console.log('Editor <- backend: getInterfaceData', data);
       for (let state of data.states) {
-        console.log('Editor: State', state.global_vars_interface);
         const node_interface: StateNodeInterface = {
           stateId: state.stateId,
           name: state.name,

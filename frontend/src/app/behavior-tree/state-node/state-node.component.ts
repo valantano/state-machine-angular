@@ -16,8 +16,18 @@ export class StateNodeComponent {
 
 
   constructor(private sharedService: SharedServiceService) {
+    
+   
+   }
+
+   ngOnInit() {
     if (this.state_interface === null) {
       throw new Error('StateNode: state_interface is null');
+    }
+    for (const key in this.state_interface.input_par_interface) {
+      if (this.inputParameters[key] === undefined) {
+        this.inputParameters[key] = this.state_interface.input_par_interface[key].default;
+      }
     }
    }
 
@@ -36,6 +46,11 @@ export class StateNodeComponent {
   @Output() topCircleEnter: EventEmitter<{nodeId: string}> = new EventEmitter<{nodeId: string}>();
   @Output() topCircleLeave: EventEmitter<void> = new EventEmitter<void>();
 
+
+  onInputParChanged(parameterKey: string, newValue: any) {
+    console.log(`Parameter ${parameterKey} changed to ${newValue}`);
+    this.sharedService.inputParameterChangedEvent.emit();
+  }
 
   onTopCircleEnter(event: MouseEvent) {
     console.log('StateNode -> TreeCanvas: Top circle entered', this.nodeId);

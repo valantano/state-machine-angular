@@ -220,7 +220,7 @@ export interface StateNodeInterface {
     name: string;
     stateId: number;
     infoText: string;
-    input_par_interface: {};
+    input_par_interface: {[key: string]: any};
     output_interface: string[];
     global_vars_interface: {
         requires: string[];

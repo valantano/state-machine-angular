@@ -9,11 +9,12 @@ export class MenuBarComponent {
 
   @Output() saveClick: EventEmitter<void> = new EventEmitter<void>();
   @Output() loadClick: EventEmitter<void> = new EventEmitter<void>();
-  @Output() importClick: EventEmitter<void> = new EventEmitter<void>();
-  @Output() exportClick: EventEmitter<void> = new EventEmitter<void>();
   @Output() undoClick: EventEmitter<void> = new EventEmitter<void>();
   @Output() redoClick: EventEmitter<void> = new EventEmitter<void>();
   @Output() configNameChange: EventEmitter<string> = new EventEmitter<string>();
+
+  @Output() importClick: EventEmitter<void> = new EventEmitter<void>();
+  @Output() exportClick: EventEmitter<void> = new EventEmitter<void>();
 
   @Input() executionRunning: boolean = true;
   @Input() not_saved: boolean = false;
