@@ -1,6 +1,7 @@
 # State Machine with an Angular Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
+Code the states of your State Machine in Python and connect the states in a behavior-tree-like structure inside the Editor (angular frontend).  
+
 
 ## Prerequisites
 
