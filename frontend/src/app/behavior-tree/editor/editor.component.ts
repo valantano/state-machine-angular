@@ -1,7 +1,7 @@
 import { Component, EventEmitter, HostListener, input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorTreeService } from '../behavior-tree.service';
-import { TransitionEdge, StateNode, StateNodeInterface, ExecutionStatus, TransitionStatus, Graph } from './data_model';
+import { TransitionEdge, StateNode, StateNodeInterface, ExecutionStatus, TransitionStatus, Graph, Settings } from './data_model';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { SharedServiceService } from './shared-service.service';
@@ -29,6 +29,7 @@ export class EditorComponent {
 
   // Data structures passed to the tree-canvas component
   graph: Graph;
+  settings: Settings;
   node_interfaces: { [id: number]: StateNodeInterface } = {};
   freshlyCreatedNodeId: string = "";
 
@@ -62,6 +63,7 @@ export class EditorComponent {
       throw new Error('Navigation is null');
     }
     this.graph = new Graph();
+    this.settings = new Settings();
 
     const state = navigation.extras.state as { filename: string, smId: number };
     this.stateMachineId = state.smId;

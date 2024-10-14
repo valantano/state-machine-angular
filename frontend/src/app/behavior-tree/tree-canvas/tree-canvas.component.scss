@@ -51,7 +51,46 @@
     border-radius: 10px;
     pointer-events: stroke;
     // user-select: none;
+  }
 
+  .edge-color-base {
+    stroke: #B0BEC5;
+  }
+
+  .edge-color-0 {
+    stroke: #FF5733;
+  }
+  
+  .edge-color-1 {
+    stroke: #33FF57;
+  }
+  
+  .edge-color-2 {
+    stroke: #3357FF;
+  }
+  
+  .edge-color-3 {
+    stroke: #FF33A1;
+  }
+  
+  .edge-color-4 {
+    stroke: #A133FF;
+  }
+  
+  .edge-color-5 {
+    stroke: #33FFF5;
+  }
+  
+  .edge-color-6 {
+    stroke: #FF8C33;
+  }
+  
+  .edge-color-7 {
+    stroke: #00fe7b;
+  }
+  
+  .edge-color-8 {
+    stroke: #338CFF;
   }
 
   path:hover {

@@ -7,7 +7,7 @@
         <app-control-panel [node_interfaces]="node_interfaces"
             (nodeCreate)="handleNodeCreate($event)"></app-control-panel>
         <div class="canvas-area">
-            <app-tree-canvas [graph]="graph" [node_interfaces]="node_interfaces"
+            <app-tree-canvas [graph]="graph" [settings]="settings" [node_interfaces]="node_interfaces"
                 [freshlyCreatedNodeId]="freshlyCreatedNodeId" [startNodeId]="graph.startNode"></app-tree-canvas>
             <app-overlay></app-overlay>
         </div>

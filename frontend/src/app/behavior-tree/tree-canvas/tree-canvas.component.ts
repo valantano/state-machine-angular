@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, HostListener, QueryList, ViewChildren, ChangeDetectorRef, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { StateNodeComponent } from '../state-node/state-node.component';
-import { StateNode, TransitionEdge, StateNodeInterface, Graph } from '../editor/data_model';
+import { StateNode, TransitionEdge, StateNodeInterface, Graph, Settings } from '../editor/data_model';
 import { SharedServiceService } from '../editor/shared-service.service';
 import { Subscription } from 'rxjs';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -22,6 +22,7 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   // @Input() edges: { [id: string]: TransitionEdge } = {};                // Given by EditorComponent by reference.
   @Input() startNodeId: string = "";
   @Input() graph: Graph = new Graph();
+  @Input() settings: Settings = new Settings();
 
   // Used to drag nodes
   private draggingNode = false;
@@ -53,6 +54,8 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   ngOnInit() {
     document.addEventListener('keydown', this.onKeyDown.bind(this));
     document.addEventListener('keyup', this.onKeyUp.bind(this));
+
+    this.graph.initOffsets();
   }
 
   ngOnDestroy() {
@@ -255,27 +258,48 @@ export class TreeCanvasComponent implements AfterViewInit, OnInit {
   }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+  getEdgeClass(index: number): string {
+    if (this.settings.coloredEdges) {
+      return `edge-color-${index % 9}`;
+    } else {
+      return 'edge-color-base';
+    }
+  }
   // Drawing Edges ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  getPath(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string): string {
+  getPath(sourceNodeId: string, targetNodeId: string, sourceNodeOutputGate: string, edge: TransitionEdge|undefined): string {
     const [startX, startY, endX, endY] = this.getStartEndPos(sourceNodeId, targetNodeId, sourceNodeOutputGate);
     if (startY > endY) {
-      const belowStartY = startY + 50;
-      const aboveEndY = endY - 50;
+      let xOffsetL = 220;
+      let yOffsetL = 50;
+      let xOffsetR = 220;
+      let yOffsetR = 50;
+      if (edge && edge.x_offset_left !== undefined && edge.x_offset_right !== undefined && edge.y_offset_left !== undefined && edge.y_offset_right !== undefined) {
+        xOffsetL = edge.x_offset_left;
+        yOffsetL = edge.y_offset_left;
+        xOffsetR = edge.x_offset_right;
+        yOffsetR = edge.y_offset_right;
+        // Use calculated offsets in graph from each edge to avoid overlapping edges
+      }
+
+      let belowStartY;
+      let aboveEndY;
       let besideX;
       if (startX > endX) {
-
-        besideX = Math.max(startX + 200, endX + 200);
+        belowStartY = startY + yOffsetR;
+        aboveEndY = endY - yOffsetR;
+        besideX = Math.max(startX + xOffsetR, endX + xOffsetR);
       } else {
-        besideX = Math.min(startX - 200, endX - 200);
+        belowStartY = startY + yOffsetL;
+        aboveEndY = endY - yOffsetL;
+        besideX = Math.min(startX - xOffsetL, endX - xOffsetL);
       }
 
       return `M ${startX} ${startY} L ${startX} ${belowStartY} L ${besideX} ${belowStartY} L ${besideX} ${aboveEndY} L ${endX} ${aboveEndY} L ${endX} ${endY}`;
     } else {
       const controlPointStartX = startX;
       const controlPointEndX = endX;
-      const controlPointStartY = startY + 100;
-      const controlPointEndY = endY - 100;
+      const controlPointStartY = startY + 0;
+      const controlPointEndY = endY - 50;
       return `M ${startX} ${startY} C ${controlPointStartX} ${controlPointStartY} ${controlPointEndX} ${controlPointEndY} ${endX} ${endY}`;
     }
   }

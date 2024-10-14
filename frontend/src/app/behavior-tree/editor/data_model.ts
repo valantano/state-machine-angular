@@ -1,5 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 
+export class Settings {
+    coloredEdges: boolean = true;
+}
+
 
 export class StateNode {
     nodeId: string;
@@ -54,6 +58,10 @@ export interface TransitionEdge {
     targetNodeId: string;
     transitionStatus: TransitionStatus;
 
+    x_offset_left?: number;
+    y_offset_left?: number;
+    x_offset_right?: number;
+    y_offset_right?: number;
     // title: string;
 }
 
@@ -77,6 +85,7 @@ export class Graph {
     startNode: string = "";
     multipleSelectionMode: boolean = false;
     childSelectionMode: boolean = false;
+
 
     addNode(node: StateNode): void {
         this.nodes[node.nodeId] = node;
@@ -131,9 +140,45 @@ export class Graph {
           targetNodeId: targetNodeId,
           transitionStatus: TransitionStatus.Unknown
         }
+        console.log(newEdge);
+
+        // const n_output_gates = this.nodes[sourceNodeId].state_interface.output_interface.length;
+        // const offset_id = this.nodes[targetNodeId].state_interface.output_interface.indexOf(sourceNodeOutputGate);
+        // const width = 420;
+        // const width_split = width / (n_output_gates + 1) + 20;
+
+        // newEdge.x_offset_left = width_split * (offset_id + 1);
+        // newEdge.y_offset_left = 20 + 10 * (offset_id + 1);
+
+        // newEdge.x_offset_right = width_split * (n_output_gates - offset_id + 1);
+        // newEdge.y_offset_right = 20 + 10 * (n_output_gates - offset_id + 1);
+
         this.edges[newEdge.id] = newEdge;
+        try {
+            this.initOffsets();
+        } catch (e) {
+            console.log(e);
+        }
+
         return newEdge.id;
       }
+
+    initOffsets(): void {
+        // Workaround helper function to make edges avoid each other
+        for (let edgeId in this.edges) {
+            const edge = this.edges[edgeId];
+            const n_output_gates = this.nodes[edge.sourceNodeId].state_interface.output_interface.length;
+            const offset_id = this.nodes[edge.targetNodeId].state_interface.output_interface.indexOf(edge.sourceNodeOutputGate);
+            const width = 420;
+            const width_split = width / (n_output_gates + 1) + 20;
+
+            edge.x_offset_left = width_split * (offset_id + 1);
+            edge.y_offset_left = 20 + 10 * (offset_id + 1);
+
+            edge.x_offset_right = width_split * (n_output_gates - offset_id);
+            edge.y_offset_right = 20 + 10 * (n_output_gates - offset_id);
+        }
+    }
 
     moveNode(nodeId: string, x: number, y: number): void {
         this.nodes[nodeId].updatePosition(x, y);

@@ -14,11 +14,12 @@
     </app-state-node>
 
     <svg *ngIf="stateNodes">
-      <path *ngIf="startNodeId != ''" class="pathclass" [attr.d]="getPath('start-node', startNodeId, 'Start')"
+      <path *ngIf="startNodeId != ''" class="pathclass" [attr.d]="getPath('start-node', startNodeId, 'Start', undefined)"
         stroke="black" fill="transparent" stroke-linejoin="round" stroke-linecap="round" stroke-width="1"
         pointer-events="all" />
-      <path *ngFor="let edge of graph.edges | keyvalue" class="pathclass"
-        [attr.d]="getPath(edge.value.sourceNodeId, edge.value.targetNodeId, edge.value.sourceNodeOutputGate)"
+        <path *ngFor="let edge of graph.edges | keyvalue; let i = index" class="pathclass"
+        [ngClass]="getEdgeClass(i)"
+        [attr.d]="getPath(edge.value.sourceNodeId, edge.value.targetNodeId, edge.value.sourceNodeOutputGate, edge.value)"
         stroke="black" fill="transparent" stroke-linejoin="round" stroke-linecap="round" stroke-width="1"
         (contextmenu)="onRightClick($event, edge.value.id)" (mouseover)="onMouseOver($event, edge.value.id)"
         pointer-events="all" />
